@@ -1,12 +1,35 @@
 var express = require('express');
-
+var fs = require('fs');
 var app = express();
 
+
+//=========================
+// Load Configuration File
+//=========================
+var fileConfig = fs.readFileSync(__dirname + '/app_config.json'),
+	databaseConfig;
+
+try{
+	databaseConfig = JSON.parse(fileConfig);
+	console.log('Loaded config: ');
+	console.log(databaseConfig);
+}catch(err){
+	console.log('Error parsing config file');
+}
+
+
+//=========================
+// Setup Express
+//========================= 
 app.configure(function(){
 	app.use(express.bodyParser());
 	app.use(express.static(__dirname + '/public'));
 });
 
+
+//=========================
+// RESTful Resources
+//=========================
 app.post('/api/v1/game', function(req, res){
 	var name = req.body.kingName;
 	var password = req.body.kingPass;
@@ -37,6 +60,8 @@ app.get('/api/v1/game/:code', function(req, res){
 			//reply as king
 		//reply as peasant
 });
+
+
 
 app.listen(3000, function(){
 	console.log('Started app...');
