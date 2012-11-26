@@ -26,9 +26,34 @@ define('HomeView', [
 			return this;
 		},
 		submitPeasant : function(){
-			var peasantName = $('#peasant-name').val();
+			var that = this,
+				peasantName = $('#peasant-name').val();
 
-			//send request to server
+			//send ajax request to server
+			$.ajax({
+				url : '/api/v1/game/random',
+				type : 'GET',
+				data : {
+					peasantName : peasantName
+				},
+				dataType : 'json'				
+			}).done(function(res){
+				if(res.error){
+					console.log(res);
+				}else{
+					if(res){
+						that.model.set(res);
+						that.model.trigger('peasant-start-success');
+					}else{
+						console.log(res);
+					}
+				}
+			}).fail(function(jqXHR, textStatus){
+				console.log("Request failed: " + textStatus);
+			});
+			
+
+			
 		},
 		submitKing : function(){
 			var kingName = $.trim($('#king-name').val());
@@ -45,7 +70,7 @@ define('HomeView', [
 						console.log('Error starting a new game');
 					}else{
 						console.log('Success, starting a new game');
-						model.trigger('start-success');
+						model.trigger('king-start-success');
 					}
 				},
 				error : function(model, res){
@@ -57,7 +82,7 @@ define('HomeView', [
 						console.log('Unable to start a new game: 500');
 					}
 				}
-			})
+			});
 		}
 
 	});

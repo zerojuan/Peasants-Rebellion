@@ -4,8 +4,9 @@ define('Router', [
 	'backbone',
 	'HeaderView',
 	'HomeView',
+	'GameView',
 	'GameModel'
-], function($, _, Backbone, HeaderView, HomeView, GameModel){
+], function($, _, Backbone, HeaderView, HomeView, GameView, GameModel){
 	var Router;
 
 	Router = Backbone.Router.extend({
@@ -16,6 +17,8 @@ define('Router', [
 		},
 		initialize : function(){
 			this.headerView = new HeaderView();
+
+			this.currentGame = null;
 
 			this.elms = {
 		        'header' : $('.header'),
@@ -31,14 +34,50 @@ define('Router', [
 		    	this.homeView = new HomeView();
 		    }
 
-		    this.homeView.model.on('save-success', function(code){
+		    this.homeView.model.on('king-start-success', function(code){
+		    	console.log('Starting as king...');
 		    	delete that.homeView;
-		    	that.navigate('#/g/'+code, {trigger : true});
+		    	that.currentGame = this;
+		    	that.navigate('#/g/'+this.get('code'), {trigger : true});
+		    });
+
+		    this.homeView.model.on('peasant-start-success', function(code){
+		    	console.log('Starting as peasant...');
+		    	delete that.homeView;
+		    	that.currentGame = this;
+		    	that.navigate('#/g/'+this.get('code'), {trigger : true});
 		    });
 
 		    this.elms['page-content'].html(this.homeView.render().el);
 		},
-		game : function(id){
+		game : function(code){
+			var that = this;
+
+			if(!this.currentGame){
+				this.currentGame = new GameModel({code: code});
+				//query the game from database
+				this.currentGame.fetch({
+					success : function(model, res){
+						console.log('Success');
+						that._game();
+					},
+					error : function(model, res){
+						console.log('Error');
+					}
+				});
+			}else{
+				this._game();
+			}
+
+			
+		},
+		_game : function(){
+			//no need to sync
+			if(!this.gameView){
+				this.gameView = new GameView();
+			}
+
+			this.elms['page-content'].html(this.gameView.render().el);	
 
 		}
 	});

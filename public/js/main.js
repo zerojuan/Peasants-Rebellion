@@ -21,6 +21,7 @@ requirejs.config({
 		'Router' : 'router',
 		'HeaderView' : 'views/header',
 		'HomeView' : 'views/home',
+		'GameView' : 'views/game',
 		'GameModel' : 'models/game'
 	}
 });
