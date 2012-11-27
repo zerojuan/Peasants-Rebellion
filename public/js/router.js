@@ -38,7 +38,7 @@ define('Router', [
 
 		    this.homeView.model.on('king-start-success', function(code){
 		    	console.log('Starting as king...');
-		    	//store cookie
+		    	$.cookie(code+'.auth_king', this.get('king.authId'));
 		    	delete that.homeView;
 		    	that.currentGame = this;
 		    	that.navigate('#/g/'+this.get('code'), {trigger : true});
@@ -57,9 +57,9 @@ define('Router', [
 			var that = this,
 				authId;
 
-			if(!$.cookie('auth_king')){
+			if(!$.cookie(code + '.auth_king')){
 				if(this.currentGame){
-					$.cookie('auth_king', this.currentGame.get('king.authId'));	
+					$.cookie(code + '.auth_king', this.currentGame.get('king.authId'));	
 				}
 			}else{
 				authId = $.cookie('auth_king');
@@ -82,9 +82,7 @@ define('Router', [
 				});
 			}else{
 				this._game();
-			}
-
-			
+			}	
 		},
 		_errorPage : function(error){
 			var errorView = new ErrorView();

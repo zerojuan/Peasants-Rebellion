@@ -1,3 +1,12 @@
 <div>
-	<h2>Game View</h2>
+	<h2><%- game.king.name %></h2>	
+	<div>
+		<canvas id='gameboard' width='800' height='600'></canvas>
+	</div>
+	<h2><% _.each(game.peasants, function(peasant){ %>
+		<%- peasant.name %>
+	<% }) %></h2>
+	<div>
+		<h2>Chatbox</h2>
+	</div>
 </div>

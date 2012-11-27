@@ -102,7 +102,7 @@ app.get('/api/v1/game/random', function(req, res, next){
 	var playerName = req.params.peasantName;
 	console.log(req.params);
 	if(playerName == null || playerName.length <= 0){
-		playerName = 'Peasent Poor';
+		playerName = 'Peasant Poor';
 	}
 
 	Game.count({}, function(err, count){
@@ -138,7 +138,8 @@ app.get('/api/v1/game/random', function(req, res, next){
 				},
 				peasants : game.peasants,
 				board : game.board,
-				turn : game.turn
+				turn : game.turn,
+				player : peasant
 			}); 
 		});
 	});
@@ -201,6 +202,7 @@ app.get('/api/v1/game/:code', function(req, res, next){
 			board : game.board,
 			turn : game.turn,
 			peasants : game.peasants
+			player : peasant
 		});
 	});
 });

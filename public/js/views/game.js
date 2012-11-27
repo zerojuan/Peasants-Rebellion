@@ -8,14 +8,19 @@ define('GameView',[
 	var GameView;
 
 	GameView = Backbone.View.extend({
-		initialize : function(){
+		initialize : function(model){
 			this.template = _.template(tpl);
+			this.model = model;
+			this.side = (this.model.get('king.authId') == null) ? 'W' : 'B';
+			
 		},
 		render : function(){
 			var that = this,
 				tmpl;
 
-			var tmpl = this.template();
+			var game = this.model.toJSON();		
+
+			var tmpl = this.template({game: game, side : this.side});
 
 			$(that.el).html(tmpl);
 			return this;
