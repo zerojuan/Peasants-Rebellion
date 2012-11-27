@@ -1,12 +1,14 @@
 define('Router', [
 	'jquery',
+	'cookie',
 	'underscore',
 	'backbone',
 	'HeaderView',
 	'HomeView',
+	'ErrorView',
 	'GameView',
 	'GameModel'
-], function($, _, Backbone, HeaderView, HomeView, GameView, GameModel){
+], function($, Cookie2, _, Backbone, HeaderView, HomeView, ErrorView, GameView, GameModel){
 	var Router;
 
 	Router = Backbone.Router.extend({
@@ -36,6 +38,7 @@ define('Router', [
 
 		    this.homeView.model.on('king-start-success', function(code){
 		    	console.log('Starting as king...');
+		    	//store cookie
 		    	delete that.homeView;
 		    	that.currentGame = this;
 		    	that.navigate('#/g/'+this.get('code'), {trigger : true});
@@ -51,15 +54,27 @@ define('Router', [
 		    this.elms['page-content'].html(this.homeView.render().el);
 		},
 		game : function(code){
-			var that = this;
+			var that = this,
+				authId;
+
+			if(!$.cookie('auth_king')){
+				if(this.currentGame){
+					$.cookie('auth_king', this.currentGame.get('king.authId'));	
+				}
+			}else{
+				authId = $.cookie('auth_king');
+			}
 
 			if(!this.currentGame){
-				this.currentGame = new GameModel({code: code});
+				this.currentGame = new GameModel({code: code, authId: authId});
 				//query the game from database
 				this.currentGame.fetch({
 					success : function(model, res){
-						console.log('Success');
-						that._game();
+						if(res.error){
+							that._errorPage(res.error);
+						}else{
+							that._game();	
+						}
 					},
 					error : function(model, res){
 						console.log('Error');
@@ -71,10 +86,16 @@ define('Router', [
 
 			
 		},
+		_errorPage : function(error){
+			var errorView = new ErrorView();
+			console.log('Error View: ');
+			console.dir(error);
+			this.elms['page-content'].html(errorView.render(error).el);
+		},
 		_game : function(){
 			//no need to sync
 			if(!this.gameView){
-				this.gameView = new GameView();
+				this.gameView = new GameView(this.currentGame);
 			}
 
 			console.log(this.currentGame.get('board'));

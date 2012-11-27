@@ -98,27 +98,101 @@ app.post('/api/v1/game', function(req, res){
 	});
 });
 
-app.get('/api/v1/game/random', function(req, res){
+app.get('/api/v1/game/random', function(req, res, next){
 	var playerName = req.params.peasantName;
+	console.log(req.params);
+	if(playerName == null || playerName.length <= 0){
+		playerName = 'Peasent Poor';
+	}
 
-	console.log('Loading random game');
-	return res.send({
-		name : playerName,
-		code : 'XXVVC',
-		board : [0, 0, 1, 0]
+	Game.count({}, function(err, count){
+		if(err){
+			console.log('Error count query');
+			return;
+		}
+		var random = Math.max(0, Math.round(Math.random() * count - 1));
+		console.log('Getting result: ' + random);
+		Game.find().limit(1).skip(random).exec(function(err, game){
+
+			if(err){
+				console.log('Error looking for random game');
+				console.dir(err);
+				return;
+			}
+
+			var game = game[0];
+			console.dir(game);
+			var peasantSize = game.peasants.length + 1;
+			peasant = {
+				name : playerName,
+				alive : true
+			};
+			game.peasants.push(peasant);
+			game.markModified('peasants');
+			game.save();
+
+			return res.send({
+				code : game.code,
+				king : {
+					name : game.king.name
+				},
+				peasants : game.peasants,
+				board : game.board,
+				turn : game.turn
+			}); 
+		});
 	});
 });
 
-app.get('/api/v1/game/:code', function(req, res){
+app.get('/api/v1/game/:code', function(req, res, next){
+	var authId;
 	if(req.params.authId){
 		console.log('AuthId is present');
+		authId = req.params.authId;
 	}
+
+	console.dir(req.params);
+
 	Game.findOne({ code: req.params.code}, function(err, game){
 		if(err){
 			console.log('Error loading: ' + req.params.code);
 			return;			
 		}
 
+		if(!game){
+			console.log('Cannot find game :' + req.params.code);
+			return res.send({
+				error : {
+					msg : 'Cannot find game : ' + req.params.code,
+					code : 1
+				}
+			});
+		}
+
+		var king,
+			peasant;
+		console.dir(game);
+
+		if(game.king.authId == authId){
+			//correct auth, reply with a king object
+			king = {
+				name : game.king.name,
+				authId : game.king.authId
+			};
+		}else{
+			//invalid, create a random name
+			var peasantSize = game.peasants.length + 1;
+			peasant = {
+				name : 'Random P ' + peasantSize,
+				alive : true
+			};
+
+			game.peasants.push(peasant);
+			game.markModified('peasants');
+			game.save();
+		}
+
+		
 		return res.send({
 			code : game.code,
 			king : {
@@ -128,7 +202,6 @@ app.get('/api/v1/game/:code', function(req, res){
 			turn : game.turn,
 			peasants : game.peasants
 		});
-
 	});
 });
 
