@@ -201,7 +201,7 @@ app.get('/api/v1/game/:code', function(req, res, next){
 			},
 			board : game.board,
 			turn : game.turn,
-			peasants : game.peasants
+			peasants : game.peasants,
 			player : peasant
 		});
 	});
