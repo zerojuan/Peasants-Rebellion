@@ -110,10 +110,26 @@ app.get('/api/v1/game/random', function(req, res){
 });
 
 app.get('/api/v1/game/:code', function(req, res){
-	//look for the game record
-		//validate cookie
-			//reply as king
-		//reply as peasant
+	if(req.params.authId){
+		console.log('AuthId is present');
+	}
+	Game.findOne({ code: req.params.code}, function(err, game){
+		if(err){
+			console.log('Error loading: ' + req.params.code);
+			return;			
+		}
+
+		return res.send({
+			code : game.code,
+			king : {
+				name : game.king.name
+			},
+			board : game.board,
+			turn : game.turn,
+			peasants : game.peasants
+		});
+
+	});
 });
 
 //======================================

@@ -6,7 +6,7 @@ define('GameModel', [
 	var GameModel;
 
 	GameModel = Backbone.Model.extend({
-		idAttribute : "id",
+		idAttribute : "code",
 		urlRoot : "api/v1/game"
 	});
 
