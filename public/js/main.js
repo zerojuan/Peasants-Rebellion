@@ -10,6 +10,9 @@ requirejs.config({
 		},
 		'cookie' : {
 			deps : ['jquery']
+		},
+		'PlayChess' : {
+			deps : ['easel', 'preload', 'Tilemap']
 		}
 	},
 	paths : {
@@ -23,6 +26,8 @@ requirejs.config({
 		'text' : 'lib/text',
 		'App' : 'app',
 		'Router' : 'router',
+		'Tilemap' : 'utils/tilemap',
+		'PlayChess' : 'chess/playchess',
 		'HeaderView' : 'views/header',
 		'HomeView' : 'views/home',
 		'ErrorView' : 'views/error',
