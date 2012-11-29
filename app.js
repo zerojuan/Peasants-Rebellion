@@ -147,12 +147,13 @@ app.get('/api/v1/game/random', function(req, res, next){
 
 app.get('/api/v1/game/:code', function(req, res, next){
 	var authId;
-	if(req.params.authId){
+
+	if(req.query.authId){
+		authId = req.query.authId;
 		console.log('AuthId is present');
-		authId = req.params.authId;
+		console.log(authId);
 	}
 
-	console.dir(req.params);
 
 	Game.findOne({ code: req.params.code}, function(err, game){
 		if(err){

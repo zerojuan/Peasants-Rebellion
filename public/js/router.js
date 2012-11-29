@@ -38,7 +38,9 @@ define('Router', [
 
 		    this.homeView.model.on('king-start-success', function(code){
 		    	console.log('Starting as king...');
-		    	$.cookie(code+'.auth_king', this.get('king.authId'));
+		    	var king  = this.get('king');
+		    	$.cookie(code+'.auth_king', king.authId);
+		    	console.log('COOKIE: ' + $.cookie(code+'.auth_king'));
 		    	delete that.homeView;
 		    	that.currentGame = this;
 		    	that.navigate('#/g/'+this.get('code'), {trigger : true});
@@ -56,19 +58,26 @@ define('Router', [
 		game : function(code){
 			var that = this,
 				authId;
-
+			console.log('Code: ' + code);
 			if(!$.cookie(code + '.auth_king')){
 				if(this.currentGame){
-					$.cookie(code + '.auth_king', this.currentGame.get('king.authId'));	
+					var king = this.currentGame.get('king');
+					console.log('Setting Cookie: ' + king.authId);
+					$.cookie(code + '.auth_king', king.authId);	
 				}
+				console.log('Cookie Doesnt Exist');
 			}else{
-				authId = $.cookie('auth_king');
+				authId = $.cookie(code+'.auth_king');
+				console.log('Loading cookie: ' + $.cookie(code+'.auth_king'));
 			}
 
 			if(!this.currentGame){
 				this.currentGame = new GameModel({code: code, authId: authId});
 				//query the game from database
 				this.currentGame.fetch({
+					data : {
+						authId : authId
+					},
 					success : function(model, res){
 						if(res.error){
 							that._errorPage(res.error);
