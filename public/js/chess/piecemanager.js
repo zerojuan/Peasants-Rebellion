@@ -91,7 +91,15 @@ define('PieceManager', [
 
 			this.graphics.addChild(piece.graphics);
 			this.pieces.push(piece);
-
+		},
+		findSelectedGamePiece : function(row, col){
+			for(var i in this.pieces){
+				var piece = this.pieces[i];
+				if(piece.row == row && piece.col == col){
+					return piece;
+				}
+			}
+			return false;
 		}
 	}
 
