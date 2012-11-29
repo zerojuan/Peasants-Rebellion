@@ -28,7 +28,7 @@ define('GameView',[
 			$(that.el).html(tmpl);
 
 			var canvas = $(that.el).find('#gameboard')[0];			
-			this.playChess.initialize(canvas);
+			this.playChess.initialize(canvas, game);
 			
 			return this;
 		}

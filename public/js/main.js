@@ -28,6 +28,8 @@ requirejs.config({
 		'Router' : 'router',
 		'Tilemap' : 'utils/tilemap',
 		'PlayChess' : 'chess/playchess',
+		'ChessPiece' : 'chess/chesspiece', 
+		'PieceManager' : 'chess/piecemanager',
 		'HeaderView' : 'views/header',
 		'HomeView' : 'views/home',
 		'ErrorView' : 'views/error',
