@@ -99,7 +99,7 @@ define('PieceManager', [
 					return piece;
 				}
 			}
-			return false;
+			return null;
 		}
 	}
 

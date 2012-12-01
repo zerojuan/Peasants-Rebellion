@@ -66,8 +66,11 @@ define('HomeView', [
 				silent : false,
 				sync : true,
 				success : function(model, res){
-					if(res && res.errors){
+					if(res && res.error){
 						console.log('Error starting a new game');
+						if(res.error.code == 2){
+							console.log('Game limit reached');
+						}
 					}else{
 						console.log('Success, starting a new game');
 						model.trigger('king-start-success');

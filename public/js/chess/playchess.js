@@ -3,9 +3,10 @@ define('PlayChess', [
 	'Tilemap',
 	'ChessPiece',
 	'PieceManager',
+	'MovesLayer',
 	'easel',
 	'preload'
-], function($, Tilemap, ChessPiece, PieceManager){
+], function($, Tilemap, ChessPiece, PieceManager, MovesLayer){
 	var PlayChess;
 
 	var assetManifest = [
@@ -14,8 +15,10 @@ define('PlayChess', [
 		{src : 'assets/black-piece.png', id: 'black'}
 	];
 
-	PlayChess = function(){
+	PlayChess = function(color){
 		console.log('Starting Chess game');
+		this.color = color;
+		this.activePiece = null;
 	};
 
 	PlayChess.prototype = {
@@ -116,7 +119,10 @@ define('PlayChess', [
 					}
 				}
 
-				that.stage.addChild(tileMap, borderMap, 
+				that.movesLayer = new MovesLayer();
+				that.movesLayer.graphics.y = that.offset.y;
+
+				that.stage.addChild(tileMap, that.movesLayer.graphics, borderMap, 
 					that.whitePieceManager.graphics,
 					that.blackPieceManager.graphics);
 
@@ -144,17 +150,66 @@ define('PlayChess', [
 			var row = Math.floor(mouseY / 64);
 
 			//find item that was selected in our array
-			var piece = this.whitePieceManager.findSelectedGamePiece(row, col);
-			if(piece){
-				console.log('Piece tapped: ' + piece.type);
+			var piece;
+			var pieceManager;
+			if(this.color == 'W'){
+				piece = this.whitePieceManager.findSelectedGamePiece(row, col);
+			}else if(this.color == 'B'){
+				piece = this.blackPieceManager.findSelectedGamePiece(row, col);
 			}
+
+			if(this.activePiece){
+				if(piece){
+					//check if different piece
+					if(this.activePiece.col == piece.col && this.activePiece.row == piece.row){
+						//the same piece, deactivate
+						this.activatePiece(null);
+					}else{
+						console.log('Selected Piece: ' + piece.type);
+						this.activatePiece(piece);
+					}
+				}else{
+					//blank space/black space, check if this move is legal
+					if(this.movesLayer.isPossibleMove(row, col)){
+						//do move
+						console.log('DO MOvE!');
+					}else{
+						//cancel
+						this.activatePiece(null);
+					}
+				}
+			}else{
+				//make this as selected
+				console.log('Piece selected: ' + piece.type);
+				this.activatePiece(piece);
+			}
+			
 			console.log('Tapped: [' + row + ', ' + col +']');
+		},
+		activatePiece : function(piece){
+			if(piece == null){
+				console.log('Deactivating piece');
+				this.activePiece.deactivate();
+				this.movesLayer.deactivate();
+			}else{
+				console.log('Activating piece');
+				piece.activate();
+				this.movesLayer.setPossibleMoves([
+						{row: 1, col: 1}, {row: 2, col : 2}
+					]);
+			}
+			this.activePiece = piece;
 		},
 		extractPiece : function(tileData, color){
 			if(tileData.charAt(0) == color){
 				return tileData.charAt(1);
 			}
 			return null;
+		},
+		getPossibleMoves : function(piece){
+			//TODO: Get all possible moves
+			//Build board data
+			//SWITCH BY TYPE
 		},
 		tick : function(){
 			this.stage.update();

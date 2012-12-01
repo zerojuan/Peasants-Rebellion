@@ -26,6 +26,12 @@ define("ChessPiece",[
 		},
 		getPossibleMoves : function(){
 			//array of row cols;
+		},
+		activate : function(){
+
+		},
+		deactivate : function(){
+			
 		}
 	};
 

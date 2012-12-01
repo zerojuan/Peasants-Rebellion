@@ -1,5 +1,9 @@
 {
 	"database" : {
 		"uri" : "URI OF FAKENESS"
+	},
+	"pubnub":{
+		publish_key : "XXX",
+		subscribe_key : "XXX"
 	}
 }

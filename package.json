@@ -3,7 +3,8 @@
   "version": "0.0.0-3",
   "dependencies": {
     "express": "3.0.3",
-    "mongoose": "3.4.0"
+    "mongoose": "3.4.0",
+    "pubnub" : "3.3.1"
   },
   "subdomain": "peasant-chess",
   "scripts": {
