@@ -86,6 +86,7 @@ define('PieceManager', [
 				type : type,
 				row : row,
 				col : col,
+				color : this.color,
 				spriteSheet : ss
 			});
 

@@ -20,11 +20,10 @@ define('MovesLayer',[
 					console.log('Setting Position: ' + row + ', ' + col);
 					this.row = row;
 					this.col = col;
-					this.graphics.x = row * 64;
-					this.graphics.y = col * 64;
+					this.graphics.y = row * 64;
+					this.graphics.x = col * 64;
 				},
 				setVisible : function(visible){
-					console.log('Set visible :' + visible);
 					this.visible = visible;
 					if(this.visible){
 						this.graphics.alpha = .5;

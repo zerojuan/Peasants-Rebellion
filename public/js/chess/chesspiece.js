@@ -7,6 +7,7 @@ define("ChessPiece",[
 		this.type = opts.type;
 		this.row = opts.row;
 		this.col = opts.col;
+		this.color = opts.color;
 		this.spriteSheet = opts.spriteSheet;
 
 		this.alive = true;
