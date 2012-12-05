@@ -94,7 +94,7 @@ var pubnubSubscriber = function(channel){
 		callback : function(message){
 			console.log('Subscribe callback  ' +'peasant_chess_server_'+channel +":" + message);
 			handlePubnubMessage(channel, message);
-		},
+		}/*,
 		presence : function (message) {
 			console.log('PRESENCE');
         	if(message.action === "join"){
@@ -102,7 +102,7 @@ var pubnubSubscriber = function(channel){
         	}else if(message.action === "leave"){
         		console.log('User (browser)' + message.uuid + ' has left');
         	}
-        }
+        }*/
 	});
 }
 
@@ -343,6 +343,14 @@ var handlePubnubMessage = function(code, message){
 			var player = message.player;
 			console.log(player.name + ':' + message.chat);
 			pubnubPublisher(code, message); 
+			break;
+		case 'move' :
+			var piece = message.piece;
+			var from = message.from;
+			var to = message.to;
+			var color = message.color;
+			console.log('Move ' + color + ':' + piece + ' to ' + to.row + ', ' + to.col);
+			pubnubPublisher(code, message);
 			break;
 	}
 	

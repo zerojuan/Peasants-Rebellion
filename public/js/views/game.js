@@ -8,13 +8,19 @@ define('GameView',[
 ], function($, _, Backbone, tpl, GameModel, PlayChess){
 	var GameView;
 
+	var that = GameView;
+
 	GameView = Backbone.View.extend({
 		initialize : function(model){
 			var that = this;
 			this.model = model;
 			this.channel = this.model.get('code');
 			this.side = (this.model.get('player').authId == null) ? 'W' : 'B';
-			this.playChess = new PlayChess(this.side);
+			this.playChess = new PlayChess({
+				color : this.side
+			});
+
+			this.playChess.addMoveListener(this);
 
 			this.template = _.template(tpl);
 
@@ -61,10 +67,35 @@ define('GameView',[
 			
 			return this;
 		},
+		onMove : function(piece, move_to){
+			this._publishMessage('move', {
+				piece : piece.type,
+				color : piece.color,
+				from : {
+					row : piece.row,
+					col : piece.col,
+				},
+				to : move_to
+			});
+		},
 		_parseMessage : function(message){
 			//the message is global
+			switch(type){
+				case 'chat' : 
+					console.log('CHAT:');
+					console.log(message);
+					break;
+				case 'move' :
+					console.log('MOVE: ');
+					console.log(message);
+					break;
+			}
 		},
 		_publishMessage : function(type, data){
+			//send via ajax
+			$.ajax({
+
+			});			 
 			var channel = 'peasant_chess_server_'+this.channel;
 			console.log('Publishing to ' + channel);
 			switch(type){
@@ -92,6 +123,6 @@ define('GameView',[
 			}
 		}
 	});
-
+ 
 	return GameView;
 });

@@ -15,13 +15,23 @@ define('PlayChess', [
 		{src : 'assets/black-piece.png', id: 'black'}
 	];
 
-	PlayChess = function(color){
+	PlayChess = function(opts){
 		console.log('Starting Chess game');
-		this.color = color;
+		this.color = opts.color;
+		this.listeners = [];
 		this.activePiece = null;
 	};
 
 	PlayChess.prototype = {
+		addMoveListener : function(listener){
+			this.listeners.push(listener);
+		},
+		dispatchMoveEvent : function(piece, move_to){
+			for(var i in this.listeners){
+				var listener = this.listeners[i];
+				listener.onMove(piece, move_to);
+			}
+		},
 		initialize : function(canvas, gameData){
 			var that = this;
 
@@ -173,7 +183,10 @@ define('PlayChess', [
 					//blank space/black space, check if this move is legal
 					if(this.movesLayer.isPossibleMove(row, col)){
 						//do move
-						console.log('DO MOvE!');
+						this.dispatchMoveEvent(this.activePiece, {
+							row : row,
+							col : col
+						});
 					}else{
 						//cancel
 						this.activatePiece(null);

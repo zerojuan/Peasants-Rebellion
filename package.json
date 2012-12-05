@@ -4,7 +4,7 @@
   "dependencies": {
     "express": "3.0.3",
     "mongoose": "3.4.0",
-    "pubnub" : "3.3.1"
+    "pubnub" : "3.1.9"
   },
   "subdomain": "peasant-chess",
   "scripts": {
