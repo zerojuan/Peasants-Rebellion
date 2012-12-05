@@ -24,33 +24,31 @@ define('GameView',[
 
 			this.template = _.template(tpl);
 
-			this.pubnub = PUBNUB.init({
-				publish_key : 'pub-ffc0ec10-6f99-4d87-b7dc-b950178e0891',
-				subscribe_key : 'sub-997218e1-5ccd-11e1-8d2c-674c1f1ec115',
-				ssl : false,
-				uuid : this.model.get('player').playerCode,
-				origin : 'pubsub.pubnub.com'
-			});
-			this.pubnub.subscribe({
-				channel : 'peasant_chess_browser_'+that.channel,
-				restore : false,
-				callback : function(message){
-					console.log(message);
-					that._parseMessage(message);
-				},
-				disconnect : function(){
-					alert("Connection Lost");
-				},
-				reconnect : function(){
-					alert("And we're back");
-				},
-				connect : function(){
-					that._publishMessage('connect', {
-						code : that.model.get('code'),
-						player : that.model.get('player')
-					});
+			xRTML.Config.debug = true;
+			this.ortcClient = null;
+
+			loadOrtcFactory(IbtRealTimeSJType, function(factory, error){
+				if(error != null){
+					console.log('Factory error: ' + error.message);
+				}else{
+					if(factory != null){
+						that.ortcClient = factory.createClient();
+
+						that.ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
+                 
+						that.ortcClient.onConnected = function(ortc){
+							console.log('Connected...');
+							that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
+								true, function(ortc, channel, message){
+									console.log('Message Recieved: ' + message);
+								});
+						}
+
+						that.ortcClient.connect('Qy9W72', 'peasantchessauth');
+					}
 				}
 			});
+
 		},
 		render : function(){
 			var that = this,
@@ -92,10 +90,7 @@ define('GameView',[
 			}
 		},
 		_publishMessage : function(type, data){
-			//send via ajax
-			$.ajax({
-
-			});			 
+			//send via ajax			 
 			var channel = 'peasant_chess_server_'+this.channel;
 			console.log('Publishing to ' + channel);
 			switch(type){
@@ -103,23 +98,24 @@ define('GameView',[
 					console.log('Connected'); 
 					break;
 				case 'chat':
-					this.pubnub.publish({
-						channel : channel,
-						message : {
-							type : type,
-							data : data
-						}
+					this.ortcClient.send(channel, {
+						type : type,
+						data : data
 					});
 					break;
 				case 'move' :
 					console.log('Move');
-					this.pubnub.publish({
-						channel : channel,
-						message : {
-							type : type,
-							data : data
-						}
-					});
+					var message = {
+						type : type,
+						data : data
+					};
+					//this.ortcClient.send(channel, {
+					//	type : type,
+					//	data : data
+					//});
+					this.ortcClient.send(channel,
+						JSON.stringify(message));
+					break;
 			}
 		}
 	});

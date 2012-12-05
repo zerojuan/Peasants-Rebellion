@@ -1,7 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var mongoose = require('mongoose');
-var PUBNUB = require('pubnub');
+var ortcNodeclient = require('IbtRealTimeSJNode').IbtRealTimeSJNode;
 var app = express();
 
 
@@ -56,77 +56,78 @@ mongoose.model('Game', GameSchema);
 var Game = mongoose.model('Game');
 
 //=========================
-// PUBNUB FUNCTIONS
+// ORTC Client
 //=========================
 
-var pubnub = PUBNUB.init({
-	publish_key : appConfig.pubnub.publish_key,
-	subscribe_key : appConfig.pubnub.subscribe_key,
-	origin : 'pubsub.pubnub.com'
-});
 
-var pubnubSubscriber = function(channel){
-	/*
-	pubnub.presence({
-        channel:'peasant_chess_server_'+channel,
-        callback:function (message) {
-        	console.log('Something is up here');
-        	if(message.action === "join"){
-        		console.log('User (server)' + message.uuid + ' has joined'); 
-        	}else if(message.action === "leave"){
-        		console.log('User (server)' + message.uuid + ' has left');
-        	}
-        }
-    });
-    pubnub.presence({
-        channel:'peasant_chess_browser_'+channel,
-        callback:function (message) {
-        	console.log('Something else is up here');
-        	if(message.action === "join"){
-        		console.log('User (browser)' + message.uuid + ' has joined'); 
-        	}else if(message.action === "leave"){
-        		console.log('User (browser)' + message.uuid + ' has left');
-        	}
-        }
-    });*/
-	pubnub.subscribe({
-		channel : 'peasant_chess_server_'+channel,
-		callback : function(message){
-			console.log('Subscribe callback  ' +'peasant_chess_server_'+channel +":" + message);
-			handlePubnubMessage(channel, message);
-		}/*,
-		presence : function (message) {
-			console.log('PRESENCE');
-        	if(message.action === "join"){
-        		console.log('User (browser)' + message.uuid + ' has joined'); 
-        	}else if(message.action === "leave"){
-        		console.log('User (browser)' + message.uuid + ' has left');
-        	}
-        }*/
-	});
+var ortcClient = new ortcNodeclient();
+
+var ortcSubscriber = function(code){
+	console.log('Subscribing to: ' + 'peasant_chess_server_'+code);
+	ortcClient.subscribe('peasant_chess_server_'+code, true, 
+		function(ortc, channel, message){
+			console.log('Recieved Message: ');
+			var msgObj = JSON.parse(message);
+			handleORTCMessage(code, msgObj);
+		});
 }
 
-var pubnubPublisher = function(channel, message){
-	console.log('Publishing to ' + 'peasant_chess_browser_'+channel);
-	pubnub.publish({
-		channel : 'peasant_chess_browser_'+channel,
-		message : message
-	});
+var ortcPublisher = function(code, message){
+	var browserChannel = 'peasant_chess_browser_'+code;
+	ortcClient.send(browserChannel, JSON.stringify(message));
 }
 
-/** GET ALL EXISTING GAMES AND RESUBSCRIBE TO ALL OF THEM **/
+ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
+
+ortcClient.onConnected = function(ortc){
+	console.log("ORTC Connected...");
+	//Connected
+	/** GET ALL EXISTING GAMES AND RESUBSCRIBE TO ALL OF THEM **/
+	Game.find({alive:true}, function(err, games){
+		if(err){
+			console.log('Unable to create subscribers for games');
+		}
+
+		for(var i in games){
+			var game = games[i];
+				ortcSubscriber(game.code);	
+		}
+	});	
+}
 
 Game.find({alive:true}, function(err, games){
-	if(err){
-		console.log('Unable to create subscribers for games');
-	}
+		if(err){
+			console.log('Unable to create subscribers for games');
+		}
 
-	for(var i in games){
-		var game = games[i];
-			console.log('Subscribing... ' + game.code);
-			pubnubSubscriber(game.code);	
-	}
-});
+		var channels = {};
+		for(var i in games){
+			var game = games[i];
+				console.log('Subscribing... ' + game.code);
+				channels['peasant_chess_server_'+game.code] = 'r';
+				channels['peasant_chess_browser_'+game.code] = 'w';
+		}
+
+		// Post permissions
+		ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1/', true, 
+			appConfig.ortc.private_key, 0, 
+			appConfig.ortc.app_key, 1400, 
+			appConfig.ortc.private_key, channels, function (error, success) {
+		    if (error) {
+		        console.log('Error saving authentication: ' + error);
+		    } else if (success) {
+		        console.log('Successfully authenticated');
+		         
+		        ortcClient.connect(appConfig.ortc.app_key, 'peasantchessauth');
+		    } else {
+		        console.log('Not authenticated');
+		    }
+		});
+});	
+
+
+
+
 
 
 //=========================
@@ -175,7 +176,7 @@ app.post('/api/v1/game', function(req, res){
 				}
 
 				/*CREATE A NEW CHANNEL*/
-				pubnubSubscriber(savedGame.code);
+				ortcSubscriber(savedGame.code);
 
 				return res.send({
 					code : savedGame.code,
@@ -329,28 +330,28 @@ app.get('/api/v1/game/:code', function(req, res, next){
 //======================================
 // GAME UTILS (PUT THIS IN ANOTHER FILE)
 //======================================
-var handlePubnubMessage = function(code, message){
+var handleORTCMessage = function(code, message){
 	console.log('Message From: ' + code + '>>' + message.type);
 	console.log(message);
 	var type = message.type;
 	switch(type){
 		case 'connect' :
-			var player = message.player;
+			var player = message.data.player;
 			console.log('Player ' + player.name + ' connected to ' + code);
-			pubnubPublisher(code, message);
+			ortcPublisher(code, message);
 			break;
 		case 'chat' :
-			var player = message.player;
+			var player = message.data.player;
 			console.log(player.name + ':' + message.chat);
-			pubnubPublisher(code, message); 
+			ortcPublisher(code, message); 
 			break;
 		case 'move' :
-			var piece = message.piece;
-			var from = message.from;
-			var to = message.to;
-			var color = message.color;
+			var piece = message.data.piece;
+			var from = message.data.from;
+			var to = message.data.to;
+			var color = message.data.color;
 			console.log('Move ' + color + ':' + piece + ' to ' + to.row + ', ' + to.col);
-			pubnubPublisher(code, message);
+			ortcPublisher(code, message);
 			break;
 	}
 	
