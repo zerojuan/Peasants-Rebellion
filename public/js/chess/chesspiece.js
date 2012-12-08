@@ -33,6 +33,18 @@ define("ChessPiece",[
 		},
 		deactivate : function(){
 			
+		},
+		move : function(row, col){
+			this.row = row;
+			this.col = col;
+			this.graphics.x = this.col * 64;
+			this.graphics.y = this.row * 64;
+		},
+		remove : function(row, col){
+			this.row = -1;
+			this.col = -1;
+			this.alive = false;
+			this.graphics.alpha = 0;
 		}
 	};
 

@@ -101,6 +101,16 @@ define('PieceManager', [
 				}
 			}
 			return null;
+		},
+		movePiece : function(from, to){
+			var piece = this.findSelectedGamePiece(from.row, from.col);
+			if(piece)
+				piece.move(to.row, to.col);
+		},
+		removePiece : function(from){
+			var piece = this.findSelectedGamePiece(from.row, from.col);
+			if(piece)
+				piece.remove();
 		}
 	}
 

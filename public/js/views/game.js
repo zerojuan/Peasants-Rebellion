@@ -41,6 +41,7 @@ define('GameView',[
 							that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
 								true, function(ortc, channel, message){
 									console.log('Message Recieved: ' + message);
+									that._parseMessage(message);
 								});
 						}
 
@@ -77,15 +78,18 @@ define('GameView',[
 			});
 		},
 		_parseMessage : function(message){
+			var msgObj = JSON.parse(message);
+
 			//the message is global
-			switch(type){
+			switch(msgObj.type){
 				case 'chat' : 
 					console.log('CHAT:');
 					console.log(message);
 					break;
 				case 'move' :
 					console.log('MOVE: ');
-					console.log(message);
+					var data = msgObj.data;
+					this.playChess.updatePiece(data);
 					break;
 			}
 		},

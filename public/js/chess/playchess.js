@@ -236,16 +236,30 @@ define('PlayChess', [
 			];
 			for(var i in this.blackPieceManager.pieces){
 				var p1 = this.blackPieceManager.pieces[i];
-				boardData[p1.row][p1.col] = 'B'+p1.type;
+				if(p1.alive){
+					boardData[p1.row][p1.col] = 'B'+p1.type;	
+				}
+				
 			}
 			for(var i in this.whitePieceManager.pieces){
 				var p1 = this.whitePieceManager.pieces[i];
-				boardData[p1.row][p1.col] = 'W'+p1.type;
+				if(p1.alive){
+					boardData[p1.row][p1.col] = 'W'+p1.type;	
+				}
 			}
 			
 			var possibleMoves = this.movesLayer.getPossibleMoves(piece, boardData);
 
 			return possibleMoves;
+		},
+		updatePiece : function(data){
+			if(data.color == 'B'){
+				this.blackPieceManager.movePiece(data.from, data.to);
+				this.whitePieceManager.removePiece(data.to);
+			}else if(data.color == 'W'){
+				this.whitePieceManager.movePiece(data.from, data.to);
+				this.blackPieceManager.removePiece(data.to);
+			}
 		},
 		tick : function(){
 			this.stage.update();

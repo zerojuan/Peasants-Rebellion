@@ -2,6 +2,8 @@ var express = require('express');
 var fs = require('fs');
 var mongoose = require('mongoose');
 var ortcNodeclient = require('IbtRealTimeSJNode').IbtRealTimeSJNode;
+var Chess = require('./chess/chess');
+
 var app = express();
 
 
@@ -331,7 +333,7 @@ app.get('/api/v1/game/:code', function(req, res, next){
 // GAME UTILS (PUT THIS IN ANOTHER FILE)
 //======================================
 var handleORTCMessage = function(code, message){
-	console.log('Message From: ' + code + '>>' + message.type);
+	console.log('Message From: ' + code + '>> ' + message.type);
 	console.log(message);
 	var type = message.type;
 	switch(type){
@@ -350,12 +352,41 @@ var handleORTCMessage = function(code, message){
 			var from = message.data.from;
 			var to = message.data.to;
 			var color = message.data.color;
-			console.log('Move ' + color + ':' + piece + ' to ' + to.row + ', ' + to.col);
-			ortcPublisher(code, message);
+			//query database
+			Game.findOne({ code: code}, function(err, game){
+				if(err){
+					console.log('Error finding game: ' + err.message);
+				}
+				if(!game){
+					console.log('Cannot find game');
+					return;
+				}
+
+				//check if valid move	
+				var board = game.board;
+				if(board[from.row][from.col] == color+''+piece){
+					console.log('Correct starting piece');
+					//confirm if chess piece move is correct
+					if(Chess.isValidMove(board, piece, from, to, color)){
+						console.log('Valid move found');
+						//update game state
+						board[from.row][from.col] = '0';
+						board[to.row][to.col] = color+''+piece;
+						game.board = board;
+						game.markModified('board');
+						game.save();
+
+						ortcPublisher(code, message);
+					}
+				}
+			});
+			
 			break;
 	}
 	
 }
+
+
 
 var generateAuthKey = function(){
 	var result = '';
