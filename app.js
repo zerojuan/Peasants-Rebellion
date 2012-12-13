@@ -1,6 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
-var ortcNodeclient = require('IbtRealTimeSJNode').IbtRealTimeSJNode;
+var ortcNodeclient = require('ibtrealtimesjnode').IbtRealTimeSJNode;
 var Chess = require('./chess/chess');
 
 var app = express();
@@ -95,8 +95,8 @@ Game.find({alive:true}, function(err, games){
 		}
 
 		// Post permissions
-		ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1/', true, 
-			process.env.ORTC_PRIVATE_KEY, 0, 
+		ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true, 
+			'peasantchessauth', 0, 
 			process.env.ORTC_APP_KEY, 1400, 
 			process.env.ORTC_PRIVATE_KEY, channels, function (error, success) {
 		    if (error) {
