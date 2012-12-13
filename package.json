@@ -4,14 +4,15 @@
   "dependencies": {
     "express": "3.0.3",
     "mongoose": "3.4.0",
-    "pubnub" : "3.1.9",
+    "mocha": "",
     "IbtRealTimeSJNode" : "2.0.0"
   },
   "subdomain": "peasant-chess",
   "scripts": {
-    "start": "app.js"
+    "start": "app.js",
+    "test": "mocha test/*"
   },
   "engines": {
-    "node": "0.6.x"
+    "node": "0.8.x"
   }
 }

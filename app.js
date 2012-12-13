@@ -1,27 +1,11 @@
 var express = require('express');
-var fs = require('fs');
 var mongoose = require('mongoose');
 var ortcNodeclient = require('IbtRealTimeSJNode').IbtRealTimeSJNode;
 var Chess = require('./chess/chess');
 
 var app = express();
 
-
-//=========================
-// Load Configuration File
-//=========================
-var fileConfig = fs.readFileSync(__dirname + '/app_config.json'),
-	appConfig;
-
-try{
-	appConfig = JSON.parse(fileConfig);
-	console.log('Loaded config: ');
-	console.log(appConfig);
-}catch(err){
-	console.log('Error parsing config file');
-}
-
-var db = mongoose.connect(appConfig.database.uri);
+var db = mongoose.connect(process.env.MONGO_URI);
 var Schema = mongoose.Schema;
 
 
@@ -112,15 +96,14 @@ Game.find({alive:true}, function(err, games){
 
 		// Post permissions
 		ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1/', true, 
-			appConfig.ortc.private_key, 0, 
-			appConfig.ortc.app_key, 1400, 
-			appConfig.ortc.private_key, channels, function (error, success) {
+			process.env.ORTC_PRIVATE_KEY, 0, 
+			process.env.ORTC_APP_KEY, 1400, 
+			process.env.ORTC_PRIVATE_KEY, channels, function (error, success) {
 		    if (error) {
 		        console.log('Error saving authentication: ' + error);
 		    } else if (success) {
 		        console.log('Successfully authenticated');
-		         
-		        ortcClient.connect(appConfig.ortc.app_key, 'peasantchessauth');
+		        ortcClient.connect(process.env.ORTC_APP_KEY, 'peasantchessauth');
 		    } else {
 		        console.log('Not authenticated');
 		    }
