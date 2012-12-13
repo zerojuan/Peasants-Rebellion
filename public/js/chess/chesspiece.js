@@ -29,10 +29,17 @@ define("ChessPiece",[
 			//array of row cols;
 		},
 		activate : function(){
-
+			this.animation.gotoAndPlay(this.type+"_up"+"_selected");
 		},
 		deactivate : function(){
-			
+			this.animation.gotoAndPlay(this.type+"_up"+"_awake");	
+		},
+		updateTurn : function(isMyTurn){
+			if(isMyTurn){
+				this.animation.gotoAndPlay(this.type+"_up"+"_awake");
+			}else{
+				this.animation.gotoAndPlay(this.type+"_up"+"_idle");
+			}
 		},
 		move : function(row, col){
 			this.row = row;

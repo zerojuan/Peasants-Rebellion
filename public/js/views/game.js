@@ -17,7 +17,8 @@ define('GameView',[
 			this.channel = this.model.get('code');
 			this.side = (this.model.get('player').authId == null) ? 'W' : 'B';
 			this.playChess = new PlayChess({
-				color : this.side
+				color : this.side,
+				turn : this.model.get('turn')
 			});
 
 			this.playChess.addMoveListener(this);
@@ -63,7 +64,7 @@ define('GameView',[
 
 			var canvas = $(that.el).find('#gameboard')[0];			
 			this.playChess.initialize(canvas, game);
-			
+
 			return this;
 		},
 		onMove : function(piece, move_to){

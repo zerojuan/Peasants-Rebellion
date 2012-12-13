@@ -18,6 +18,7 @@ define('PlayChess', [
 	PlayChess = function(opts){
 		console.log('Starting Chess game');
 		this.color = opts.color;
+		this.turn = opts.turn;
 		this.listeners = [];
 		this.activePiece = null;
 	};
@@ -31,6 +32,11 @@ define('PlayChess', [
 				var listener = this.listeners[i];
 				listener.onMove(piece, move_to);
 			}
+		},
+		setTurn : function(turn){
+			this.turn = turn;
+			this.whitePieceManager.updateTurn();
+			this.blackPieceManager.updateTurn();
 		},
 		initialize : function(canvas, gameData){
 			var that = this;
@@ -137,6 +143,8 @@ define('PlayChess', [
 					that.whitePieceManager.graphics,
 					that.blackPieceManager.graphics);
 
+				that.setTurn(that.turn);
+
 				createjs.Ticker.setFPS(40);
 				createjs.Ticker.addListener(that);
 			};
@@ -169,37 +177,42 @@ define('PlayChess', [
 				piece = this.blackPieceManager.findSelectedGamePiece(row, col);
 			}
 
-			if(this.activePiece){
-				if(piece){
-					//check if different piece
-					if(this.activePiece.col == piece.col && this.activePiece.row == piece.row){
-						//the same piece, deactivate
-						this.activatePiece(null);
+			if(this.color == this.turn){
+				if(this.activePiece){
+					if(piece){
+						//check if different piece
+						if(this.activePiece.col == piece.col && this.activePiece.row == piece.row){
+							//the same piece, deactivate
+							this.activatePiece(null);
+						}else{
+							console.log('Selected Piece: ' + piece.type);
+							this.activatePiece(piece);
+						}
 					}else{
-						console.log('Selected Piece: ' + piece.type);
-						this.activatePiece(piece);
+						//blank space/black space, check if this move is legal
+						if(this.movesLayer.isPossibleMove(row, col)){
+							//do move
+							this.dispatchMoveEvent(this.activePiece, {
+								row : row,
+								col : col
+							});
+						}else{
+							//cancel
+							this.activatePiece(null);
+						}
 					}
 				}else{
-					//blank space/black space, check if this move is legal
-					if(this.movesLayer.isPossibleMove(row, col)){
-						//do move
-						this.dispatchMoveEvent(this.activePiece, {
-							row : row,
-							col : col
-						});
-					}else{
-						//cancel
-						this.activatePiece(null);
+					//make this as selected
+					if(piece){
+						console.log('Piece selected: ' + piece.type);
+						this.activatePiece(piece);	
 					}
-				}
+					
+				}	
 			}else{
-				//make this as selected
-				if(piece){
-					console.log('Piece selected: ' + piece.type);
-					this.activatePiece(piece);	
-				}
-				
+				console.log('Its not your turn');
 			}
+			
 			
 			console.log('Tapped: [' + row + ', ' + col +']');
 		},
@@ -260,6 +273,8 @@ define('PlayChess', [
 				this.whitePieceManager.movePiece(data.from, data.to);
 				this.blackPieceManager.removePiece(data.to);
 			}
+			this.setTurn(data.turn);
+			this.movesLayer.deactivate();
 		},
 		tick : function(){
 			this.stage.update();

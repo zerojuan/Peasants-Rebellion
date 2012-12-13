@@ -364,21 +364,30 @@ var handleORTCMessage = function(code, message){
 
 				//check if valid move	
 				var board = game.board;
-				if(board[from.row][from.col] == color+''+piece){
-					console.log('Correct starting piece');
-					//confirm if chess piece move is correct
-					if(Chess.isValidMove(board, piece, from, to, color)){
-						console.log('Valid move found');
-						//update game state
-						board[from.row][from.col] = '0';
-						board[to.row][to.col] = color+''+piece;
-						game.board = board;
-						game.markModified('board');
-						game.save();
+				if(color == game.turn){
+					if(board[from.row][from.col] == color+''+piece){
+						console.log('Correct starting piece');
+						//confirm if chess piece move is correct
+						if(Chess.isValidMove(board, piece, from, to, color)){
+							console.log('Valid move found');
+							//update game state
+							if(color == 'W'){
+								game.turn = 'B';
+							}else{
+								game.turn = 'W';
+							}
+							board[from.row][from.col] = '0';
+							board[to.row][to.col] = color+''+piece;
+							game.board = board;
+							game.markModified('board');
+							game.save();
+							message.data.turn = game.turn;
 
-						ortcPublisher(code, message);
-					}
+							ortcPublisher(code, message);
+						}
+					}	
 				}
+				
 			});
 			
 			break;

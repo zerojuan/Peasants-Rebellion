@@ -72,6 +72,7 @@ define('Router', [
 			}
 
 			if(!this.currentGame){
+				console.log('Current Game not found, loading...');
 				this.currentGame = new GameModel({code: code, authId: authId});
 				//query the game from database
 				this.currentGame.fetch({
@@ -90,6 +91,7 @@ define('Router', [
 					}
 				});
 			}else{
+				console.log('Current game exists...  ');
 				this._game();
 			}	
 		},

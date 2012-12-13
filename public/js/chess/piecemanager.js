@@ -18,51 +18,146 @@ define('PieceManager', [
 		//spritesheet data
 		this.spriteSheetData = {
 				animations : {
-					K_up : {
-						frames : [0, 1],
+					K_up_idle : {
+						frames : [0],
 						frequency: 2
 					},
-					K_down : {
+					K_up_awake : {
+						frames : [1]
+					},
+					K_up_selected : {
+						frames : [0, 1],
+						frequency: 2	
+					},
+					K_down_idle : {
+						frames : [2],
+						frequency: 2,
+					},
+					K_down_awake : {
+						frames : [3],
+						frequency: 2,
+					},
+					K_down_selected : {
 						frames : [2, 3],
 						frequency: 2,
 					},
-					Q_up : {
+					Q_up_idle : {
+						frames : [4],
+						frequency : 2
+					},
+					Q_up_awake : {
+						frames : [5],
+						frequency : 2
+					},
+					Q_up_selected : {
 						frames : [4, 5],
 						frequency : 2
 					},
-					Q_down : {
+					Q_down_idle : {
+						frames : [6],
+						frequency : 2
+					},
+					Q_down_awake : {
+						frames : [7],
+						frequency : 2
+					},
+					Q_down_selected : {
 						frames : [6, 7],
 						frequency : 2
 					},
-					B_up : {
+					B_up_idle : {
+						frames : [8],
+						frequency : 2
+					},
+					B_up_awake : {
+						frames : [9],
+						frequency : 2
+					},
+					B_up_selected : {
 						frames : [8, 9],
 						frequency : 2
 					},
-					B_down : {
+					B_down_idle : {
+						frames : [10],
+						frequency : 2
+					},
+					B_down_awake : {
+						frames : [11],
+						frequency : 2
+					},
+					B_down_selected : {
 						frames : [10, 11],
 						frequency : 2
 					},
-					N_up : {
+					N_up_idle : {
+						frames : [12],
+						frequency : 2
+					},
+					N_up_awake : {
+						frames : [13],
+						frequency : 2
+					},
+					N_up_selected : {
 						frames : [12, 13],
 						frequency : 2
 					},
-					N_down : {
+					N_down_idle : {
+						frames : [14],
+						frequency : 2
+					},
+					N_down_awake : {
+						frames : [15],
+						frequency : 2
+					},
+					N_down_selected : {
 						frames : [14, 15],
 						frequency : 2
 					},
-					R_up : {
+					R_up_idle : {
+						frames : [16],
+						frequency : 2
+					},
+					R_up_awake : {
+						frames : [17],
+						frequency : 2
+					},
+					R_up_selected : {
 						frames : [16, 17],
 						frequency : 2
 					},
-					R_down : {
+					R_down_idle : {
+						frames : [18],
+						frequency : 2
+					},
+					R_down_awake : {
+						frames : [19],
+						frequency : 2
+					},
+					R_down_selected : {
 						frames : [18, 19],
 						frequency : 2
 					},
-					P_up : {
+					P_up_idle : {
+						frames : [20],
+						frequency : 2
+					},
+					P_up_awake : {
+						frames : [21],
+						frequency : 2
+					},
+					P_up_selected : {
 						frames : [20, 21],
 						frequency : 2
 					},
-					P_down : {
+					P_down_idle : {
+						frames : [22],
+						frequency : 2
+					},
+					P_down_awake : {
+						frames : [23],
+						frequency : 2
+					},
+					P_down_selected : {
 						frames : [22, 23],
 						frequency : 2
 					}
@@ -104,13 +199,24 @@ define('PieceManager', [
 		},
 		movePiece : function(from, to){
 			var piece = this.findSelectedGamePiece(from.row, from.col);
-			if(piece)
+			if(piece){
+				console.log('Piece moved');
 				piece.move(to.row, to.col);
+			}else{
+				console.log('Piece not found');
+			}
+				
 		},
 		removePiece : function(from){
 			var piece = this.findSelectedGamePiece(from.row, from.col);
 			if(piece)
 				piece.remove();
+		},
+		updateTurn : function(turn){
+			for(var i in this.pieces){
+				var piece = this.pieces[i];
+				piece.updateTurn(turn == this.color);
+			}			
 		}
 	}
 
