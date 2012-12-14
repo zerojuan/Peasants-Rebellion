@@ -19,6 +19,13 @@ module.exports = {
 	canMoveHere : function(boardData, row, col, piece){
 		return boardData[row][col].charAt(0) != piece.color;
 	},
+	isOccupied : function(boardData, row, col){
+		return boardData[row][col] != '0';
+	},
+	isEnemyOwned : function(boardData, row, col, piece){
+		return boardData[row][col].charAt(0) != piece.color &&
+				boardData[row][col].charAt(0) != '0';
+	},
 	_getPossibleMoves : function(boardData, piece){
 		var possibleMoves = [];
 		switch(piece.type){
@@ -139,34 +146,60 @@ module.exports = {
 				//search rook
 				break;
 			case 'P' :
-				//search 2 space forward
+				
 				if(piece.color == 'W'){
-					if(piece.row == 6){
+					//search 2 space up
+					if(piece.col != 0 && piece.row != 0 && this.isEnemyOwned(boardData, piece.row-1, piece.col-1, piece)){
 						possibleMoves.push({
-							row : piece.row - 2,
-							col : piece.col
+							row : piece.row-1,
+							col : piece.col-1
 						});
 					}
-					if(piece.row != 0){
+					if(piece.col != 7 && piece.row != 0 && this.isEnemyOwned(boardData, piece.row-1, piece.col+1, piece)){
+						possibleMoves.push({
+							row : piece.row-1,
+							col : piece.col+1
+						});
+					}
+					if(piece.row != 0 && !this.isOccupied(boardData, piece.row - 1, piece.col)){
 						possibleMoves.push({
 							row : piece.row - 1,
 							col : piece.col
-						});	
+						});
+						if(piece.row == 6 && !this.isOccupied(boardData, piece.row - 2, piece.col)){
+							possibleMoves.push({
+								row : piece.row - 2,
+								col : piece.col
+							});
+						}	
 					}
-							//diagonal
 				}else if(piece.color == 'B'){
-					if(piece.row == 1){
+					//search 2 space down
+					if(piece.col != 0 && piece.row != 7 && this.isEnemyOwned(boardData, piece.row+1, piece.col-1, piece)){
 						possibleMoves.push({
-							row : piece.row + 2,
-							col : piece.col
+							row : piece.row+1,
+							col : piece.col-1
 						});
 					}
-					if(piece.row != 7){
+					if(piece.col != 7 && piece.row != 7 && this.isEnemyOwned(boardData, piece.row+1, piece.col+1, piece)){
+						possibleMoves.push({
+							row : piece.row+1,
+							col : piece.col+1
+						});
+					}
+					if(piece.row != 7 && !this.isOccupied(boardData, piece.row+1, piece.col)){
 						possibleMoves.push({
 							row : piece.row + 1,
 							col : piece.col
 						});
+						if(piece.row == 1 && !this.isOccupied(boardData, piece.row+2, piece.col)){
+							possibleMoves.push({
+								row : piece.row + 2,
+								col : piece.col
+							});
+						}
 					}
+					
 							//diagonal
 				}
 
