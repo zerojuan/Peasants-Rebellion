@@ -153,7 +153,8 @@ app.post('/api/v1/game', function(req, res){
 			game.alive = true;
 			game.board = board;
 			game.turn = 'W';
-
+			var https = require('https');
+			
 			game.save(function(err, savedGame){
 				if(err){
 					console.log('Error saving new game');			

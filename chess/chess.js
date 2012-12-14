@@ -1,5 +1,5 @@
 module.exports = {
-	isValidMove : function(board, type, from, to, color){
+	isValidMove : function(board, type, from, to, color){		
 		var possibleMoves = this._getPossibleMoves(board, {
 			type : type,
 			row : from.row,
@@ -15,6 +15,19 @@ module.exports = {
 		}
 
 		return false;
+	},
+	endGameCheck : function(board, type, from, to, color){
+		//get all possible moves
+
+		//get all enemy moves
+
+		//if checked
+			//if I kill the checker, am I still in check?
+				//yes, does my king have legal moves?
+					//no, checkmate
+		//else
+			//do i have other possible moves?
+				//no, stalemate
 	},
 	canMoveHere : function(boardData, row, col, piece){
 		return boardData[row][col].charAt(0) != piece.color;
