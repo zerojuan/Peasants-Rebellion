@@ -8,6 +8,9 @@
     "ibtrealtimesjnode" : ""
   },
   "subdomain": "peasant-chess",
+  "domains": [
+    "chess.roguestory.com"    
+  ],
   "scripts": {
     "start": "app.js",
     "test": "mocha test/ -u tdd "
