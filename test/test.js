@@ -24,6 +24,19 @@ suite('Chess Mechanics: ', function(){
 		//TODO, test for enpassant
 	});
 
+	test('valid king', function(){
+		var board = [
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', 'BP', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', 'BP', '0', '0', '0', '0'],
+			['0', '0', 'WP', 'WP', '0', '0', '0', '0'],
+			['WP', 'WP', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+	});
+
 	test('valid pawn', function(){
 		var board = [
 			['0', '0', '0', '0', '0', '0', '0', '0'],
@@ -119,5 +132,55 @@ suite('Chess Mechanics: ', function(){
 			row : 4,
 			col : 3
 		}, 'W'), 'White Pawn cant capture 1 space up');		
+	});
+
+	test('valid knight', function(){
+		var board = [
+			['BN', '0', '0', '0', '0', '0', '0', 'WN'],
+			['0', '0', 'BN', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'WP', '0', 'BP', '0', '0', '0', '0'],
+			['0', '0', '0', 'BN', '0', '0', '0', '0'],
+			['0', '0', '0', 'WN', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['WN', '0', '0', '0', '0', '0', '0', 'WN'],
+		];
+		
+		assert.ok(chess.isValidMove(board, 'N', {
+			row : 0,
+			col : 0
+		}, {
+			row : 2,
+			col : 1
+		}, 'B'), 'Black Knight corner move');	
+		assert.ok(!chess.isValidMove(board, 'N', {
+			row : 0,
+			col : 0
+		}, {
+			row : 1,
+			col : 2
+		}, 'B'), 'Black Knight capture same color');
+		assert.ok(chess.isValidMove(board, 'N', {
+			row : 1,
+			col : 2
+		}, {
+			row : 3,
+			col : 1
+		}, 'B'), 'Black Knight capture W');
+		assert.ok(chess.isValidMove(board, 'N', {
+			row : 3,
+			col : 1
+		}, {
+			row : 1,
+			col : 2
+		}, 'W'), 'White Knight capture B');
+		assert.ok(chess.isValidMove(board, 'N', {
+			row : 7,
+			col : 7
+		}, {
+			row : 6,
+			col : 5
+		}, 'W'), 'White Knight corner move');
+		
 	});
 });

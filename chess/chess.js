@@ -75,8 +75,7 @@ module.exports = {
 				//search diagonally
 				break;
 			case 'N' :
-				//search horse
-				console.log('Search KNIGHT');
+				//search knight
 				var pos = {
 					col : piece.col,
 					row : piece.row
