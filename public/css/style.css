@@ -50,6 +50,28 @@ canvas {
 	background-color: #f0f0f0;
 }
 
+.side-bar .padded{
+	padding: 15px;
+}
+
+.user-info{	
+	height: 50px;
+	color: #BDBDBD;
+	background-color: white;
+	border-bottom: 1px solid #E5E5E5;
+}
+
+.user-info .details{
+	overflow: visible;
+	position: relative;
+}
+
+.details .player-name{
+	font-size: 1.65em;
+	margin-top: 0px;
+	margin-bottom: 2px;
+}
+
 .main-wrapper{
 	margin-right: 320px;
 	height: 100%;
@@ -64,26 +86,68 @@ canvas {
 	display: block;
 }
 
-.top, .bottom{
-	height: 9em;
+.avatar{
+	float : left;
+	width: 50px;
+}
+
+.details{
+	float : left;
+	padding-left: 5px;
+}
+
+.media{	
+	position: relative;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	text-align: left;
+	min-height: 48px;
 }
 
 .clearfix{
 	clear: both;
 }
 
+.clearfix::after{
+	clear : both;
+}
+
+.clearfix::before, .clearfix::after {
+	content: " 0020";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+
+.side-bar .content-slider-wrapper {
+	position: absolute;
+	top: 81px;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	overflow: hidden;
+}
+
+
+
 .bottom{
+	position: absolute;
+	width: 100%;
 	background: #030;
 	bottom: 0;
+	top: 570px;	
+	z-index : -1;	
 }
 
 .top{
 	top: 0;
+	height: 80px;
 	background: #030;
 }
 
 .center{
 	height: 31em;
+	width: 100%;
+	z-index: 2;
 }
 
 .left{
@@ -93,11 +157,12 @@ canvas {
 	background: #c0c;
 }
 
-.game{
-	float:left;
-	width: 50%;
+.game{	
+	width: 590px;
 	height: 100%;
+	margin: 0 auto;
 	background: #0c0;
+	z-index: 5;
 }
 
 .right{
