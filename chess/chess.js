@@ -3,7 +3,6 @@ module.exports = {
 		var endGame = this.endGameCheck(board, type, from, to, color);
 		var allPossibleMoves = endGame.allPossibleMoves;
 
-		console.log(allPossibleMoves.length);
 		for(var i in allPossibleMoves){
 			var move = allPossibleMoves[i];
 			if(this._moveEqual(move, { type : type, from : from, to : to, color : color})){
@@ -21,8 +20,15 @@ module.exports = {
 		
 		//checked
 		var allPossibleMoves = this._getAllPossibleMoves(board, color, true, enemyMoves, checkers);
-		var checkMate = (checkers && checkers.length > 0 && allPossibleMoves.length == 0);
-		var staleMate = (checkers && checkers.length == 0 && allPossibleMoves.length == 0);
+		var checkMate = false;
+		var staleMate = false;
+		if(checkers){
+			checkMate = (checkers.length > 0 && allPossibleMoves.length == 0);
+			staleMate = (checkers.length == 0 && allPossibleMoves.length == 0);
+		}else{
+			staleMate = allPossibleMoves.length == 0;
+		}
+			
 		return {
 			allPossibleMoves : allPossibleMoves,
 			checkMate : checkMate,

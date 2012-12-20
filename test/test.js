@@ -43,6 +43,24 @@ suite('Chess Mechanics: ', function(){
 			row : 0,
 			col : 0
 		}, 'B').checkMate, 'Black King checkmate');
+		board = [
+			['BK', '0', '0', '0', '0', '0', '0', '0'],
+			['WP', '0', 'WP', '0', '0', '0', '0', '0'],
+			['WP', 'WP', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+
+		assert.ok(chess.endGameCheck(board, 'K', {
+			row : 0,
+			col : 0
+		},{
+			row : 0,
+			col : 0
+		}, 'B').staleMate, 'Black King stalemate');
 	});
 
 	test('valid king', function(){
