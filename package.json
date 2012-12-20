@@ -1,15 +1,15 @@
 {
   "name": "peasant-chess",
-  "version": "0.0.0-3",
+  "version": "0.0.0-8",
   "dependencies": {
     "express": "3.0.3",
     "mongoose": "3.4.0",
     "mocha": "",
-    "ibtrealtimesjnode" : ""
+    "ibtrealtimesjnode": ""
   },
   "subdomain": "peasant-chess",
   "domains": [
-    "chess.roguestory.com"    
+    "chess.roguestory.com"
   ],
   "scripts": {
     "start": "app.js",
