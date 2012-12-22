@@ -7,6 +7,21 @@ canvas {
 	background: #ccc;
 }
 
+textarea {
+	-webkit-appearance: textarea;
+	background-color: white;
+	border: 1px solid;
+	border-image: initial;
+	-webkit-rtl-ordering: logical;
+	-webkit-user-select: text;
+	-webkit-box-orient: vertical;
+	resize: auto;
+	cursor: auto;
+	padding: 2px;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
 .container{
 	width: 100%;
 	height: 100%;
@@ -96,13 +111,6 @@ canvas {
 	padding-left: 5px;
 }
 
-.media{	
-	position: relative;
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	text-align: left;
-	min-height: 48px;
-}
-
 .clearfix{
 	clear: both;
 }
@@ -127,7 +135,194 @@ canvas {
 	overflow: hidden;
 }
 
+.side-bar .side-bar-header {
+	position: relative;
+	z-index: 2;
+}
 
+.bar-shadow {
+	-webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.button-bar {
+	position: relative;
+	z-index: 1;
+	height: 35px;
+	padding: 10px 15px;
+	background-color: white;
+}
+
+.chat-form.condensed .chat-box{
+	height: 19px;
+	color: #AAA;
+}
+
+.chat-box{
+	width: 270px;
+	padding: 6px 8px 5px;
+	line-height: 18px;;
+}
+
+textarea.chat-box{
+	resize: none;
+	-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05),0 1px 0 white;
+	-moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 #fff;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05),0 1px 0 white;
+
+}
+
+.side-bar .feed-item {
+	margin-bottom: 12px;
+}
+
+.feed-content-inner{
+	position: relative;
+}
+
+.feed-content .player-name {
+	font-weight: bold;
+}
+
+.side-bar .feed-item-inner {
+	padding: 0 10px;
+}
+
+.feed-item-bubble{
+	/*-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;*/
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.feed-item-bubble .feed-item-inner {
+	padding: 0;
+	/*-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;*/
+}
+
+.tip-arrow-left-top .tip-arrow, .tip-arrow-right-top .tip-arrow {
+	top: 20px;
+}
+
+.tip-arrow-container .tip-arrow {
+	position: absolute;
+	display: block;
+	left: 50%;
+	margin-left: -6px;
+	top: auto;
+	bottom: -3px;
+	width: 12px;
+	height: 12px;
+	background-color: white;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+.feed-item-bubble .tip-arrow {
+	-webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05);
+	-moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.05);
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.tip-arrow-left .tip-arrow, .tip-arrow-right .tip-arrow, .tip-arrow-left-top .tip-arrow, .tip-arrow-right-top .tip-arrow {
+	right: auto;
+	left: -6px;
+	top: 50%;
+	margin-left: 0;
+	margin-top: -6px;
+	bottom: auto;
+}
+
+.tip-arrow-container .tip-arrow-inner {
+	background-color: white;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	transform: rotate(0deg);
+}
+
+.feed-item-bubble .feed-item-main {
+	padding: 10px;
+}
+
+.feed-item-plain {
+	margin: -5px;
+	padding: 5px;
+}
+
+.side-bar .feed-item-plain {
+	margin-bottom: 7px;
+}
+
+.media.media-mini, .media.media-micro {
+	font-size: 13px;
+	line-height: 17px;
+	min-height: 20px;
+}
+
+.media .media-img {
+	position: relative;
+	display: inline-block;
+	float: left;
+	margin-right: 10px;
+	width: 48px;
+	height: 48px;
+}
+
+.media.media-mini .media-img, .media.media-micro .media-img {
+	margin-right: 10px;
+	width: 20px;
+	height: 20px;
+}
+
+.media .media-body {
+	position: relative;
+	overflow: hidden;
+	padding-top: 1px;
+}
+
+.feed-item .media-content {
+	padding-right: 35px;
+}
+
+.media .media-content {
+	position: relative;
+	word-wrap: break-word;
+}
+
+.media .media-body .align-right {
+	float: right;
+	position: relative;
+	z-index: 1;
+}
+
+.feed-item .time {
+	color: #B9B9B9;
+}
+
+.feed-item .align-right {
+	height: 18px;
+}
+
+.media {
+	position: relative;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	text-align: left;
+	min-height: 48px;
+}
+
+.media.media-mini h1, .media.media-mini h2, .media.media-mini h3, .media.media-mini h4, .media.media-mini h5, .media.media-mini h6, .media.media-mini ul, .media.media-mini ol, .media.media-mini dl, .media.media-mini p, .media.media-mini blockquote, .media.media-micro h1, .media.media-micro h2, .media.media-micro h3, .media.media-micro h4, .media.media-micro h5, .media.media-micro h6, .media.media-micro ul, .media.media-micro ol, .media.media-micro dl, .media.media-micro p, .media.media-micro blockquote {
+	margin: 0;
+}
 
 .bottom{
 	position: absolute;
