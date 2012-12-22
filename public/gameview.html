@@ -3,7 +3,10 @@
 	<head>
 		<title>Peasant's Revolt</title>
 		<link rel="stylesheet" type="text/css" href="/css/normalize.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/nanoscroller.css"> 
 		<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+		<script type="text/javascript" src="/js/lib/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="/js/lib/jquery.nanoscroller.min.js"></script>
 	</head>
 	<body>		
 		<div class="main-wrapper">
@@ -11,7 +14,7 @@
 				<div class="main-inner">
 					<div class="main-content">
 						<div class="top">
-							top
+							<h1>Peasant's Revolt</h1>
 						</div>
 						<div class="center">							
 							<div class="game">
@@ -50,8 +53,8 @@
 							</nav>
 						</header>
 						<div class="feed">
-							<div class="feed-content-wrapper">
-								<div class="feed-content">
+							<div class="feed-content-wrapper nano">
+								<div class="feed-content content">
 									<div class="feed-content-inner padded">
 										<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">
 											
@@ -144,5 +147,12 @@
 				</div>
 			</div>
 		</aside>			
+		<script>
+		$(document).ready(function(){
+			console.log('Ready');
+			$(".nano").nanoScroller();
+		})
+			
+		</script>
 	</body>
 </html>

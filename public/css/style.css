@@ -46,6 +46,11 @@ textarea {
 /*          Game Layout 		*/
 /* ============================ */
 
+.nano { height: 600px; }
+.nano .content { padding: 0px; }
+.nano .pane   { background: #888; }
+.nano .slider { background: #111; }
+
 .topbar{
 	
 }
@@ -327,7 +332,6 @@ textarea.chat-box{
 .bottom{
 	position: absolute;
 	width: 100%;
-	background: #030;
 	bottom: 0;
 	top: 570px;	
 	z-index : -1;	
@@ -336,7 +340,12 @@ textarea.chat-box{
 .top{
 	top: 0;
 	height: 80px;
-	background: #030;
+}
+
+.top h1{
+	margin-top: 0;
+	padding-left: 20px;
+	padding-top: 10px;
 }
 
 .center{
