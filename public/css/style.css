@@ -4,7 +4,9 @@
 }*/
 
 canvas {
+	position: relative;
 	background: #ccc;
+	left: 100px;
 }
 
 textarea {
@@ -42,6 +44,92 @@ textarea {
 	margin-bottom: 10px;
 }
 
+/* ============================ */
+/* 			Home Layout 		*/
+/* ============================ */
+
+.home-page{
+	width: 1024px;
+	margin: 0 auto;
+}
+
+.team-select-wrapper{
+	padding: 10px;
+}
+
+.team{
+	cursor: pointer;
+	width: 300px;
+	height: 400px;
+	position: relative;
+}
+
+.team.left{
+	float: left;
+}
+
+.team.right{
+	float: right;
+}
+
+.center-div{
+	float: left;
+	width: 400px;
+	text-align: center;
+}
+
+.center-div .label{
+	font-size: 50px;
+	margin: 100px 100px 0 100px;
+}
+
+.team .info{
+	position: absolute;
+	top: 0px;
+}
+
+.team .info-content{
+	width: 360px;
+	background: #ccc;
+	padding: 0 10px;
+}
+
+.info-content header{
+	text-align: center;
+	margin-top: 20px;
+	font-size: 26px;
+}
+
+.info-content .info-body{
+	height: 200px;
+}
+
+.info-content .info-form{
+	text-align: center;
+	padding-top: 10px;
+}
+
+.info-content .info-form input{
+	width: 80%;
+	height: 19px;
+	margin: 4px auto;
+	padding: 6px 8px 5px;
+	line-height: 18px;
+}
+
+.hidden{
+	visibility: hidden;
+}
+
+.team.right .info-content{
+	position: absolute;
+	right: 0;
+}
+
+.team.left .info-content{
+	position: absolute;
+	left: 312px;
+}
 /* ============================ */
 /*          Game Layout 		*/
 /* ============================ */
@@ -354,24 +442,11 @@ textarea.chat-box{
 	z-index: 2;
 }
 
-.left{
-	float: left;
-	width: 25%;
-	height: 100%;
-	background: #c0c;
-}
 
 .game{	
-	width: 590px;
+	width: 780px;
 	height: 100%;
 	margin: 0 auto;
 	background: #0c0;
 	z-index: 5;
-}
-
-.right{
-	float:right;
-	width: 25%;
-	height: 100%;
-	background: #00c;
 }
