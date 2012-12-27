@@ -23,11 +23,8 @@ define('Router', [
 			this.currentGame = null;
 
 			this.elms = {
-		        'header' : $('.header'),
 		        'page-content' : $('.page-content')
 		    };
-
-		    this.elms['header'].hide().html(this.headerView.render().el).fadeIn('slow');
 		},
 		home : function(){
 			var that = this;

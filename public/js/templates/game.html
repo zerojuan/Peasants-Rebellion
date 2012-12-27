@@ -1,12 +1,57 @@
-<div>
-	<h2><%- game.king.name %></h2>	
-	<div>
-		<canvas id='gameboard' width='800' height='600'></canvas>
-	</div>
-	<h2><% _.each(game.peasants, function(peasant){ %>
-		<%- peasant.name %>
-	<% }) %></h2>
-	<div>
-		<h2>Chatbox</h2>
+ <div class="main-wrapper">
+	 <div class="main">
+		<div class="main-inner">
+			<div class="main-content">
+				<div class="top">
+					<h1>Peasants Revolt Against <%- game.king.name %></h1>
+				</div>
+				<div class="center">							
+					<div class="game">
+						<canvas id='gameboard' width='576' height='576'></canvas>
+					</div>							
+				</div>						
+				<div class="bottom">
+					bottom
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
+<aside class="side-bar" id="side-bar">
+	<div class="side-bar-inner">
+	<header class="user-info padded">
+		<div class="media clearfix">
+			<div class="avatar">
+				<a><img src="http://placekitten.com/50/50"></img></a>						
+			</div>
+			<div class="details">							
+				<h3 class="player-name"><%- game.player.name %></h3>
+				<div class="player-detail">
+					The One True King
+				</div>
+			</div>
+		</div>
+	</header>
+	<div class="content-slider-wrapper">
+		<div class="content-slider-item">
+			<header class="side-bar-header bar-shadow">
+				<nav class="button-bar">
+					<div class="chat-form condensed">
+						<textarea class="chat-box" placeholder="Say something..."></textarea>
+					</div>
+				</nav>
+			</header>
+			<div class="feed">
+				<div class="feed-content-wrapper nano">
+					<div class="feed-content content">
+						<div class="feed-content-inner padded">
+							<!-- ADD CHAT ITEM -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</aside>
+	</div>

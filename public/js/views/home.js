@@ -9,12 +9,15 @@ define('HomeView', [
 
 	HomeView = Backbone.View.extend({
 		initialize : function(){
+			this.currSelected = 'NONE';
 			this.model = new GameModel();
 			this.template = _.template(tpl);
 		},
 		events : {
 			"click #peasant-submit" : "submitPeasant",
-			"click #king-submit" : "submitKing"
+			"click #king-submit" : "submitKing",
+			"click .team.left img" : "clickTeamKing",
+			"click .team.right img" : "clickTeamPeasant"
 		},
 		render : function(){
 			var that = this,
@@ -24,6 +27,27 @@ define('HomeView', [
 
 			$(that.el).html(tmpl);
 			return this;
+		},
+		clickTeamKing : function(){
+			if(this.currSelected == 'KING'){				
+				this.currSelected = 'NONE';
+				$(this.el).find('.team.left .info .info-content').addClass('hidden');
+			}else{
+				$(this.el).find('.info-content').addClass('hidden');
+				$(this.el).find('.team.left .info .info-content').removeClass('hidden');
+				//show King div and set currSelected to KING
+				this.currSelected = 'KING';
+			}
+		},
+		clickTeamPeasant : function(){
+			if(this.currSelected == 'PEASANT'){
+				this.currSelected = 'NONE';
+				$(this.el).find('.team.right .info .info-content').addClass('hidden');
+			}else{
+				$(this.el).find('.info-content').addClass('hidden');
+				$(this.el).find('.team.right .info .info-content').removeClass('hidden');
+				this.currSelected = 'PEASANT';
+			}
 		},
 		submitPeasant : function(){
 			var that = this,

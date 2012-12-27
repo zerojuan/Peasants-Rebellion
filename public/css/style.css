@@ -437,7 +437,7 @@ textarea.chat-box{
 }
 
 .center{
-	height: 31em;
+	height: 576px;
 	width: 100%;
 	z-index: 2;
 }

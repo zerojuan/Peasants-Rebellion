@@ -3,9 +3,11 @@ define('GameView',[
 	'underscore',
 	'backbone',
 	'text!templates/game.html',
+	'text!templates/status-item.html',
+	'text!templates/chat-item.html',
 	'GameModel',
 	'PlayChess'
-], function($, _, Backbone, tpl, GameModel, PlayChess){
+], function($, _, Backbone, tpl, statusTpl, chatTpl, GameModel, PlayChess){
 	var GameView;
 
 	var that = GameView;
@@ -24,6 +26,8 @@ define('GameView',[
 			this.playChess.addMoveListener(this);
 
 			this.template = _.template(tpl);
+			this.chatTemplate = _.template(chatTpl);
+			this.statusTemplate = _.template(statusTpl);
 
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
@@ -89,7 +93,11 @@ define('GameView',[
 					break;
 				case 'move' :
 					console.log('MOVE: ');
-					var data = msgObj.data;
+					var data = msgObj.data;					
+					console.log(msgObj.data);	
+					var msg = data.color + data.piece + " moved.";
+					var tmpl = this.statusTemplate({msg : msg});					
+					$(this.el).find('.feed-content-inner').prepend(tmpl);
 					this.playChess.updatePiece(data);
 					break;
 			}

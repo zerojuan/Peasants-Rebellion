@@ -55,8 +55,8 @@ define('PlayChess', [
 			}
 
 			this.offset = {
-				x : 20,
-				y : 20
+				x : 32,
+				y : 32
 			}
 
 			this.loader = new createjs.PreloadJS();
@@ -132,14 +132,21 @@ define('PlayChess', [
 							tileMap = new Tilemap({tileSheet : result, map : map});
 							borderMap = new Tilemap({tileSheet : result, map : border});
 							tileMap.y = that.offset.y;
+							tileMap.x = that.offset.x;
 							borderMap.y = 64 * 3 + that.offset.y;
 					}
 				}
 
 				that.movesLayer = new MovesLayer();
 				that.movesLayer.graphics.y = that.offset.y;
+				that.movesLayer.graphics.x = that.offset.x;
 
-				that.stage.addChild(tileMap, that.movesLayer.graphics, borderMap, 
+				that.whitePieceManager.graphics.x = that.offset.x;
+				that.whitePieceManager.graphics.y = that.offset.y;
+				that.blackPieceManager.graphics.x = that.offset.x;
+				that.blackPieceManager.graphics.y = that.offset.y;
+
+				that.stage.addChild(tileMap, that.movesLayer.graphics, 
 					that.whitePieceManager.graphics,
 					that.blackPieceManager.graphics);
 
@@ -152,7 +159,7 @@ define('PlayChess', [
 			this.loader.loadManifest(assetManifest);
 		},
 		handleInput : function(evt){
-			var mouseX = this.stage.mouseX;
+			var mouseX = this.stage.mouseX - this.offset.x;
 			var mouseY = this.stage.mouseY - this.offset.y;
 
 			if(mouseX < 0 || mouseY < 0){
