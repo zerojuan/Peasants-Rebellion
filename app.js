@@ -328,7 +328,11 @@ var handleORTCMessage = function(code, message){
 			break;
 		case 'chat' :
 			var player = message.data.player;
-			console.log(player.name + ':' + message.chat);
+			console.log(player.name + ':' + message.message);
+			var parsedPlayer = {
+				name : message.data.player.name
+			};
+			message.data.player = parsedPlayer;
 			ortcPublisher(code, message); 
 			break;
 		case 'move' :

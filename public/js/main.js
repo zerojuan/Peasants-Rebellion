@@ -11,8 +11,11 @@ requirejs.config({
 		'cookie' : {
 			deps : ['jquery']
 		},
+		'timeago' : {
+			deps : ['jquery']
+		},
 		'GameView' : {
-			deps : ['xrtml']
+			deps : ['xrtml', 'timeago']
 		},
 		'PlayChess' : {
 			deps : ['easel', 'preload', 'Tilemap']
@@ -23,6 +26,7 @@ requirejs.config({
 		'cookie' : 'lib/jquery.cookie',
 		'easel' : 'lib/easeljs-0.5.0.min',
 		'preload' : 'lib/preloadjs-0.2.0.min',
+		'timeago' : 'lib/jquery.timeago',
 		'xrtml' : 'lib/xrtml-custom-3.0-min',
 		'sound' : 'lib/soundjs-0.3.0.min',
 		'backbone' : 'lib/backbone',

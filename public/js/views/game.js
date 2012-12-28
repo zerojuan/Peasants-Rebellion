@@ -43,6 +43,8 @@ define('GameView',[
                  
 						that.ortcClient.onConnected = function(ortc){
 							console.log('Connected...');
+							$('.overlay').fadeOut();
+							$('.chat-box').prop('disabled', false);
 							that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
 								true, function(ortc, channel, message){
 									console.log('Message Recieved: ' + message);
@@ -54,7 +56,10 @@ define('GameView',[
 					}
 				}
 			});
-
+			$('time').timeago();
+		},
+		events : {
+			"keyup .chat-box" : "onChatType" 
 		},
 		render : function(){
 			var that = this,
@@ -71,6 +76,22 @@ define('GameView',[
 
 			return this;
 		},
+		onChatType : function(e){
+			console.log('Key pressed');
+			if(e.keyCode == 13 && !e.shiftKey){				
+				var message = $.trim($(this.el).find('.chat-box').val());
+				$(this.el).find('.chat-box').val(message);
+				//submit chat message
+				var timestamp = new Date().toISOString();
+				var data = {
+					player : this.model.get('player'),
+					message : message,
+					timestamp : timestamp
+				}
+				this._publishMessage('chat', data);
+			}
+			return false;
+		},
 		onMove : function(piece, move_to){
 			this._publishMessage('move', {
 				piece : piece.type,
@@ -82,25 +103,38 @@ define('GameView',[
 				to : move_to
 			});
 		},
+		createChatElement : function(data){
+			var timestring = $.timeago(data.timestamp);
+			var tmpl = this.chatTemplate({name: data.player.name, message: data.message, timestamp : data.timestamp, timestring : timestring});
+			$(this.el).find('.feed-content-inner').prepend(tmpl);
+		},
+		createStatusElement : function(data, msg){
+			var timeString = $.timeago(new Date());
+			if(data){
+				msg = data.color + data.piece + " moved.";
+				timestring = $.timeago(data.timestamp);
+			}
+			
+			var tmpl = this.statusTemplate({msg : msg});					
+			$(this.el).find('.feed-content-inner').prepend(tmpl);					
+		},
 		_parseMessage : function(message){
 			var msgObj = JSON.parse(message);
-
+			var data = msgObj.data;
 			//the message is global
 			switch(msgObj.type){
 				case 'chat' : 
 					console.log('CHAT:');
-					console.log(message);
+					//TODO: show chat message
+					this.createChatElement(data);
 					break;
 				case 'move' :
 					console.log('MOVE: ');
-					var data = msgObj.data;					
-					console.log(msgObj.data);	
-					var msg = data.color + data.piece + " moved.";
-					var tmpl = this.statusTemplate({msg : msg});					
-					$(this.el).find('.feed-content-inner').prepend(tmpl);
+					this.createStatusElement(data);
 					this.playChess.updatePiece(data);
 					break;
 			}
+			$('time').timeago();
 		},
 		_publishMessage : function(type, data){
 			//send via ajax			 
@@ -110,22 +144,19 @@ define('GameView',[
 				case 'connect':
 					console.log('Connected'); 
 					break;
-				case 'chat':
-					this.ortcClient.send(channel, {
-						type : type,
-						data : data
-					});
-					break;
-				case 'move' :
-					console.log('Move');
+				case 'chat':				
 					var message = {
 						type : type,
 						data : data
 					};
-					//this.ortcClient.send(channel, {
-					//	type : type,
-					//	data : data
-					//});
+					this.ortcClient.send(channel,JSON.stringify(message));
+					console.log("Sending to chat");
+					break;
+				case 'move' :
+					var message = {
+						type : type,
+						data : data
+					};
 					this.ortcClient.send(channel,
 						JSON.stringify(message));
 					break;
