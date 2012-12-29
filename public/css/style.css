@@ -451,7 +451,7 @@ textarea.chat-box{
 	position: absolute;
 	width: 100%;
 	bottom: 0;
-	top: 570px;	
+	top: 660px;	
 	z-index : -1;	
 }
 
@@ -477,6 +477,11 @@ textarea.chat-box{
 	width: 780px;
 	height: 100%;
 	margin: 0 auto;
-	background: #0c0;
+	/*background: #0c0;*/
 	z-index: 5;
+}
+
+#turn-wrapper{
+	text-align: center;
+	font-size: 30px;
 }

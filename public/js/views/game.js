@@ -45,6 +45,7 @@ define('GameView',[
 							console.log('Connected...');
 							$('.overlay').fadeOut();
 							$('.chat-box').prop('disabled', false);
+							that.updateTurn(that.model.get('turn'));
 							that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
 								true, function(ortc, channel, message){
 									console.log('Message Recieved: ' + message);
@@ -109,14 +110,28 @@ define('GameView',[
 			$(this.el).find('.feed-content-inner').prepend(tmpl);
 		},
 		createStatusElement : function(data, msg){
-			var timeString = $.timeago(new Date());
+			var timestring = $.timeago(new Date());
 			if(data){
 				msg = data.color + data.piece + " moved.";
-				timestring = $.timeago(data.timestamp);
+				timestring = $.timeago(new Date());
 			}
 			
-			var tmpl = this.statusTemplate({msg : msg});					
+			var tmpl = this.statusTemplate({msg : msg, timestamp : new Date().toISOString(), timestring: timestring});					
 			$(this.el).find('.feed-content-inner').prepend(tmpl);					
+		},
+		updateTurn : function(currentTurn){
+			var name = (this.side == 'W') ? 'Peasant' : 'King';
+			console.log('Current Turn: ' + currentTurn);
+			if(this.side == currentTurn){
+				$(this.el).find('#turn-wrapper').html('Your Turn, ' + name);
+			}else{				
+				if(this.side == 'W'){
+					name = "the King's turn";
+				}else{
+					name = "the peasants' move";
+				}
+				$(this.el).find('#turn-wrapper').html('Waiting for ' + name);
+			}
 		},
 		_parseMessage : function(message){
 			var msgObj = JSON.parse(message);
@@ -131,6 +146,7 @@ define('GameView',[
 				case 'move' :
 					console.log('MOVE: ');
 					this.createStatusElement(data);
+					this.updateTurn(data.turn);
 					this.playChess.updatePiece(data);
 					break;
 			}
@@ -150,7 +166,6 @@ define('GameView',[
 						data : data
 					};
 					this.ortcClient.send(channel,JSON.stringify(message));
-					console.log("Sending to chat");
 					break;
 				case 'move' :
 					var message = {

@@ -34,7 +34,7 @@
       strings: {
         prefixAgo: null,
         prefixFromNow: null,
-        suffixAgo: "ago",
+        suffixAgo: "",
         suffixFromNow: "from now",
         seconds: "~1m",
         minute: "~1m",
