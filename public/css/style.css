@@ -32,7 +32,7 @@ textarea {
 }
 
 .overlay{
-	position: absolute;
+	position: fixed;
 	top: 0;
 	bottom: 0;
 	right: 0;
@@ -41,7 +41,7 @@ textarea {
 }
 
 .overlay .bg{
-	position: absolute;
+	position: fixed;
 	top: 0;
 	bottom: 0;
 	right: 0;
