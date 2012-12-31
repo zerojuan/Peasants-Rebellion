@@ -63,6 +63,267 @@ suite('Chess Mechanics: ', function(){
 		}, 'B').staleMate, 'Black King stalemate');
 	});
 
+	test('valid rook', function(){
+		var board = [
+			['0', '0', '0', 'BK', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', 'BP', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', 'WR', '0', 'WR', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', 'WP', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+		assert.ok(chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 4, col: 0},
+				'W'
+			), 'White Rook Left');
+		assert.ok(chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 4, col: 3},
+				'W'
+			), 'White Rook Right');
+		assert.ok(chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 7, col: 2},
+				'W'
+			), 'White Rook Down');
+		assert.ok(chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 3, col: 2},
+				'W'
+			), 'White Rook Up');
+		assert.ok(!chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 4, col: 5},
+				'W'
+			), 'White Rook Blocked Right');
+		assert.ok(!chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 1, col: 2},
+				'W'
+			), 'White Rook Blocked Top');
+		assert.ok(chess.isValidMove(board, 'R',
+				{row: 4, col: 2},
+				{row: 2, col: 2},
+				'W'
+			), 'White Rook Capture Top');
+		assert.ok(!chess.isValidMove(board, 'R',
+				{row: 4, col: 4},
+				{row: 7, col: 4},
+				'W'
+			), 'White Rook Block Bottom');
+
+		//TODO: Test for open checks
+	});
+
+	test('valid bishop', function(){
+		var board = [
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', 'BP', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', 'WB', '0', '0', '0', '0', '0'],
+			['0', '0', '0', 'WB', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'BP', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+		assert.ok(chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 5, col: 2},
+				'W'
+			), 'White Bishop SW');
+		assert.ok(chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 1, col: 6},
+				'W'
+			), 'White Bishop NE');
+		assert.ok(chess.isValidMove(board, 'B',
+				{row: 3, col: 2},
+				{row: 2, col: 1},
+				'W'
+			), 'White Bishop NW');
+		assert.ok(chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 6, col: 5},
+				'W'
+			), 'White Bishop SE');
+		assert.ok(!chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 3, col: 2},
+				'W'
+			), 'White Bishop capture same team');
+		assert.ok(!chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 0, col: 7},
+				'W'
+			), 'White Bishop block NE');
+		assert.ok(!chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 2, col: 1},
+				'W'
+			), 'White Bishop block NW');
+		assert.ok(!chess.isValidMove(board, 'B',
+				{row: 3, col: 2},
+				{row: 5, col: 4},
+				'W'
+			), 'White Bishop block SE');
+		assert.ok(chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 6, col: 1},
+				'W'
+			), 'White Bishop capture SW');
+		assert.ok(chess.isValidMove(board, 'B',
+				{row: 4, col: 3},
+				{row: 1, col: 6},
+				'W'
+			), 'White Bishop capture NE');
+	});
+
+	test('valid queen', function(){
+		var board = [
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'WP', '0', 'WP', '0', 'WP', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'WP', '0', 'WQ', '0', 'WP', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'WP', '0', 'WP', '0', 'WP', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 5, col: 3},
+				'W'
+			), 'White Bishop move S');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 6, col: 3},
+				'W'
+			), 'White Bishop capture same S');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 3, col: 3},
+				'W'
+			), 'White Bishop move N');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 2, col: 3},
+				'W'
+			), 'White Bishop capture same N');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 4, col: 4},
+				'W'
+			), 'White Bishop move E');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 4, col: 5},
+				'W'
+			), 'White Bishop capture same E');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 4, col: 2},
+				'W'
+			), 'White Bishop move W');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 4, col: 1},
+				'W'
+			), 'White Bishop capture same W');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 3, col: 4},
+				'W'
+			), 'White Bishop move NE');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 2, col: 5},
+				'W'
+			), 'White Bishop capture same NE');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 3, col: 2},
+				'W'
+			), 'White Bishop move NW');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 2, col: 1},
+				'W'
+			), 'White Bishop capture same NW');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 5, col: 2},
+				'W'
+			), 'White Bishop move SW');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 6, col: 1},
+				'W'
+			), 'White Bishop capture same SW');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 5, col: 4},
+				'W'
+			), 'White Bishop move SE');
+		assert.ok(!chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 6, col: 5},
+				'W'
+			), 'White Bishop capture same SE');
+		board = [
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'BP', '0', 'BP', '0', 'BP', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'BP', '0', 'WQ', '0', 'BP', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', 'BP', '0', 'BP', '0', 'BP', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 6, col: 3},
+				'W'
+			), 'White Bishop capture S');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 2, col: 3},
+				'W'
+			), 'White Bishop capture N');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 4, col: 5},
+				'W'
+			), 'White Bishop capture E');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 4, col: 1},
+				'W'
+			), 'White Bishop capture W');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 2, col: 5},
+				'W'
+			), 'White Bishop capture NE');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 2, col: 1},
+				'W'
+			), 'White Bishop capture NW');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 6, col: 1},
+				'W'
+			), 'White Bishop same SW');
+		assert.ok(chess.isValidMove(board, 'Q',
+				{row: 4, col: 3},
+				{row: 6, col: 5},
+				'W'
+			), 'White Bishop capture SE');
+	});
+
 	test('valid king', function(){
 		var board = [
 			['BK', '0', '0', '0', '0', '0', '0', '0'],
