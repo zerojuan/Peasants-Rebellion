@@ -146,7 +146,7 @@ app.post('/api/v1/game', function(req, res){
 			return;
 		}
 
-		if(count <= 4){
+//		if(count <= 4){
 			var game = new Game();
 			game.code = generateGameCode();
 			game.king = king;
@@ -180,15 +180,15 @@ app.post('/api/v1/game', function(req, res){
 					alive : true
 				});
 			});	
-		}else{
-			console.log('Game is full:' + count);
-			return res.send({
-				error : {
-					msg : 'All game slots are full',
-					code : 2
-				}
-			});
-		}
+		// }else{
+		// 	console.log('Game is full:' + count);
+		// 	return res.send({
+		// 		error : {
+		// 			msg : 'All game slots are full',
+		// 			code : 2
+		// 		}
+		// 	});
+		// }
 		
 	});
 	
