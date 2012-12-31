@@ -272,7 +272,7 @@ textarea {
 .button-bar {
 	position: relative;
 	z-index: 1;
-	height: 35px;
+	min-height: 35px;
 	padding: 10px 15px;
 	background-color: white;
 }
@@ -282,11 +282,21 @@ textarea {
 	color: #AAA;
 }
 
+.chat-form.expanded .chat-box{
+	height: 60px;
+	color: #000;
+}
+
+.chat-form.expanded{
+	height: 70px;
+}
+
 .chat-box{
 	width: 270px;
 	padding: 6px 8px 5px;
 	line-height: 18px;;
 }
+
 
 textarea.chat-box{
 	resize: none;

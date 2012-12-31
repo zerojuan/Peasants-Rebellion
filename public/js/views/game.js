@@ -32,35 +32,41 @@ define('GameView',[
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
 
-			loadOrtcFactory(IbtRealTimeSJType, function(factory, error){
-				if(error != null){
-					console.log('Factory error: ' + error.message);
-				}else{
-					if(factory != null){
-						that.ortcClient = factory.createClient();
+			xRTML.ready(function(){
+				loadOrtcFactory(IbtRealTimeSJType, function(factory, error){
+					if(error != null){
+						console.log('Factory error: ' + error.message);
+					}else{
+						if(factory != null){
+							that.ortcClient = factory.createClient();
 
-						that.ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
-                 
-						that.ortcClient.onConnected = function(ortc){
-							console.log('Connected...');
-							$('.overlay').fadeOut();
-							$('.chat-box').prop('disabled', false);
-							that.updateTurn(that.model.get('turn'));
-							that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
-								true, function(ortc, channel, message){
-									console.log('Message Recieved: ' + message);
-									that._parseMessage(message);
-								});
+							that.ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
+	                 
+							that.ortcClient.onConnected = function(ortc){
+								console.log('Connected...');
+								$('.overlay').fadeOut();
+								$('.chat-box').prop('disabled', false);
+								that.updateTurn(that.model.get('turn'));
+								that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
+									true, function(ortc, channel, message){
+										console.log('Message Recieved: ' + message);
+										that._parseMessage(message);
+									});
+							}
+
+							that.ortcClient.connect('Qy9W72', 'peasantchessauth');
 						}
-
-						that.ortcClient.connect('Qy9W72', 'peasantchessauth');
 					}
-				}
+				});
 			});
+
+			
 			$('time').timeago();
 		},
 		events : {
-			"keyup .chat-box" : "onChatType" 
+			"keyup .chat-box" : "onChatType",
+			"focus .chat-box" : "onChatFocus",
+			"blur .chat-box" : "onChatBlur"
 		},
 		render : function(){
 			var that = this,
@@ -76,6 +82,17 @@ define('GameView',[
 			this.playChess.initialize(canvas, game);
 
 			return this;
+		},
+		onChatBlur : function(){
+			var msg = $.trim($(this.el).find('.chat-box').val());
+			if(msg === ""){
+				$(this.el).find('.chat-form').removeClass('expanded');
+				$(this.el).find('.chat-form').addClass('condensed');	
+			}			
+		},
+		onChatFocus : function(){
+			$(this.el).find('.chat-form').removeClass('condensed');
+			$(this.el).find('.chat-form').addClass('expanded');
 		},
 		onChatType : function(e){
 			console.log('Key pressed');
