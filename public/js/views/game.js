@@ -95,10 +95,10 @@ define('GameView',[
 			$(this.el).find('.chat-form').addClass('expanded');
 		},
 		onChatType : function(e){
-			console.log('Key pressed');
 			if(e.keyCode == 13 && !e.shiftKey){				
-				var message = $.trim($(this.el).find('.chat-box').val());
-				$(this.el).find('.chat-box').val(message);
+				var chatBox = $(this.el).find('.chat-box');
+				var message = $.trim(chatBox.val());
+				chatBox.val(message);
 				//submit chat message
 				var timestamp = new Date().toISOString();
 				var data = {
@@ -107,6 +107,8 @@ define('GameView',[
 					timestamp : timestamp
 				}
 				this._publishMessage('chat', data);
+				//disable text input
+				chatBox.attr('disabled', 'disabled');
 			}
 			return false;
 		},
@@ -157,7 +159,10 @@ define('GameView',[
 			switch(msgObj.type){
 				case 'chat' : 
 					console.log('CHAT:');
-					//TODO: show chat message
+					if(data.player.name == this.model.get('player').name){
+						$(this.el).find('.chat-box').removeAttr('disabled');
+						$(this.el).find('.chat-box').val('');
+					}
 					this.createChatElement(data);
 					break;
 				case 'move' :

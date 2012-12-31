@@ -291,6 +291,10 @@ textarea {
 	height: 70px;
 }
 
+.chat-box:disabled{
+	background-color: #efefef;
+}
+
 .chat-box{
 	width: 270px;
 	padding: 6px 8px 5px;
