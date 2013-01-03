@@ -6,6 +6,7 @@ module.exports = {
 		for(var i in allPossibleMoves){
 			var move = allPossibleMoves[i];
 			if(this._moveEqual(move, { type : type, from : from, to : to, color : color})){
+				//move was possible, check if it results to an open check
 				return true;
 			}
 		}
@@ -81,6 +82,40 @@ module.exports = {
 			generatedMove.to.col == actualMove.to.col &&
 			generatedMove.type == actualMove.type &&
 			generatedMove.color == actualMove.color;
+	},
+	_willCaptureChecker : function(checker, move){
+		if(checker.from.row == move.row && checker.from.col == move.col){
+			return true;
+		}
+		return false;
+	},
+	_willBlockChecker : function(checker, move){
+		//check if it's a Q, R, B
+		if(checker.type == 'Q' || 
+			checker.type == 'R' ||
+			checker.type == 'B'){
+			
+			//check for ray blocks
+			var x3 = move.col,
+				y3 = move.row,
+				x1 = checker.from.col,
+				y1 = checker.from.row,
+				x2 = checker.to.col,
+				y2 = checker.to.row;
+
+			var slopeA = (x3 - x1) * (y2 - y1);
+			var slopeB = (y3 - y1) * (x2 - x1);
+			if(slopeA == slopeB){
+				return true;
+			}
+		}
+		return false;
+	},
+	_testMove : function(board, move){
+		board[move.from.row][move.from.col] = '0';
+		board[move.to.row][move.to.col] = move.color+''+move.type;
+
+		return board;
 	},
 	_getAllPossibleMoves : function(boardData, color, myTurn, enemyMoves, checkers){
 		var allPossibleMoves = [];
@@ -432,6 +467,7 @@ module.exports = {
 					if(piece.col != 0 && piece.row != 0){
 						if(myTurn && this.isEnemyOwned(boardData, piece.row-1, piece.col-1, piece)){
 							if(checker){
+								//only push as valid, if this move will capture the checker
 								if(checker.from.row == row-1 && checker.from.col == col-1){
 									possibleMoves.push(constructMove({
 										row : piece.row-1,
@@ -479,15 +515,33 @@ module.exports = {
 					}
 					//search 2 space up
 					if(piece.row != 0 && !this.isOccupied(boardData, piece.row - 1, piece.col)){
-						possibleMoves.push(constructMove({
-							row : piece.row - 1,
-							col : piece.col
-						}));
-						if(piece.row == 6 && !this.isOccupied(boardData, piece.row - 2, piece.col)){
+						if(checker){
+							if(this._willBlockChecker(checker, {row : piece.row - 1, col: piece.col})){
+								possibleMoves.push(constructMove({
+									row : piece.row - 1,
+									col : piece.col
+								}));	
+							}
+						}else{
 							possibleMoves.push(constructMove({
-								row : piece.row - 2,
+								row : piece.row - 1,
 								col : piece.col
 							}));
+						} 						
+						if(piece.row == 6 && !this.isOccupied(boardData, piece.row - 2, piece.col)){
+							if(checker){
+								if(this._willBlockChecker(checker, {row : piece.row - 2, col : piece.col})){
+									possibleMoves.push(constructMove({
+										row : piece.row - 2,
+										col : piece.col
+									}));
+								}
+							}else{
+								possibleMoves.push(constructMove({
+									row : piece.row - 2,
+									col : piece.col
+								}));	
+							}							
 						}	
 					}
 				}else if(piece.color == 'B'){
@@ -540,19 +594,36 @@ module.exports = {
 						
 					}
 					if(piece.row != 7 && !this.isOccupied(boardData, piece.row+1, piece.col)){
-						possibleMoves.push(constructMove({
-							row : piece.row + 1,
-							col : piece.col
-						}));
-						if(piece.row == 1 && !this.isOccupied(boardData, piece.row+2, piece.col)){
+						if(checker){
+							if(this._willBlockChecker(checker, {row : piece.row+1, col: piece.col})){
+								possibleMoves.push(constructMove({
+									row : piece.row + 1,
+									col : piece.col
+								})); 	
+							}								
+						}else{
 							possibleMoves.push(constructMove({
-								row : piece.row + 2,
-								col : piece.col
-							}));
+									row : piece.row + 1,
+									col : piece.col
+								}));
+						}						
+						if(piece.row == 1 && !this.isOccupied(boardData, piece.row+2, piece.col)){
+							if(checker){
+								if(this._willBlockChecker(checker, {row : piece.row + 2, col: piece.col})){
+									possibleMoves.push(constructMove({
+										row : piece.row + 2,
+										col : piece.col
+									}));
+								}
+							}else{
+								possibleMoves.push(constructMove({
+										row : piece.row + 2,
+										col : piece.col
+									}));
+							}						
 						}
 					}
 					
-							//diagonal
 				}
 
 				break;
