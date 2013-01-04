@@ -3,10 +3,26 @@ module.exports = {
 		var endGame = this.endGameCheck(board, type, from, to, color);
 		var allPossibleMoves = endGame.allPossibleMoves;
 
+		
+
 		for(var i in allPossibleMoves){
-			var move = allPossibleMoves[i];
-			if(this._moveEqual(move, { type : type, from : from, to : to, color : color})){
+			var move = allPossibleMoves[i];			
+			if(this._moveEqual(move, { type : type, from : from, to : to, color : color})){				
 				//move was possible, check if it results to an open check
+				var nextBoard = [];
+				for(var k = 0; k < board.length; k++){
+					nextBoard[k] = [];
+					for(var j = 0; j < board[k].length; j++){
+						nextBoard[k][j] = board[k][j];
+					}
+				}
+				nextBoard[from.row][from.col] = '0';
+				nextBoard[to.row][to.col] = color+''+type;
+				var enemyMoves = this._getAllPossibleMoves(nextBoard, (color == 'W' ? 'B' : 'W'), false);
+				var checkers = this.getChecker(nextBoard, enemyMoves, color);
+				if(checkers){
+					return false;
+				}
 				return true;
 			}
 		}
@@ -33,7 +49,8 @@ module.exports = {
 		return {
 			allPossibleMoves : allPossibleMoves,
 			checkMate : checkMate,
-			staleMate : staleMate
+			staleMate : staleMate,
+			checkers : checkers
 		};
 	},
 	canMoveHere : function(boardData, row, col, piece, myTurn){
@@ -145,145 +162,63 @@ module.exports = {
 		}
 		return allPossibleMoves;
 	},
-	_hasRayHit : function(boardData, pos, piece, possibleMoves, moveConstructor){
-		var rayHit = false;
-		if(boardData[pos.row][pos.col] == '0'){
-			possibleMoves.push(moveConstructor({
-				row : pos.row,
-				col : pos.col
-			}));
-		}else{
-			rayHit = true;
-			var color = boardData[pos.row][pos.col].charAt(0);
-			if(color != piece.color){
-				possibleMoves.push(moveConstructor({
-					row : pos.row,
-					col : pos.col
-				}));
-			}
-		}
-		return rayHit;
-	},
-	//Raycasting moves
-	_castRayN : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
+	_nextTile : function(boardData, currPos, direction){
+		var nextPos = {
+			row : currPos.row + direction.row,
+			col : currPos.col + direction.col
 		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.row - 1 >= 0){
-			for(var row = pos.row-1; !rayHit && row >= 0; row--){
-				rayHit = this._hasRayHit(boardData, {row : row, col: pos.col}, piece, possibleMoves, moveConstructor);
-			}
-		}
 
-		return possibleMoves;			
+		if(nextPos.row >= 0 && nextPos.row < 8 &&
+			nextPos.col >= 0 && nextPos.col < 8){
+			var data = boardData[nextPos.row][nextPos.col];
+			return {
+				data : data,
+				row : nextPos.row,
+				col : nextPos.col 
+			};
+		}else{
+			return null;
+		}
 	},
-	_castRayS : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
+	_castRay : function(boardData, direction, piece, myTurn, enemyMoves, moveConstructor, checker){
+		var currPos = this._nextTile(boardData, piece, direction);
 		var possibleMoves = [];
-		if(pos.row + 1 <= 7){
-			for(var row = pos.row+1; !rayHit && row < 8; row++){
-				rayHit = this._hasRayHit(boardData, {row : row, col: pos.col}, piece, possibleMoves, moveConstructor);
-			}	
+		var rayHit = false;
+		while(currPos){		
+			if(checker){ //if checked
+				//this move captures or blocks?
+				if(boardData[currPos.row][currPos.col] != piece.color+'K'){
+					if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){
+						possibleMoves.push(moveConstructor({
+							row : currPos.row,
+							col : currPos.col
+						}));			
+					} 
+				}				
+			}else{
+				if(currPos.data == '0'){
+					possibleMoves.push(moveConstructor({
+						row : currPos.row,
+						col : currPos.col
+					}));
+				}else{
+					rayHit = true;
+					var color = boardData[currPos.row][currPos.col].charAt(0);
+					if(color != piece.color || !myTurn){
+						possibleMoves.push(moveConstructor({
+							row : currPos.row,
+							col : currPos.col
+						}));
+					}
+					break;
+				}
+				
+			}			
+			//get next position
+			currPos = this._nextTile(boardData, currPos, direction);
 		}
 
 		return possibleMoves;
-	},
-	_castRayE : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.col + 1 <= 7){
-			for(var col = pos.col+1; !rayHit && col < 8; col++){
-				rayHit = this._hasRayHit(boardData, {row : pos.row, col:col}, piece, possibleMoves, moveConstructor);
-			}	
-		}
-
-		return possibleMoves; 
-	},
-	_castRayW : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.col - 1 >= 0){
-			for(var col = pos.col-1; !rayHit && col >= 0; col--){
-				rayHit = this._hasRayHit(boardData, {row : pos.row, col:col}, piece, possibleMoves, moveConstructor);
-			}	
-		}
-
-		return possibleMoves; 
-	},
-	_castRayNE : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.col + 1 <= 7 && pos.row - 1 >= 0){
-			for(var col = pos.col+1, row = pos.row - 1; !rayHit && col < 8 && row >= 0; col++, row--){
-				rayHit = this._hasRayHit(boardData, {row : row, col:col}, piece, possibleMoves, moveConstructor);
-			}	
-		}
-
-		return possibleMoves; 
-	},
-	_castRayNW : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.col - 1 >= 0 && pos.row - 1 >= 0){
-			for(var col = pos.col-1, row = pos.row - 1; !rayHit && col >= 0 && row >= 0; col--, row--){
-				rayHit = this._hasRayHit(boardData, {row : row, col:col}, piece, possibleMoves, moveConstructor);
-			}	
-		}
-
-		return possibleMoves; 
-	},
-	_castRaySW : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.col - 1 >= 0 && pos.row + 1 <= 7){
-			for(var col = pos.col-1, row = pos.row + 1; !rayHit && col >= 0 && row < 8; col--, row++){
-				rayHit = this._hasRayHit(boardData, {row : row, col:col}, piece, possibleMoves, moveConstructor);
-			}	
-		}
-
-		return possibleMoves; 
-	},
-	_castRaySE : function(boardData, piece, myTurn, enemyMoves, moveConstructor){
-		var pos = {
-			row: piece.row,
-			col: piece.col
-		};
-		var rayHit = false;
-		var possibleMoves = [];
-		if(pos.col + 1 <= 7 && pos.row + 1 <= 7){
-			for(var col = pos.col+1, row = pos.row + 1; !rayHit && col < 8 && row < 8; col++, row++){
-				rayHit = this._hasRayHit(boardData, {row : row, col:col}, piece, possibleMoves, moveConstructor);
-			}	
-		}
-
-		return possibleMoves; 
 	},
 	_getPossibleMoves : function(boardData, piece, myTurn, enemyMoves, checker){
 		var possibleMoves = [];
@@ -330,55 +265,56 @@ module.exports = {
 				break;
 			case 'Q' :
 				//search diagonally
-				var rayNE = this._castRayNE(boardData, piece, myTurn, enemyMoves, constructMove);
+				var rayNE = this._castRay(boardData, { row: -1, col: 1}, piece, myTurn, enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayNE);
-				var rayNW= this._castRayNW(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var rayNW= this._castRay(boardData, { row: -1, col: -1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayNW);
-				var raySE = this._castRaySE(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var raySE = this._castRay(boardData, {row : 1, col: 1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, raySE);
-				var raySW = this._castRaySW(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var raySW = this._castRay(boardData, {row: 1, col: -1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, raySW);
 				//search rook
-				var rayEast = this._castRayE(boardData, piece, myTurn, enemyMoves, constructMove);
+				var rayEast = this._castRay(boardData, {row: 0, col: 1}, piece, myTurn, enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayEast);
-				var rayWest = this._castRayW(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var rayWest = this._castRay(boardData, {row: 0, col: -1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayWest);
-				var rayNorth = this._castRayN(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var rayNorth = this._castRay(boardData, {row: -1, col: 0}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayNorth);
-				var raySouth = this._castRayS(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var raySouth = this._castRay(boardData, {row: 1, col: 0}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, raySouth);
 				break;
 			case 'B' :
 				//search diagonally
-				var rayNE = this._castRayNE(boardData, piece, myTurn, enemyMoves, constructMove);
+				var rayNE = this._castRay(boardData, { row: -1, col: 1}, piece, myTurn, enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayNE);
-				var rayNW= this._castRayNW(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var rayNW= this._castRay(boardData, { row: -1, col: -1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayNW);
-				var raySE = this._castRaySE(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var raySE = this._castRay(boardData, {row : 1, col: 1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, raySE);
-				var raySW = this._castRaySW(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var raySW = this._castRay(boardData, {row: 1, col: -1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, raySW);
 				break;
 			case 'R' :
-				var rayEast = this._castRayE(boardData, piece, myTurn, enemyMoves, constructMove);
+				//search rook
+				var rayEast = this._castRay(boardData, {row: 0, col: 1}, piece, myTurn, enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayEast);
-				var rayWest = this._castRayW(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var rayWest = this._castRay(boardData, {row: 0, col: -1}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayWest);
-				var rayNorth = this._castRayN(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var rayNorth = this._castRay(boardData, {row: -1, col: 0}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, rayNorth);
-				var raySouth = this._castRayS(boardData, piece, myTurn,
-					enemyMoves, constructMove);
+				var raySouth = this._castRay(boardData, {row: 1, col: 0}, piece, myTurn,
+					enemyMoves, constructMove, checker);
 				possibleMoves.push.apply(possibleMoves, raySouth);
 				break;
 			case 'N' :

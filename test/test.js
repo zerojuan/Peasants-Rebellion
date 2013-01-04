@@ -36,6 +36,61 @@ suite('Chess Mechanics: ', function(){
 			['0', '0', '0', '0', '0', '0', '0', '0'],
 		];
 		//TODO: passing moves should transform to queen
+
+	});
+
+	test('open check', function(){
+		var board = [
+			['0', 'BK', '0', '0', '0', '0', '0', '0'],
+			['0', '0', 'BP', '0', '0', '0', '0', '0'],
+			['0', '0', '0', 'WB', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0']
+		];
+
+		assert.ok(!chess.isValidMove(board, 'P', {
+			row : 1,
+			col : 2
+		},{
+			row : 2,
+			col : 2
+		}, 'B'), 'Black Pawn open check');	
+
+		board = [
+			['0', 'BK', '0', 'BR', '0', '0', '0', '0'],
+			['0', 'BR', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', 'WB', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0']
+		];
+
+		assert.ok(!chess.isValidMove(board, 'R', {
+			row : 1,
+			col : 1
+		},{
+			row : 2,
+			col : 1
+		}, 'B'), 'Black Rook not blocking');
+		assert.ok(chess.isValidMove(board, 'R', {
+			row : 1,
+			col : 1
+		},{
+			row : 1,
+			col : 2
+		}, 'B'), 'Black Rook blocks check');
+		assert.ok(chess.isValidMove(board, 'R', {
+			row : 0,
+			col : 3
+		},{
+			row : 2,
+			col : 3
+		}, 'B'), 'Black Rook captures checker');	
 	});
 
 	test('check mate', function(){
