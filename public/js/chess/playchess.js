@@ -230,6 +230,8 @@ define('PlayChess', [
 				this.movesLayer.deactivate();
 			}else{
 				console.log('Activating piece');
+				if(this.activePiece)
+					this.activePiece.deactivate();
 				piece.activate();
 				this.movesLayer.setPossibleMoves(
 						this.getPossibleMoves(piece)
