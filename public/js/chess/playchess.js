@@ -268,7 +268,7 @@ define('PlayChess', [
 				}
 			}
 			
-			var possibleMoves = this.movesLayer.getPossibleMoves(piece, boardData);
+			var possibleMoves = chessLogic.exports.getPossibleMoves(boardData, piece);
 
 			return possibleMoves;
 		},

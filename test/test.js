@@ -428,6 +428,23 @@ suite('Chess Mechanics: ', function(){
 			row : 1,
 			col : 1
 		}, 'B'), 'Black King cannot capture a protected square');
+		board = [
+			['0', '0', '0', '0', 'BK', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', 'WP', '0', 'BN', 'WP', '0'],
+			['0', '0', 'WP', '0', 'BP', 'WP', '0', '0'],
+			['0', 'WP', '0', '0', 'WP', '0', '0', '0'],
+			['WP', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', 'WK', '0', '0', '0'],
+		];
+		assert.ok(chess.isValidMove(board, 'K', {
+			row : 0,
+			col : 4
+		},{
+			row : 1,
+			col : 3
+		}, 'B'), 'Black King move on top of Pawn');
 	});
 
 	test('valid pawn', function(){

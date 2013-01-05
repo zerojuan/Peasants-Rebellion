@@ -18,7 +18,7 @@ requirejs.config({
 			deps : ['xrtml', 'timeago']
 		},
 		'PlayChess' : {
-			deps : ['easel', 'preload', 'Tilemap']
+			deps : ['easel', 'preload', 'chess-client', 'Tilemap']
 		}
 	},
 	paths : {
@@ -32,6 +32,7 @@ requirejs.config({
 		'backbone' : 'lib/backbone',
 		'underscore' : 'lib/underscore',
 		'text' : 'lib/text',
+		'chess-client' : 'chess/chess-client',
 		'App' : 'app',
 		'Router' : 'router',
 		'Tilemap' : 'utils/tilemap',
