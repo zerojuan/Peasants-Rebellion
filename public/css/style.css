@@ -3,6 +3,15 @@
 	height: 100%;
 }*/
 
+body{
+	background-image: url('../assets/pw_maze_white.png');
+	font-family: 'Forum', Arial;
+}
+
+header{
+	font-family: 'Forum', cursive;
+}
+
 canvas {
 	position: relative;
 	background: #ccc;
@@ -83,7 +92,27 @@ textarea {
 	margin: 0 auto;
 }
 
+header.main{
+	text-align: center;
+	position: absolute;	
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 55px;
+	color: #fff;
+	background: #770000;
+	border-bottom: solid 5px #bd7b63;
+}
+
+.home-page h1{	
+	margin: 0px;
+	font-size: 50px;
+}
+
 .team-select-wrapper{
+	margin-top: 70px;
+	margin-left: 50px;
+	margin-right: 50px;
 	padding: 10px;
 }
 
@@ -104,18 +133,19 @@ textarea {
 
 .center-div{
 	float: left;
-	width: 400px;
+	width: 300px;
 	text-align: center;
 }
 
 .center-div .label{
 	font-size: 50px;
-	margin: 100px 100px 0 100px;
+	font-family: 'Forum', cursive;
+	margin: 140px 100px 0 100px;
 }
 
 .team .info{
 	position: absolute;
-	top: 0px;
+	top: 0;
 }
 
 .team .info-content{
@@ -148,7 +178,7 @@ textarea {
 }
 
 .hidden{
-	visibility: hidden;
+	display: none;
 }
 
 .team.right .info-content{
@@ -159,6 +189,78 @@ textarea {
 .team.left .info-content{
 	position: absolute;
 	left: 312px;
+}
+
+.team-details{    
+    width: 70%;
+    height: 200px;
+    position:relative;
+    padding:20px;
+    margin:20px auto;
+}
+
+
+.team-details .arrow{
+	position: relative;
+	background: #cccc99;
+	top: -40px;
+	width: 50px;
+	height: 50px;	
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+	transition: left 2s;
+}
+
+.team-details.king:before{
+    content: "";
+    background: #cccc99;
+    width: 100%;
+    height:100%;
+    margin-top: -20px;
+    z-index: -1;
+    position:absolute;
+    -webkit-transition: all 2s linear;
+    -moz-transition: all 2s linear;
+    -webkit-transform: perspective(150px) rotate3D(0.9,-0.9,0.8,-3deg);   
+    -moz-transform: perspective(150px) rotate3D(0.9,-0.3,0.7,3deg);
+}
+
+.team-details.peasant:before{
+    content: "";
+    background: #cccc99;
+    width: 100%;
+    height:100%;
+    margin-top: -20px;
+    z-index: -1;
+    position:absolute;
+    -webkit-transition: all 2s linear;
+    -moz-transition: all 2s linear;
+    -webkit-transform: perspective(150px) rotate3D(1,5,1, 1deg);   
+    -moz-transform: perspective(150px) rotate3D(1,5,1,1deg);
+}
+
+.team-details.king .arrow{	
+	left: 0px;
+}
+
+.team-details.peasant .arrow{	
+	left: 650px;
+}
+
+.team-details .details-content{
+	font-family: 'Forum', cursive;
+	margin-top: -50px;
+}
+
+.details-content header{
+	text-align: center;
+}
+
+.details-content h1{
+	font-size: 25px;	
 }
 /* ============================ */
 /*          Game Layout 		*/
@@ -376,6 +478,7 @@ textarea.chat-box{
 	margin-left: 0;
 	margin-top: -6px;
 	bottom: auto;
+	z-index: -1;
 }
 
 .tip-arrow-container .tip-arrow-inner {

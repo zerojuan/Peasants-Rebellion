@@ -1,48 +1,49 @@
 <div class="home-page">
-	<header>
-		<h1>Peasant's Revolt</h1>
-		<span>A war game</span>
+	<header class="main">
+		<h1>PEASANTS' REBELLION</h1>		
 	</header>
 	<div class="team-select-wrapper">
 		<div class="team left">
-			<img src="http://placekitten.com/300/400"></img>
-			<div class="info">
-				<div class="info-content hidden">
-					<header>
-						Proclamation of Divine Right
-					</header>
-					<div class="info-body">
-						<p>I am sent from the heavens, yo!</p>
-						<p>This is the second paragraph, filled with more words.</p>
-					</div>
-					<div class="info-form">
-						<input type="text" id="king-name" placeholder="Input Name Here"></input>
-						<input type="text" id="king-pass" placeholder="Input Key"></input>
-						<input type="submit" id="king-submit"></input>
-					</div>
-				</div>
-			</div>
+			<img src="/assets/king-shield.png"></img>
 		</div>
 		<div class="center-div">
-			<div class="label">Choose Your Side</div>
+			<div class="label">VS</div>
 		</div>
 		<div class="team right">
-			<img src="http://placekitten.com/300/400"></img>
-			<div class="info">
-				<div class="info-content hidden">
-					<header>
-						Declaration of Independence
-					</header>
-					<div class="info-body">
-						<p>We will not be bound</p>
-						<p>This is the second paragraph, filled with more words.</p>
-					</div>
-					<div class="info-form">
-						<input type="text" id="peasant-name" placeholder="Input Name Here"></input>
-						<input type="submit" id="peasant-submit"></input>
-					</div>
+			<img src="/assets/peasant-shield.png"></img>			
+		</div>		
+	</div>
+	<div class="clearfix"></div>
+	<div class="team-details hidden king">
+		<div class="arrow"></div>
+		<div class="details-content">
+			<div class="team-info king hidden">
+				<header><h1>Proclamation of Divine Right</h1></header>
+				<div class="details-body">
+					<p>I, <span>King Herod</span>, have been blessed by God as the executor of His Will on this domain.</p>
+					<p>It is my duty to ensure the blah blah. Any threaths is considered a direct insult to my rule and shall be dealt with swiftly and ruthlessly in God's Will.</p>
+					<p>Signed,</p>
+				</div>
+				<div class="details-form">
+					<input type="text" id="king-name" placeholder="Input Name Here"></input>
+					<input type="text" id="king-pass" placeholder="Input Key"></input>
+					<input type="submit" id="king-submit"></input>
+				</div>
+			</div>
+			<div class="team-info peasant hidden">
+				<header><h1>Declaration of Independence</h1></header>
+				<div class="details-body">
+					<p>I, <span>&lt; your name here &gt;</span>, of level mind and under my free will make it known that I am taking part of the Rebellion.</p>
+					<p>This is the second paragraph, filled with more words.</p>
+					<p>Signed,</p>
+				</div>
+				<div class="details-form">
+					<input type="text" id="peasant-name" placeholder="Input Name Here"></input>
+					<input type="submit" id="peasant-submit"></input>
 				</div>
 			</div>
 		</div>
+		
 	</div>
+	
 </div>

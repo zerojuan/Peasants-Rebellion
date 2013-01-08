@@ -31,10 +31,13 @@ define('HomeView', [
 		clickTeamKing : function(){
 			if(this.currSelected == 'KING'){				
 				this.currSelected = 'NONE';
-				$(this.el).find('.team.left .info .info-content').addClass('hidden');
+				$(this.el).find('.team-details').addClass('hidden');
 			}else{
-				$(this.el).find('.info-content').addClass('hidden');
-				$(this.el).find('.team.left .info .info-content').removeClass('hidden');
+				$(this.el).find('.team-details').removeClass('hidden');
+				$(this.el).find('.team-details').removeClass('peasant');
+				$(this.el).find('.team-details').addClass('king');
+				$(this.el).find('.team-details .team-info').addClass('hidden');
+				$(this.el).find('.team-info.king').removeClass('hidden');
 				//show King div and set currSelected to KING
 				this.currSelected = 'KING';
 			}
@@ -42,10 +45,13 @@ define('HomeView', [
 		clickTeamPeasant : function(){
 			if(this.currSelected == 'PEASANT'){
 				this.currSelected = 'NONE';
-				$(this.el).find('.team.right .info .info-content').addClass('hidden');
+				$(this.el).find('.team-details').addClass('hidden');
 			}else{
-				$(this.el).find('.info-content').addClass('hidden');
-				$(this.el).find('.team.right .info .info-content').removeClass('hidden');
+				$(this.el).find('.team-details').removeClass('hidden');
+				$(this.el).find('.team-details').removeClass('king');
+				$(this.el).find('.team-details').addClass('peasant');
+				$(this.el).find('.team-details .team-info').addClass('hidden');
+				$(this.el).find('.team-info.peasant').removeClass('hidden');
 				this.currSelected = 'PEASANT';
 			}
 		},
