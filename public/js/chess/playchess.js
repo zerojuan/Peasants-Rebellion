@@ -35,8 +35,8 @@ define('PlayChess', [
 		},
 		setTurn : function(turn){
 			this.turn = turn;
-			this.whitePieceManager.updateTurn();
-			this.blackPieceManager.updateTurn();
+			this.whitePieceManager.updateTurn(turn);
+			this.blackPieceManager.updateTurn(turn);
 		},
 		initialize : function(canvas, gameData){
 			var that = this;
@@ -142,9 +142,9 @@ define('PlayChess', [
 				that.movesLayer.graphics.x = that.offset.x;
 
 				that.whitePieceManager.graphics.x = that.offset.x;
-				that.whitePieceManager.graphics.y = that.offset.y;
+				that.whitePieceManager.graphics.y = that.offset.y - 20;
 				that.blackPieceManager.graphics.x = that.offset.x;
-				that.blackPieceManager.graphics.y = that.offset.y;
+				that.blackPieceManager.graphics.y = that.offset.y - 20;
 
 				that.stage.addChild(tileMap, that.movesLayer.graphics, 
 					that.whitePieceManager.graphics,

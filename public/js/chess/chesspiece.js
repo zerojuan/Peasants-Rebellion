@@ -28,6 +28,10 @@ define("ChessPiece",[
 		getPossibleMoves : function(){
 			//array of row cols;
 		},
+		promote : function(){			
+			this.animation.gotoAndPlay(this.type+"_up_promote");
+			this.type = 'Q';
+		},
 		activate : function(){
 			this.animation.gotoAndPlay(this.type+"_up"+"_selected");
 		},
@@ -35,6 +39,7 @@ define("ChessPiece",[
 			this.animation.gotoAndPlay(this.type+"_up"+"_awake");	
 		},
 		updateTurn : function(isMyTurn){
+			console.log('Is My Turn: ' + isMyTurn);
 			if(isMyTurn){
 				this.animation.gotoAndPlay(this.type+"_up"+"_awake");
 			}else{
@@ -42,6 +47,13 @@ define("ChessPiece",[
 			}
 		},
 		move : function(row, col){
+			if(this.type == 'P'){
+				//promote to queen
+				if((this.color == 'W' && row == 0) ||
+					(this.color == 'B' && row == 7)){
+					this.promote();									
+				}
+			}			
 			this.row = row;
 			this.col = col;
 			this.graphics.x = this.col * 64;

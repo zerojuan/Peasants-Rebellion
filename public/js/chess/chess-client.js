@@ -75,7 +75,7 @@
 		}else{
 			staleMate = allPossibleMoves.length == 0;
 		}
-			
+
 		return {
 			allPossibleMoves : allPossibleMoves,
 			checkMate : checkMate,
@@ -158,11 +158,22 @@
 		}
 		return false;
 	},
-	_testMove : function(board, move){
-		board[move.from.row][move.from.col] = '0';
-		board[move.to.row][move.to.col] = move.color+''+move.type;
-
-		return board;
+	_kingsMoveChecked : function(board, move, color){
+		var nextBoard = [];
+		for(var k = 0; k < board.length; k++){
+			nextBoard[k] = [];
+			for(var j = 0; j < board[k].length; j++){
+				nextBoard[k][j] = board[k][j];
+			}
+		}
+		nextBoard[move.from.row][move.from.col] = '0';
+		nextBoard[move.to.row][move.to.col] = color+'K';
+		var enemyMoves = this._getAllPossibleMoves(nextBoard, (color == 'W' ? 'B' : 'W'), false);
+		var checkers = this.getChecker(nextBoard, enemyMoves, color);
+		if(checkers){
+			return true;
+		}
+		return false;
 	},
 	_getAllPossibleMoves : function(boardData, color, myTurn, enemyMoves, checkers){
 		var allPossibleMoves = [];
@@ -281,10 +292,18 @@
 								if(this.canMoveHere(boardData, row_i, col_i, piece, myTurn)){
 									if(!this.isEnemyControlled(row_i, col_i, enemyMoves)){
 										if(col_i != pos.col || row_i != pos.row){
-											possibleMoves.push(constructMove({
-												row : row_i,
-												col : col_i											
-											}));
+											if(myTurn){
+												if(!this._kingsMoveChecked(boardData, {
+													from : {row: piece.row, col: piece.col},
+													to : {row: row_i, col: col_i}
+												}, piece.color)){
+													possibleMoves.push(constructMove({
+														row : row_i,
+														col : col_i											
+													}));		
+												}
+											}
+											
 										}	
 									}
 								}
@@ -604,4 +623,3 @@
 	}
 }
 }(typeof module === 'undefined' ? this.chessLogic = {} : module));
-

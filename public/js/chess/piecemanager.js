@@ -10,163 +10,106 @@ define('PieceManager', [
 
 		var imgSrc;
 		if(this.color == 'W'){
-			imgSrc = 'assets/white-piece.png';
-		}else{
-			imgSrc = 'assets/black-piece.png';
-		}
-
-		//spritesheet data
-		this.spriteSheetData = {
+			this.spriteSheetData = {
 				animations : {
 					K_up_idle : {
-						frames : [0],
-						frequency: 2
+						frames : [5]
 					},
 					K_up_awake : {
-						frames : [1]
+						frames : [2]
 					},
 					K_up_selected : {
-						frames : [0, 1],
-						frequency: 2	
-					},
-					K_down_idle : {
-						frames : [2],
-						frequency: 2,
-					},
-					K_down_awake : {
-						frames : [3],
-						frequency: 2,
-					},
-					K_down_selected : {
-						frames : [2, 3],
-						frequency: 2,
+						frames : [4, 3, 0, 1],
+						frequency : 2
 					},
 					Q_up_idle : {
-						frames : [4],
-						frequency : 2
+						frames : [11]
 					},
 					Q_up_awake : {
-						frames : [5],
-						frequency : 2
+						frames : [8]
 					},
 					Q_up_selected : {
-						frames : [4, 5],
-						frequency : 2
-					},
-					Q_down_idle : {
-						frames : [6],
-						frequency : 2
-					},
-					Q_down_awake : {
-						frames : [7],
-						frequency : 2
-					},
-					Q_down_selected : {
-						frames : [6, 7],
-						frequency : 2
-					},
-					B_up_idle : {
-						frames : [8],
-						frequency : 2
-					},
-					B_up_awake : {
-						frames : [9],
-						frequency : 2
-					},
-					B_up_selected : {
-						frames : [8, 9],
-						frequency : 2
-					},
-					B_down_idle : {
-						frames : [10],
-						frequency : 2
-					},
-					B_down_awake : {
-						frames : [11],
-						frequency : 2
-					},
-					B_down_selected : {
-						frames : [10, 11],
-						frequency : 2
-					},
-					N_up_idle : {
-						frames : [12],
-						frequency : 2
-					},
-					N_up_awake : {
-						frames : [13],
-						frequency : 2
-					},
-					N_up_selected : {
-						frames : [12, 13],
-						frequency : 2
-					},
-					N_down_idle : {
-						frames : [14],
-						frequency : 2
-					},
-					N_down_awake : {
-						frames : [15],
-						frequency : 2
-					},
-					N_down_selected : {
-						frames : [14, 15],
-						frequency : 2
-					},
-					R_up_idle : {
-						frames : [16],
-						frequency : 2
-					},
-					R_up_awake : {
-						frames : [17],
-						frequency : 2
-					},
-					R_up_selected : {
-						frames : [16, 17],
-						frequency : 2
-					},
-					R_down_idle : {
-						frames : [18],
-						frequency : 2
-					},
-					R_down_awake : {
-						frames : [19],
-						frequency : 2
-					},
-					R_down_selected : {
-						frames : [18, 19],
+						frames : [10, 9, 6, 7],
 						frequency : 2
 					},
 					P_up_idle : {
-						frames : [20],
-						frequency : 2
+						frames : [23]
 					},
 					P_up_awake : {
-						frames : [21],
-						frequency : 2
+						frames : [20]
 					},
 					P_up_selected : {
-						frames : [20, 21],
+						frames : [22, 19, 18, 21],
 						frequency : 2
 					},
-					P_down_idle : {
-						frames : [22],
-						frequency : 2
-					},
-					P_down_awake : {
-						frames : [23],
-						frequency : 2
-					},
-					P_down_selected : {
-						frames : [22, 23],
-						frequency : 2
+					P_up_promote : {
+						frames : [20, 8, 20, 8, 20, 8, 20, 8],
+						frequency : 4,
+						next : "Q_up_awake"
 					}
 				},
 				frames : {
-					width : 64, height: 64
+					width : 56, height: 76
 				},
-			images : [imgSrc]
-		};		
+				images : ['assets/white-piece.png']				
+			};
+			//imgSrc = 'assets/white-piece.png';
+		}else{
+			this.spriteSheetData = {
+				animations : {
+					K_up_idle : {
+						frames : [0]
+					},
+					K_up_awake : {
+						frames : [3]
+					},
+					K_up_selected : {
+						frames : [5, 4, 1, 2],
+						frequency : 2
+					},
+					Q_up_idle : {
+						frames : [11]
+					},
+					Q_up_awake : {
+						frames : [8]
+					},
+					Q_up_selected : {
+						frames : [10, 9, 6, 7],
+						frequency : 2
+					},
+					N_up_idle : {
+						frames : [12]
+					},
+					N_up_awake : {
+						frames : [14]
+					},
+					N_up_selected : {
+						frames : [16, 15, 17, 13],
+						frequency : 2
+					},
+					P_up_idle : {
+						frames : [21]
+					},
+					P_up_awake : {
+						frames : [18]
+					},
+					P_up_selected : {						
+						frames : [19, 20, 23, 22],
+						frequency : 2
+					},
+					P_up_promote : {
+						frames : [18, 8, 18, 8, 18, 8, 18, 8],
+						frequency : 4,
+						next : "Q_up_awake"
+					}
+				},
+				frames : {
+					width : 56, height: 76
+				},
+				images : ['assets/black-piece.png']				
+			};
+			imgSrc = 'assets/black-piece.png';
+		}
 
 		this.graphics = new createjs.Container();
 	};
@@ -213,8 +156,10 @@ define('PieceManager', [
 				piece.remove();
 		},
 		updateTurn : function(turn){
+			console.log("My Turn: " + turn + " " + this.color);
 			for(var i in this.pieces){
 				var piece = this.pieces[i];
+
 				piece.updateTurn(turn == this.color);
 			}			
 		}

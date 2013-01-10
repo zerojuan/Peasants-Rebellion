@@ -359,13 +359,40 @@ var handleORTCMessage = function(code, message){
 						if(Chess.isValidMove(board, piece, from, to, color)){
 							console.log('Valid move found');
 							//update game state
+							//check if move is a promotion
+							if(piece == 'P'){
+								//promote to queen
+								if(color == 'W' && to.row == 0){																		
+									piece = 'Q';									
+								}else if(color == 'B' && to.row == 7){
+									piece = 'Q';
+								}
+							}							
+
 							if(color == 'W'){
 								game.turn = 'B';
 							}else{
 								game.turn = 'W';
-							}
+							}							
+
 							board[from.row][from.col] = '0';
 							board[to.row][to.col] = color+''+piece;
+
+							//check if move is a gameover
+							var endGameCheck = chess.endGameCheck(board, 'K', {
+									row : 0,
+									col : 0
+								},{
+									row : 0,
+									col : 0
+								}, game.turn);
+							if(endGameCheck.checkMate){
+								//game over
+								//declare winner : color
+							}else if(endGameCheck.staleMate){
+								//game over stalemate
+							}
+
 							game.board = board;
 							game.markModified('board');
 							game.save();

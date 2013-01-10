@@ -130,6 +130,24 @@ suite('Chess Mechanics: ', function(){
 			row : 0,
 			col : 0
 		}, 'B').staleMate, 'Black King stalemate');
+		
+		board = [
+			['0', 'WQ', '0', 'BK', '0', '0', '0', '0'],
+			['0', 'WQ', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+		assert.ok(chess.endGameCheck(board, 'K', {
+			row : 0,
+			col : 0
+		},{
+			row : 0,
+			col : 0
+		}, 'B').checkMate, 'Black King checkmate 2');		
 	});
 
 	test('valid rook', function(){

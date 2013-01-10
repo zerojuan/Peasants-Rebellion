@@ -167,6 +167,13 @@ define('GameView',[
 					break;
 				case 'move' :
 					console.log('MOVE: ');
+					if(data.type == 'promote'){
+						
+					}else if(data.type == 'stalemate'){
+
+					}else if(data.type == 'checkmate'){
+
+					}
 					this.createStatusElement(data);
 					this.updateTurn(data.turn);
 					this.playChess.updatePiece(data);
