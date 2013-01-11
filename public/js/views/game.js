@@ -114,6 +114,7 @@ define('GameView',[
 		},
 		onMove : function(piece, move_to){
 			this._publishMessage('move', {
+				name : this.model.get('player').name,
 				piece : piece.type,
 				color : piece.color,
 				from : {

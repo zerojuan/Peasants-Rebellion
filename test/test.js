@@ -1,5 +1,18 @@
 var assert = require('assert');
 var chess = require('../chess/chess');
+var gameModel = require('../models/game');
+
+suite('Chat Parser: ', function(){
+	setup(function(){
+
+	});
+
+	test('usurp', function(){
+		var sampleGame = new gameModel();
+		
+		assert.ok(true, 'Test usurp');
+	});
+})
 
 suite('Chess Mechanics: ', function(){
 	setup(function(){
@@ -22,21 +35,6 @@ suite('Chess Mechanics: ', function(){
 			row : 4 
 		};
 		//TODO, test for enpassant
-	});
-
-	test('pawn transform', function(){
-		var board = [
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-			['0', '0', '0', '0', '0', '0', '0', '0'],
-		];
-		//TODO: passing moves should transform to queen
-
 	});
 
 	test('open check', function(){

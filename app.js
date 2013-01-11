@@ -3,10 +3,10 @@ var mongoose = require('mongoose');
 var ortcNodeclient = require('ibtrealtimesjnode').IbtRealTimeSJNode;
 var Chess = require('./chess/chess');
 
+
 var app = express();
 
 var db = mongoose.connect(process.env.MONGO_URI);
-var Schema = mongoose.Schema;
 
 
 //=========================
@@ -20,26 +20,7 @@ app.configure(function(){
 //=========================
 // Setup Schemas
 //=========================
-var GameSchema = new Schema({
-	code : String,
-	alive : Boolean,
-	king : {
-		name : String,
-		passkey : String,
-		playerCode : String,
-		authId : String
-	},
-	peasants : [{
-		name : String,
-		playerCode : String,
-		alive : Boolean
-	}],
-	board : Array,
-	turn : String	
-});
-
-mongoose.model('Game', GameSchema);
-var Game = mongoose.model('Game');
+var Game = require('./models/game');
 
 //=========================
 // ORTC Client
@@ -152,6 +133,7 @@ app.post('/api/v1/game', function(req, res){
 			game.king = king;
 			game.alive = true;
 			game.board = board;
+			game.moves = [];
 			game.turn = 'W';
 			var https = require('https');
 			
@@ -335,6 +317,17 @@ var handleORTCMessage = function(code, message){
 			message.data.player = parsedPlayer;
 			ortcPublisher(code, message); 
 			break;
+		case 'touch' :
+			var player = message.data.player;
+			console.log(player.name + ' touched ' 
+				+ message.data.piece + ' at ' 
+				+ message.data.from.row + ', ' + message.data.from.col);
+			var parsedPlayer = {
+				name : player.name
+			};
+			message.data.player = parsedPlayer;
+			ortcPublisher(code, message);
+			break;
 		case 'move' :
 			var piece = message.data.piece;
 			var from = message.data.from;
@@ -362,10 +355,12 @@ var handleORTCMessage = function(code, message){
 							//check if move is a promotion
 							if(piece == 'P'){
 								//promote to queen
-								if(color == 'W' && to.row == 0){																		
-									piece = 'Q';									
-								}else if(color == 'B' && to.row == 7){
+								if(color == 'W' && to.row == 0){
+									piece = 'Q';				
+									message.data.type = 'promote';					
+								}else if(color == 'B' && to.row == 7){									
 									piece = 'Q';
+									message.data.type = 'promote';
 								}
 							}							
 
@@ -387,12 +382,15 @@ var handleORTCMessage = function(code, message){
 									col : 0
 								}, game.turn);
 							if(endGameCheck.checkMate){
-								//game over
-								//declare winner : color
+								message.data.type = 'checkmate';
+								game.alive = false;
+								game.winner = color;
 							}else if(endGameCheck.staleMate){
-								//game over stalemate
+								message.data.type = 'stalemate';
+								game.alive = false;
+								game.winner = 'D';
 							}
-
+							game.moves.push(message.data);
 							game.board = board;
 							game.markModified('board');
 							game.save();
