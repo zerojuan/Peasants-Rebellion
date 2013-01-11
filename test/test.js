@@ -1,16 +1,72 @@
 var assert = require('assert');
 var chess = require('../chess/chess');
-var gameModel = require('../models/game');
+var chatCommands = require('../chess/chatcommands');
+var GameModel = require('../models/game');
 
-suite('Chat Parser: ', function(){
+suite('Chat Commands: ', function(){
 	setup(function(){
 
 	});
 
-	test('usurp', function(){
-		var sampleGame = new gameModel();
-		
-		assert.ok(true, 'Test usurp');
+	test('parse', function(){
+		var chatMessage = '!usurp';
+		var result = chatCommands.parseChatMessage(chatMessage);
+		assert.ok(result == null, 'Wrong format');
+
+		var chatMessage = '!usurp passcode';
+		var result = chatCommands.parseChatMessage(chatMessage);
+		assert.ok(result == null, 'Invalid length');
+
+		var chatMessage = '!usurp oldpass neopass';
+		var result = chatCommands.parseChatMessage(chatMessage);
+		assert.ok(result.command == 'usurp' && 
+					result.passcode == 'oldpass' && 
+					result.newPasscode == 'neopass', 'Correct format');		
+	});
+
+	test('usurp', function(){		
+		var sampleGame = new GameModel();
+		sampleGame.king = {	
+			name : 'Poor King',
+			passkey : 'rightKey',
+			playerCode : 'kingplayercode',
+			authId : 'somethingauthid'	
+		};
+		sampleGame.peasants = [
+			{
+				name : 'Normal Peasant',
+				playerCode : 'normalCode'
+			},
+			{
+				name : 'Usurper',
+				playerCode : 'samenameCode'
+			}
+		];		
+
+		var usurper = {
+			name : 'Usurper',
+			playerCode : 'usurperCode'
+		};
+		var command = chatCommands.parseChatMessage('!usurp badpass newpass');
+
+		if(command.command == 'usurp'){
+			var result = chatCommands.doUsurp(sampleGame, usurper, command.passcode, command.newPasscode);
+			assert.ok(!result, "Invalid Passcode");
+			assert.ok(sampleGame.king.name == "Poor King", "Unsuccessful Usurper");
+
+			command = chatCommands.parseChatMessage('!usurp rightKey newpass');
+
+			//should test as invalid, because usurper isn't part of the peasant list
+			result = chatCommands.doUsurp(sampleGame, usurper, command.passcode, command.newPasscode);
+			assert.ok(!result, "Usurper isn't part of the peasant list");
+			
+			sampleGame.peasants.push(usurper);
+			
+			result = chatCommands.doUsurp(sampleGame, usurper, command.passcode, command.newPasscode);
+			assert.ok(result, "Usurper succeeded?");
+			assert.ok(sampleGame.king.name == "Usurper", "Usurper is now King!");
+			assert.ok(sampleGame.peasants.length == 2, "Usurper removed from peasants");
+		}		
 	});
 })
 
@@ -29,7 +85,7 @@ suite('Chess Mechanics: ', function(){
 			['0', '0', '0', '0', '0', '0', '0', '0'],
 			['WP', 'WP', '0', '0', '0', '0', '0', '0'],
 			['0', '0', '0', '0', '0', '0', '0', '0'],
-		];
+		];		
 		var double_jump = {
 			col : 2,
 			row : 4 

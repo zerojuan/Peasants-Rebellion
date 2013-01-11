@@ -111,15 +111,6 @@ app.post('/api/v1/game', function(req, res){
 		password = 'hijackthis';
 	}
 
-	var king = {
-		name : name,
-		passkey : password,
-		authId : generateAuthKey(),
-		playerCode : generateAuthKey()
-	};
-
-	var board = createNewBoard();
-
 	Game.count({alive:true}, function(err, count){
 		if(err){
 			console.log('Error occured');
@@ -129,7 +120,15 @@ app.post('/api/v1/game', function(req, res){
 
 //		if(count <= 4){
 			var game = new Game();
-			game.code = generateGameCode();
+			var king = {
+				name : name,
+				passkey : password,
+				authId : game.generateAuthKey(),
+				playerCode : game.generateAuthKey()
+			};
+			var board = game.createNewBoard();
+
+			game.code = game.generateGameCode();
 			game.king = king;
 			game.alive = true;
 			game.board = board;
@@ -203,7 +202,7 @@ app.get('/api/v1/game/random', function(req, res, next){
 			var peasantSize = game.peasants.length + 1;
 			peasant = {
 				name : playerName,
-				playerCode : generateAuthKey(),
+				playerCode : game.generateAuthKey(),
 				alive : true
 			};
 			game.peasants.push(peasant);
@@ -270,7 +269,7 @@ app.get('/api/v1/game/:code', function(req, res, next){
 			peasant = {
 				name : 'Random P ' + peasantSize,
 				alive : true,
-				playerCode : generateAuthKey()
+				playerCode : game.generateAuthKey()
 			};
 
 			player = peasant;
@@ -406,41 +405,6 @@ var handleORTCMessage = function(code, message){
 			break;
 	}
 	
-}
-
-
-
-var generateAuthKey = function(){
-	var result = '';
-	var chars = '01234567890abcdefghijklmnopqrstwxyz';
-	for(var i = 16; i > 0; --i){
-		result += chars[Math.round(Math.random() * (chars.length - 1))];
-	}
-	return result;
-}
-
-var generateGameCode = function(){
-	var result = '';
-	var chars = '01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	for(var i = 6; i > 0; --i){
-		result += chars[Math.round(Math.random() * (chars.length - 1))];
-	}
-	return result;	
-}
-
-var createNewBoard = function(){
-	var board;
-	board = [
-		['0', 'BN', 'BN', '0', 'BK', '0', 'BN', '0'],
-		['0', '0', '0', '0', 'BP', '0', '0', '0'],
-		['0', '0', '0', '0', '0', '0', '0', '0'],
-		['0', '0', '0', '0', '0', '0', '0', '0'],
-		['0', '0', '0', '0', '0', '0', '0', '0'],
-		['0', '0', '0', '0', '0', '0', '0', '0'],
-		['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
-		['0', '0', '0', '0', 'WK', '0', '0', '0']
-	];
-	return board;
 }
 
 
