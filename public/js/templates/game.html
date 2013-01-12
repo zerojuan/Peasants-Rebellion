@@ -31,7 +31,12 @@
 	<header class="user-info padded">
 		<div class="media clearfix">
 			<div class="avatar">
-				<a><img src="http://placekitten.com/50/50"></img></a>						
+				<a><% if(game.player.authId) { %>
+					<img src="./assets/king-icon-big.png"></img>
+					<% }else{ %>
+					<img src="./assets/peasant-icon-big.png"></img>
+					<% } %>
+				</a>						
 			</div>
 			<div class="details">							
 				<h3 class="player-name"><%- game.player.name %></h3>

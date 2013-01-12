@@ -4,10 +4,11 @@ define('GameView',[
 	'backbone',
 	'text!templates/game.html',
 	'text!templates/status-item.html',
+	'text!templates/move-item.html',
 	'text!templates/chat-item.html',
 	'GameModel',
 	'PlayChess'
-], function($, _, Backbone, tpl, statusTpl, chatTpl, GameModel, PlayChess){
+], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, GameModel, PlayChess){
 	var GameView;
 
 	var that = GameView;
@@ -28,6 +29,7 @@ define('GameView',[
 			this.template = _.template(tpl);
 			this.chatTemplate = _.template(chatTpl);
 			this.statusTemplate = _.template(statusTpl);
+			this.moveTemplate = _.template(moveTpl);
 
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
@@ -126,7 +128,7 @@ define('GameView',[
 		},
 		createChatElement : function(data){
 			var timestring = $.timeago(data.timestamp);
-			var tmpl = this.chatTemplate({name: data.player.name, message: data.message, timestamp : data.timestamp, timestring : timestring});
+			var tmpl = this.chatTemplate({color: data.player.color, name: data.player.name, message: data.message, timestamp : data.timestamp, timestring : timestring});
 			$(this.el).find('.feed-content-inner').prepend(tmpl);
 		},
 		createStatusElement : function(data, msg){
@@ -139,9 +141,50 @@ define('GameView',[
 			var tmpl = this.statusTemplate({msg : msg, timestamp : new Date().toISOString(), timestring: timestring});					
 			$(this.el).find('.feed-content-inner').prepend(tmpl);					
 		},
+		createMoveElement : function(data){
+			var timestring = $.timeago(new Date());
+
+			var piece = 'King';
+			switch(data.piece){
+				case 'K' : if(data.color == 'B')
+								piece = 'King'; 
+						   else
+						   		piece = 'Leader'
+						   break;
+				case 'Q' : if(data.color == 'B')
+							piece = 'Queen'; 
+						   else
+						   	piece = 'General';
+						   break;
+				case 'N' : piece = 'Knight';
+						   break;
+				case 'P' : if(data.color == 'B')
+							piece = 'Pawn';
+						   else
+						   	piece = 'Peasant';
+						   break;
+			}
+
+			if(data.type == 'promote'){
+				
+			}else if(data.type == 'stalemate'){
+
+			}else if(data.type == 'checkmate'){
+
+			}
+
+			var cols = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+			var from = cols[data.from.col]+ ""+ (data.from.row + 1)
+
+			var to = cols[data.to.col]+ ""+ (data.to.row + 1)				
+
+			var tmpl = this.moveTemplate({data: data, result : "", from: from, to: to, piece: piece, timestamp: new Date().toISOString(), timestring: timestring});
+			$(this.el).find('.feed-content-inner').prepend(tmpl);					
+		},
 		updateTurn : function(currentTurn){
 			var name = (this.side == 'W') ? 'Peasant' : 'King';
 			console.log('Current Turn: ' + currentTurn);
+			this.model.set('turn', currentTurn);
 			if(this.side == currentTurn){
 				$(this.el).find('#turn-wrapper').html('Your Turn, ' + name);
 			}else{				
@@ -158,6 +201,29 @@ define('GameView',[
 			var data = msgObj.data;
 			//the message is global
 			switch(msgObj.type){
+				case 'usurp':
+					console.log('USURPATION!');
+					$(this.el).find('.chat-box').removeAttr('disabled');
+					if(data.success){
+						console.log('All Hail the new King');
+						if(this.model.get('player').playerCode == data.player.playerCode){													
+							$.cookie(this.model.get('code') + '.auth_king', data.player.authId);
+							this.side = 'B';
+							this.updateTurn(this.model.get('turn'));	
+							//I AM A KING NOW
+						}else{
+							if(this.side == 'B'){ //I was the former King
+								//SHUT ME DOWN
+								console.log('Goodbye, former king!');
+							}
+							//HE IS KING NOW							
+						}	
+					}else{
+						//FAILED ATTEMPT!
+						console.log('Failed attempt to usurp the King');
+					}
+					
+					break;
 				case 'chat' : 
 					console.log('CHAT:');
 					if(data.player.name == this.model.get('player').name){
@@ -175,7 +241,7 @@ define('GameView',[
 					}else if(data.type == 'checkmate'){
 
 					}
-					this.createStatusElement(data);
+					this.createMoveElement(data);
 					this.updateTurn(data.turn);
 					this.playChess.updatePiece(data);
 					break;

@@ -2,6 +2,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var ortcNodeclient = require('ibtrealtimesjnode').IbtRealTimeSJNode;
 var Chess = require('./chess/chess');
+var ChatCommands = require('./chess/chatcommands');
 
 
 var app = express();
@@ -309,12 +310,55 @@ var handleORTCMessage = function(code, message){
 			break;
 		case 'chat' :
 			var player = message.data.player;
-			console.log(player.name + ':' + message.message);
-			var parsedPlayer = {
-				name : message.data.player.name
-			};
-			message.data.player = parsedPlayer;
-			ortcPublisher(code, message); 
+			var playerColor = 'W';
+				if(player.authId) playerColor = 'B';
+			console.log(player.name + ':' + message.data.message);
+			var command = ChatCommands.parseChatMessage(message.data.message);
+			if(command && command.command == 'usurp'){
+				console.log('Usurpation attempt!');
+				Game.findOne({ code: code}, function(err, game){
+					if(err){
+						console.log('Error finding game: ' + err.message);
+					}
+					if(!game){
+						console.log('Cannot find game');
+						return;
+					}
+					var result = ChatCommands.doUsurp(game, player, command.passcode, command.newPasscode);
+					message.type = 'usurp';
+					if(result){						
+						message.data = {
+							player : {
+								playerCode : player.playerCode,
+								name : player.name,
+								authId : game.king.authId
+							},
+							success : true
+						};
+						game.save();
+						console.log('Success! All hail the new King ' + player.name );						
+					}else{
+						
+						message.data = {
+							player : {								
+								name : player.name,								
+								color : playerColor
+							},
+							success : false
+						};
+						console.log('Failed! ' + player.name);
+					}
+					ortcPublisher(code, message);
+				});
+			}else{
+				var parsedPlayer = {
+					name : message.data.player.name,
+					color : playerColor
+				};
+				message.data.player = parsedPlayer;
+				ortcPublisher(code, message); 	
+			}
+			
 			break;
 		case 'touch' :
 			var player = message.data.player;
@@ -373,7 +417,7 @@ var handleORTCMessage = function(code, message){
 							board[to.row][to.col] = color+''+piece;
 
 							//check if move is a gameover
-							var endGameCheck = chess.endGameCheck(board, 'K', {
+							var endGameCheck = Chess.endGameCheck(board, 'K', {
 									row : 0,
 									col : 0
 								},{
