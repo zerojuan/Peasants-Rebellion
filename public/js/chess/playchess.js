@@ -33,7 +33,11 @@ define('PlayChess', [
 				listener.onMove(piece, move_to);
 			}
 		},
+		setColor : function(team){
+			this.color = team;
+		},
 		setTurn : function(turn){
+			console.log('Changing turn from ' + this.turn + " to " + turn);
 			this.turn = turn;
 			this.whitePieceManager.updateTurn(turn);
 			this.blackPieceManager.updateTurn(turn);
@@ -284,7 +288,7 @@ define('PlayChess', [
 			}
 			this.setTurn(data.turn);
 			this.movesLayer.deactivate();
-		},
+		},		
 		tick : function(){
 			this.stage.update();
 		}

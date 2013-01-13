@@ -68,7 +68,8 @@ define('GameView',[
 		events : {
 			"keyup .chat-box" : "onChatType",
 			"focus .chat-box" : "onChatFocus",
-			"blur .chat-box" : "onChatBlur"
+			"blur .chat-box" : "onChatBlur",
+			"click #results-panel" : "onResultsPanel"
 		},
 		render : function(){
 			var that = this,
@@ -91,6 +92,11 @@ define('GameView',[
 				$(this.el).find('.chat-form').removeClass('expanded');
 				$(this.el).find('.chat-form').addClass('condensed');	
 			}			
+		},
+		onResultsPanel : function(){			
+			$(this.el).find('#results-panel').animate({top: "-1000px", bottom: "1000px"}, 600);					
+			$(this.el).find('#results-panel .bg').animate({bottom: "1000px"}, 600);
+			//$(this.el).find('#results-panel .bg').fadeOut(500, function(){$(this).hide()});
 		},
 		onChatFocus : function(){
 			$(this.el).find('.chat-form').removeClass('condensed');
@@ -181,9 +187,14 @@ define('GameView',[
 			var tmpl = this.moveTemplate({data: data, result : "", from: from, to: to, piece: piece, timestamp: new Date().toISOString(), timestring: timestring});
 			$(this.el).find('.feed-content-inner').prepend(tmpl);					
 		},
+		updateColor : function(color){
+			this.side = color;
+			this.playChess.setColor(color);
+		},
 		updateTurn : function(currentTurn){
 			var name = (this.side == 'W') ? 'Peasant' : 'King';
 			console.log('Current Turn: ' + currentTurn);
+			this.playChess.setTurn(currentTurn);
 			this.model.set('turn', currentTurn);
 			if(this.side == currentTurn){
 				$(this.el).find('#turn-wrapper').html('Your Turn, ' + name);
@@ -208,7 +219,7 @@ define('GameView',[
 						console.log('All Hail the new King');
 						if(this.model.get('player').playerCode == data.player.playerCode){													
 							$.cookie(this.model.get('code') + '.auth_king', data.player.authId);
-							this.side = 'B';
+							updateColor('B');
 							this.updateTurn(this.model.get('turn'));	
 							//I AM A KING NOW
 						}else{
@@ -237,8 +248,9 @@ define('GameView',[
 					if(data.type == 'promote'){
 						
 					}else if(data.type == 'stalemate'){
-
+						console.log('Stalemate');
 					}else if(data.type == 'checkmate'){
+						console.log('Checkmate!');
 
 					}
 					this.createMoveElement(data);
