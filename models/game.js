@@ -1,6 +1,8 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
+var miscData = require('./miscData.json');
+
 var GameSchema = new Schema({
 	code : String,
 	alive : Boolean,
@@ -8,11 +10,13 @@ var GameSchema = new Schema({
 		name : String,
 		passkey : String,
 		playerCode : String,
+		title : String,
 		authId : String
 	},
 	peasants : [{
 		name : String,
 		playerCode : String,
+		title : String,
 		alive : Boolean
 	}],
 	board : Array,
@@ -64,6 +68,31 @@ GameSchema.methods.createNewBoard = function(){
 		['0', '0', '0', '0', 'WK', '0', '0', '0']
 	];
 	return board;
+}
+
+GameSchema.methods.getRandomPeasantName = function(){
+	var peasantsLength = miscData.peasants.length;
+	return miscData.peasants[Math.floor((Math.random() * peasantsLength))];
+}
+
+GameSchema.methods.getRandomPeasantTitle = function(){
+	var peasantTitle = Math.floor(Math.random() * miscData.peasantTitles.length);
+	return miscData.peasantTitles[peasantTitle]; 
+}
+
+GameSchema.methods.getRandomKingName = function(){
+	var kingsLength = miscData.kings.length;
+	return miscData.kings[Math.floor((Math.random() * kingsLength))];	
+}
+
+GameSchema.methods.getRandomKingTitle = function(){
+	var kingTitle = Math.floor(Math.random() * miscData.kingTitles.length);
+	return miscData.kingTitles[kingTitle];
+}
+
+GameSchema.methods.getRandomUsurperTitle = function(){
+	var usurperTitle = Math.floor(Math.random() * miscData.usurperTitles.length);
+	return miscData.usurperTitles[usurperTitle];
 }
 
 module.exports = mongoose.model('Game', GameSchema);

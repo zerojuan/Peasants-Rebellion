@@ -1,0 +1,47 @@
+{
+	"peasants" : [
+		"Little John",
+		"Robin Hood",
+		"Walter Tyler",
+		"Jakob Rohrbach",
+		"Y. Pugachev",
+		"Stepan Razin",
+		"G. Garibaldi",
+		"Pancho Villa",
+		"Zhu Yuanzhang",
+		"William Wallace",
+		"George Washington",
+		"Spartacus",		
+		"Che Guevara",
+		"Moses"
+	],
+	"peasantTitles" : [
+		"The Freedom Lover",
+		"Freedom Fighter",
+		"The Everyman",
+		"Everybody's Hero",
+		"The Peasant Leader"		
+	],
+	"kings" : [
+		"Sultan Suleiman",
+		"King James",
+		"King John",
+		"Emperor Meiji",
+		"Gustavus Adolphus",
+		"Emperor Augustus",
+		"Cyrus II",
+		"King Frederick ",
+		"King Louis"
+	],
+	"kingTitles" : [
+		"The Benevolent",
+		"The Sun King",
+		"The Lion Ruler",
+		"The Magnificient",
+		"The One True King"		
+	],
+	"usurperTitles" : [
+		"The Schemer King",
+		"The Usurper King"
+	]
+}

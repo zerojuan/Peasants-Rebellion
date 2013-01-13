@@ -4,6 +4,8 @@ var ortcNodeclient = require('ibtrealtimesjnode').IbtRealTimeSJNode;
 var Chess = require('./chess/chess');
 var ChatCommands = require('./chess/chatcommands');
 
+var miscData = require('./models/miscData.json');
+
 
 var app = express();
 
@@ -171,10 +173,7 @@ app.configure('development', function(){
 app.post('/api/v1/game', function(req, res){
 	var name = req.body.kingName;
 	var password = req.body.kingPass;
-
-	if(name == ''){
-		name = 'King de Fault IV';
-	}
+	
 
 	if(password == ''){
 		password = 'hijackthis';
@@ -189,8 +188,14 @@ app.post('/api/v1/game', function(req, res){
 
 //		if(count <= 4){
 			var game = new Game();
+
+			if(name == ''){						
+				name = game.getRandomKingName();
+			}
+			
 			var king = {
 				name : name,
+				title : game.getRandomKingTitle(),
 				passkey : password,
 				authId : game.generateAuthKey(),
 				playerCode : game.generateAuthKey()
@@ -218,6 +223,7 @@ app.post('/api/v1/game', function(req, res){
 					code : savedGame.code,
 					king : {
 						name : savedGame.king.name,
+						title : savedGame.king.title,
 						authId : savedGame.king.authId
 					},
 					turn : 'W',
@@ -251,7 +257,7 @@ app.get('/api/v1/game/random', function(req, res, next){
 		playerName = 'Peasant Poor';
 	}
 
-	Game.count({}, function(err, count){
+	Game.count({alive:true}, function(err, count){
 		if(err){
 			console.log('Error count query');
 			return;
@@ -267,12 +273,24 @@ app.get('/api/v1/game/random', function(req, res, next){
 			}
 
 			var game = game[0];
+			var name = "";
 			console.dir(game);
-			var peasantSize = game.peasants.length + 1;
+			if(playerName == null || playerName.length <= 0){												
+				name = game.getRandomPeasantName();
+			}else{
+				name = playerName;
+			}			
+
+			for(i in game.peasants){
+				if(game.peasants[i].name == name){
+					name += game.peasants.length;
+				}
+			}
 			peasant = {
-				name : playerName,
-				playerCode : game.generateAuthKey(),
-				alive : true
+				name : name,
+				title : game.getRandomPeasantTitle(),
+				alive : true,
+				playerCode : game.generateAuthKey()
 			};
 			game.peasants.push(peasant);
 			game.markModified('peasants');
@@ -328,19 +346,31 @@ app.get('/api/v1/game/:code', function(req, res, next){
 			//correct auth, reply with a king object
 			king = {
 				name : game.king.name,
+				title : game.king.title,
 				authId : game.king.authId,
 				playerCode : game.king.playerCode
 			};
 
 			player = king;
 		}else{
-			//invalid, create a random name
-			var peasantSize = game.peasants.length + 1;
+			//invalid, create a random name								
+			var name = game.getRandomPeasantName();
+			for(i in game.peasants){
+				if(game.peasants[i].name == name){
+					name += game.peasants.length;
+				}
+			}
 			peasant = {
-				name : 'Random P ' + peasantSize,
+				name : name,
+				title : game.getRandomPeasantTitle(),
 				alive : true,
 				playerCode : game.generateAuthKey()
 			};
+
+			if(!game.alive){
+				peasant.name = 'A Historian';
+				peasant.title = 'Lover of History';
+			}
 
 			player = peasant;
 
@@ -353,7 +383,8 @@ app.get('/api/v1/game/:code', function(req, res, next){
 		return res.send({
 			code : game.code,
 			king : {
-				name : game.king.name
+				name : game.king.name,
+				title : game.king.title
 			},
 			board : game.board,
 			turn : game.turn,
@@ -395,10 +426,12 @@ var handleORTCMessage = function(code, message){
 					}
 					var result = ChatCommands.doUsurp(game, player, command.passcode, command.newPasscode);
 					message.type = 'usurp';
-					if(result){						
+					if(result){			
+
 						message.data = {
 							player : {
 								playerCode : player.playerCode,
+								title : player.title,
 								name : player.name,
 								authId : game.king.authId
 							},

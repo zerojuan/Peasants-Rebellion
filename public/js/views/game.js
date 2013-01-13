@@ -219,7 +219,7 @@ define('GameView',[
 						console.log('All Hail the new King');
 						if(this.model.get('player').playerCode == data.player.playerCode){													
 							$.cookie(this.model.get('code') + '.auth_king', data.player.authId);
-							updateColor('B');
+							this.updateColor('B');
 							this.updateTurn(this.model.get('turn'));	
 							//I AM A KING NOW
 						}else{

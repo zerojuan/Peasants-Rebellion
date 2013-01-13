@@ -23,6 +23,7 @@
 				if(peasant.playerCode == usurper.playerCode){
 					if(game.king.passkey == passcode){
 						//oust the king
+						usurper.title = game.getRandomUsurperTitle();
 						game.king = usurper;
 						game.king.passkey = newPasscode;
 						game.king.authId = game.generateAuthKey();
