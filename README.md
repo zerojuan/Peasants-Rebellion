@@ -8,7 +8,10 @@ A multiplayer twist to a traditional chess variant.
 * Mongoose 3.4
 * Pubnub 3.3
 
-
+## Run Locally
+1. Get ORTC Keys at [realtime.co](http://www.realtime.co/)
+2. Set environment variables for MONGO_URI, ORTC_APP_KEY, and ORTC_PRIVATE_KEY
+3. Nodejs start script is at "app.js"
 
 _Originally built for the Github Game Off._
 
