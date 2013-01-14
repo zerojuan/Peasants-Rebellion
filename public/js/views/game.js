@@ -6,9 +6,10 @@ define('GameView',[
 	'text!templates/status-item.html',
 	'text!templates/move-item.html',
 	'text!templates/chat-item.html',
+	'text!templates/result-sidebar.html',
 	'GameModel',
 	'PlayChess'
-], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, GameModel, PlayChess){
+], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, GameModel, PlayChess){
 	var GameView;
 
 	var that = GameView;
@@ -30,38 +31,43 @@ define('GameView',[
 			this.chatTemplate = _.template(chatTpl);
 			this.statusTemplate = _.template(statusTpl);
 			this.moveTemplate = _.template(moveTpl);
+			this.resultTemplate = _.template(resultTpl);
 
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
 
-			xRTML.ready(function(){
-				loadOrtcFactory(IbtRealTimeSJType, function(factory, error){
-					if(error != null){
-						console.log('Factory error: ' + error.message);
-					}else{
-						if(factory != null){
-							that.ortcClient = factory.createClient();
+			if(this.model.get('alive')){
+				xRTML.ready(function(){
+					loadOrtcFactory(IbtRealTimeSJType, function(factory, error){
+						if(error != null){
+							console.log('Factory error: ' + error.message);
+						}else{
+							if(factory != null){
+								that.ortcClient = factory.createClient();
 
-							that.ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
-	                 
-							that.ortcClient.onConnected = function(ortc){
-								console.log('Connected...');
-								$('.overlay').fadeOut();
-								$('.chat-box').prop('disabled', false);
-								that.updateTurn(that.model.get('turn'));
-								that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
-									true, function(ortc, channel, message){
-										console.log('Message Recieved: ' + message);
-										that._parseMessage(message);
-									});
+								that.ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
+		                 
+								that.ortcClient.onConnected = function(ortc){
+									console.log('Connected...');
+									$('.overlay').fadeOut();
+									$('.chat-box').prop('disabled', false);
+									that.updateTurn(that.model.get('turn'));
+									that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
+										true, function(ortc, channel, message){
+											console.log('Message Recieved: ' + message);
+											that._parseMessage(message);
+										});
+								}
+
+								that.ortcClient.connect('Qy9W72', 'peasantchessauth');
 							}
-
-							that.ortcClient.connect('Qy9W72', 'peasantchessauth');
 						}
-					}
-				});
-			});
-
+					});
+				});		
+			}else{
+				$('.overlay').fadeOut();
+			}
+				
 			
 			$('time').timeago();
 		},
@@ -69,7 +75,7 @@ define('GameView',[
 			"keyup .chat-box" : "onChatType",
 			"focus .chat-box" : "onChatFocus",
 			"blur .chat-box" : "onChatBlur",
-			"click #results-panel" : "onResultsPanel"
+			"click #results-panel" : "onHideResultsPanel"
 		},
 		render : function(){
 			var that = this,
@@ -79,10 +85,22 @@ define('GameView',[
 
 			var tmpl = this.template({game: game, side : this.side});
 
-			$(that.el).html(tmpl);
-
+			$(that.el).html(tmpl);					
+			
 			var canvas = $(that.el).find('#gameboard')[0];			
-			this.playChess.initialize(canvas, game);
+			this.playChess.initialize(canvas, game, function(){
+				if(!game.alive){
+					console.log('GAME IS DEAD!');
+					$(that.el).find('.overlay').hide();				
+					that.showWinnerBG(game.winner);
+					that.showResultSidebar(game.winner, game.moves);
+					that.playChess.showGameOver(game.winner);
+				}else{
+					that.showMoves(game.moves);
+				}
+			});
+
+			
 
 			return this;
 		},
@@ -93,10 +111,58 @@ define('GameView',[
 				$(this.el).find('.chat-form').addClass('condensed');	
 			}			
 		},
-		onResultsPanel : function(){			
+		onHideResultsPanel : function(){			
 			$(this.el).find('#results-panel').animate({top: "-1000px", bottom: "1000px"}, 600);					
 			$(this.el).find('#results-panel .bg').animate({bottom: "1000px"}, 600);
 			//$(this.el).find('#results-panel .bg').fadeOut(500, function(){$(this).hide()});
+		},
+		showResultsPanel : function(winner){			
+			if(winner == 'B'){
+				$(this.el).find('#results-panel img').attr('src', './assets/king-win.png');
+			}else if(winner == 'W'){
+				$(this.el).find('#results-panel img').attr('src', './assets/peasant-win.png');
+			}else{				
+				$(this.el).find('#results-panel img').attr('src', './assets/peasant-win.png');
+				$(this.el).find('#results-panel figcaption').html('Stalemate...');
+			}
+			this.showWinnerBG(winner);
+			$(this.el).find('#results-panel').css('top', '-1000px').animate({top: "0", bottom: "0"}, 600);					
+			$(this.el).find('#results-panel .bg').css('bottom', '1000px').animate({bottom: "0"}, 600);
+		},
+		showResultSidebar : function(winner, moves){
+			var winnerTxt = '';
+			var message = '';
+			if(winner == 'B'){
+				winnerTxt = 'king';
+				message = 'The Monarch Endures!';
+			}else if(winner == 'W'){
+				winnerTxt = 'peasant';
+				message = 'The Rebellion has Succeeded!';
+			}else{
+				winnerTxt = 'draw';
+				message = 'The War Dragged to a Stalemate';
+			}
+			var tmpl = this.resultTemplate({winner: winnerTxt, message: message});
+			$(this.el).find('.content-slider-item').html(tmpl).hide().fadeIn();
+			this.showMoves(moves);
+		},
+		showMoves : function(moves){
+			for(var i in moves){
+				var move = moves[i];
+				this.createMoveElement(move);
+			}	
+		},
+		showWinnerBG : function(winner){
+			if(winner == 'B'){
+				$(this.el).find('.winning-bg img').attr('src', './assets/king-shield-alpha.png');
+			}else if(winner == 'W'){
+				$(this.el).find('.winning-bg img').attr('src', './assets/peasant-shield-alpha.png');
+			}else{
+				$(this.el).find('.winning-bg img').attr('src', './assets/draw-shield-alpha.png');
+			}
+			$(this.el).find('.winning-bg').css('left', '-1000px').animate({"left": "-250px"}, 600);
+			$(this.el).find('#turn-wrapper').html('');
+			$('time').timeago();	
 		},
 		onChatFocus : function(){
 			$(this.el).find('.chat-form').removeClass('condensed');
@@ -148,7 +214,8 @@ define('GameView',[
 			$(this.el).find('.feed-content-inner').prepend(tmpl);					
 		},
 		createMoveElement : function(data){
-			var timestring = $.timeago(new Date());
+			var date = new Date(data.time);
+			var timestring = $.timeago(date);
 
 			var piece = 'King';
 			switch(data.piece){
@@ -184,7 +251,7 @@ define('GameView',[
 
 			var to = cols[data.to.col]+ ""+ (data.to.row + 1)				
 
-			var tmpl = this.moveTemplate({data: data, result : "", from: from, to: to, piece: piece, timestamp: new Date().toISOString(), timestring: timestring});
+			var tmpl = this.moveTemplate({data: data, result : "", from: from, to: to, piece: piece, timestamp: date.toISOString(), timestring: timestring});
 			$(this.el).find('.feed-content-inner').prepend(tmpl);					
 		},
 		updateColor : function(color){
@@ -197,7 +264,12 @@ define('GameView',[
 			this.playChess.setTurn(currentTurn);
 			this.model.set('turn', currentTurn);
 			if(this.side == currentTurn){
-				$(this.el).find('#turn-wrapper').html('Your Turn, ' + name);
+				if(this.side == 'W'){
+					$(this.el).find('#turn-wrapper').html('Our turn, Brother');	
+				}else{
+					$(this.el).find('#turn-wrapper').html('Your turn, Your Highness');	
+				}
+				
 			}else{				
 				if(this.side == 'W'){
 					name = "the King's turn";
@@ -245,17 +317,26 @@ define('GameView',[
 					break;
 				case 'move' :
 					console.log('MOVE: ');
-					if(data.type == 'promote'){
-						
-					}else if(data.type == 'stalemate'){
+					this.createMoveElement(data);
+					if(data.type == 'stalemate'){
 						console.log('Stalemate');
+						this.showResultsPanel('D');
+						that.playChess.showGameOver('D');
 					}else if(data.type == 'checkmate'){
 						console.log('Checkmate!');
-
+						var winner = '';
+						if(data.turn == 'B'){
+							winner = 'W';
+						}else{
+							winner = 'B';
+						}
+						this.showResultsPanel(winner);
+						this.playChess.updatePiece(data);
+						this.playChess.showGameOver(winner);						
+					}else{
+						this.updateTurn(data.turn);
+						this.playChess.updatePiece(data);
 					}
-					this.createMoveElement(data);
-					this.updateTurn(data.turn);
-					this.playChess.updatePiece(data);
 					break;
 			}
 			$('time').timeago();

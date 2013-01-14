@@ -37,13 +37,24 @@ define('PlayChess', [
 			this.color = team;
 		},
 		setTurn : function(turn){
+			if(this.gameOver){
+				return;
+			}
 			console.log('Changing turn from ' + this.turn + " to " + turn);
 			this.turn = turn;
 			this.whitePieceManager.updateTurn(turn);
 			this.blackPieceManager.updateTurn(turn);
 		},
-		initialize : function(canvas, gameData){
+		showGameOver : function(winner){
+			this.gameOver = true;
+			this.stage.onMouseUp = null;
+			this.whitePieceManager.updateWinner(winner);
+			this.blackPieceManager.updateWinner(winner);						
+		},
+		initialize : function(canvas, gameData, onReady){
 			var that = this;
+
+			this.gameOver = false;
 
 			this.gameData = gameData;
 			this.assets = [];
@@ -158,6 +169,8 @@ define('PlayChess', [
 
 				createjs.Ticker.setFPS(40);
 				createjs.Ticker.addListener(that);
+
+				onReady();
 			};
 
 			this.loader.loadManifest(assetManifest);

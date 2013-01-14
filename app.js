@@ -117,9 +117,9 @@ app.configure('development', function(){
 			//Black checkmate in 2 moves
 			var chkMateBoard = [
 				['0', '0', 'BK', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', '0', '0', '0'],
+				['0', '0', '0', '0', '0', 'WP', '0', '0'],
 				['0', 'WP', 'WP', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', 'WQ', '0', '0'],
+				['0', '0', '0', '0', '0', '0', '0', '0'],
 				['0', '0', 'WK', '0', '0', '0', '0', '0'],
 				['0', '0', '0', '0', '0', '0', '0', '0'],
 				['0', '0', '0', '0', '0', '0', '0', '0'],
@@ -131,6 +131,7 @@ app.configure('development', function(){
 			game.alive = true;
 			game.king.passkey = 'hijackthis';
 			game.peasants = [];
+			game.moves = [];
 			game.save();
 			Game.findOne({code : 'STLMTE'}, function(err,game){
 				if(err){
@@ -158,6 +159,7 @@ app.configure('development', function(){
 				game.alive = true;
 				game.king.passkey = 'hijackthis';
 				game.peasants = [];
+				game.moves = [];
 				game.save();
 				console.log('Done!');
 				res.send('Test setup done.');	
@@ -299,7 +301,8 @@ app.get('/api/v1/game/random', function(req, res, next){
 			return res.send({
 				code : game.code,
 				king : {
-					name : game.king.name
+					name : game.king.name,
+					title : game.king.title
 				},
 				peasants : game.peasants,
 				board : game.board,
@@ -390,7 +393,9 @@ app.get('/api/v1/game/:code', function(req, res, next){
 			turn : game.turn,
 			peasants : game.peasants,
 			player : player,
-			alive : game.alive
+			alive : game.alive,
+			winner : game.winner,
+			moves : game.moves			
 		});
 	});
 });
@@ -535,6 +540,7 @@ var handleORTCMessage = function(code, message){
 								game.alive = false;
 								game.winner = 'D';
 							}
+							message.data.time = Date.now();
 							game.moves.push(message.data);
 							game.board = board;
 							game.markModified('board');

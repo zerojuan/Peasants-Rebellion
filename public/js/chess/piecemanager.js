@@ -46,6 +46,11 @@ define('PieceManager', [
 						frames : [20, 8, 20, 8, 20, 8, 20, 8],
 						frequency : 4,
 						next : "Q_up_awake"
+					},
+					Q_up_promote : {
+						frames : [20, 8, 20, 8, 20, 8, 20, 8],
+						frequency : 4,
+						next : "Q_up_awake"
 					}
 				},
 				frames : {
@@ -98,6 +103,11 @@ define('PieceManager', [
 						frequency : 2
 					},
 					P_up_promote : {
+						frames : [18, 8, 18, 8, 18, 8, 18, 8],
+						frequency : 4,
+						next : "Q_up_awake"
+					},
+					Q_up_promote : {
 						frames : [18, 8, 18, 8, 18, 8, 18, 8],
 						frequency : 4,
 						next : "Q_up_awake"
@@ -162,6 +172,14 @@ define('PieceManager', [
 
 				piece.updateTurn(turn == this.color);
 			}			
+		},
+		updateWinner : function(winner){
+			console.log("Result: " + winner + " " + this.color);
+			for(var i in this.pieces){
+				var piece = this.pieces[i];
+
+				piece.updateWinner(winner);
+			}	
 		}
 	}
 

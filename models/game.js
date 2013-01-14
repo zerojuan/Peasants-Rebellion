@@ -33,7 +33,8 @@ var GameSchema = new Schema({
 		to : {
 			row : Number,
 			col : Number
-		}
+		},
+		time : { type : Date, default: Date.now() }
 	}]	
 });
 

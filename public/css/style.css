@@ -51,6 +51,8 @@ textarea {
 
 .mini-overlay{
 	z-index: 1;
+	top: -1000px;
+	bottom: 1000px;
 	margin-right: 320px;
 	cursor: pointer;
 }
@@ -64,6 +66,18 @@ textarea {
 	opacity: .6;
 	background: #000;
 	z-index: 3;	
+}
+
+.mini-overlay .bg{
+	top: -1000px;
+	bottom: 1000px;
+}
+
+.winning-bg{
+	position: fixed;
+	top: 70px;
+	left: -1000px;
+	z-index: -1;
 }
 
 
@@ -378,10 +392,19 @@ header.main{
 	z-index: 2;
 }
 
+
+
+
 .bar-shadow {
 	-webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
 	-moz-box-shadow: 0 2px 0 rgba(0,0,0,0.1);
 	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.bar-shadow.king{
+	-webkit-box-shadow: 0 2px 0 rgba(0, 85, 111, .3);
+	-moz-box-shadow: 0 2px 0 rgba(0, 85, 111,.3);
+	box-shadow: 0 2px 0 rgba(0, 85, 111,.3);	
 }
 
 .button-bar {
@@ -390,6 +413,27 @@ header.main{
 	min-height: 35px;
 	padding: 10px 15px;
 	background-color: white;
+}
+
+.side-bar-header.king .button-bar{
+	text-align: center;
+	background: #00556f;
+	color: white;
+	font-size: 25px;
+}
+
+.side-bar-header.peasant .button-bar{
+	text-align: center;
+	background: #7a2e28;
+	color: white;
+	font-size: 25px;
+}
+
+.side-bar-header.draw .button-bar{
+	text-align: center;
+	background: #555555;
+	color: white;
+	font-size: 25px;
 }
 
 .chat-form.condensed .chat-box{

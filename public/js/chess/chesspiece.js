@@ -30,6 +30,7 @@ define("ChessPiece",[
 		},
 		promote : function(){			
 			this.animation.gotoAndPlay(this.type+"_up_promote");
+			console.log(this.type+"_up_promote");
 			this.type = 'Q';
 		},
 		activate : function(){
@@ -40,14 +41,29 @@ define("ChessPiece",[
 		},
 		updateTurn : function(isMyTurn){
 			console.log('Is My Turn: ' + isMyTurn);
+			if(this.animation.currentAnimation == 'P_up_promote'){
+				return;
+			}
 			if(isMyTurn){
 				this.animation.gotoAndPlay(this.type+"_up"+"_awake");
 			}else{
 				this.animation.gotoAndPlay(this.type+"_up"+"_idle");
 			}
 		},
+		updateWinner : function(winner){
+			if(winner == 'D'){
+				this.animation.gotoAndPlay(this.type+"_up_idle");
+			}else if(winner == this.color){
+				this.animation.gotoAndPlay(this.type+"_up_selected");
+			}else{
+				this.animation.gotoAndPlay(this.type+"_up_idle");
+			}
+		},
 		move : function(row, col){
 			if(this.type == 'P'){
+				console.log('CHANGING PROMOTION:  ' + this.type);
+				console.log('Row: ' + row);
+				console.log('Color: ' + this.color);
 				//promote to queen
 				if((this.color == 'W' && row == 0) ||
 					(this.color == 'B' && row == 7)){
