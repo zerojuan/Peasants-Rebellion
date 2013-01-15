@@ -246,8 +246,7 @@ app.post('/api/v1/game', function(req, res){
 		// 			code : 2
 		// 		}
 		// 	});
-		// }
-		mongodb://julius:magician@linus.mongohq.com:10054/peasant-prod
+		// }		
 	});
 	
 });
