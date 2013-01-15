@@ -253,10 +253,7 @@ app.post('/api/v1/game', function(req, res){
 
 app.get('/api/v1/game/random', function(req, res, next){
 	var playerName = req.params.peasantName;
-	console.log(req.params);
-	if(playerName == null || playerName.length <= 0){
-		playerName = 'Peasant Poor';
-	}
+	console.log(req.params);	
 
 	Game.count({alive:true}, function(err, count){
 		if(err){
