@@ -8,6 +8,10 @@ body{
 	font-family: 'Forum', Arial;
 }
 
+a{
+	text-decoration: none;
+}
+
 header{
 	font-family: 'Forum', cursive;
 }
@@ -110,9 +114,27 @@ textarea {
 	margin-bottom: 10px;
 }
 
+.divider{
+	text-align: center;
+	margin: 30px 0 30px 0;
+	clear: both;
+}
+
 /* ============================ */
 /* 			Home Layout 		*/
 /* ============================ */
+
+.footer{
+	margin: 50px 0px 10px 0px;
+	color: #aaa;
+	text-align: center;
+	font-family: Georgia, serif;
+	font-size: 15px;
+}
+
+.footer img{
+	margin: 0 15px 10px 15px;
+}
 
 .home-page{
 	width: 1024px;
@@ -134,6 +156,81 @@ header.main{
 .home-page h1{	
 	margin: 0px;
 	font-size: 50px;
+}
+
+
+
+.home-page div.details{
+	width: 100%;
+	height: 1150px;	
+	padding-top: 50px;
+	background: #fff;
+}
+
+.home-page div.details .details-info{
+	text-align: center;	
+}
+
+.home-page div.details .details-info .details-body{
+	margin: 0 70px 0 80px;	
+	text-align: left;
+	font-family: Georgia;	
+}
+
+.details-info.king{
+	float: left;
+	padding-top: 20px;
+	margin-left: 80px;
+	width: 400px;
+	height: 470px;
+	color: white;
+	background: #3c7399;
+}
+
+.details-info.peasant{
+	padding-top: 20px;
+	float: right;
+	margin-right: 70px;
+	width: 400px;
+	height: 470px;
+	color: white;
+	background: #be564d;
+}
+
+.details-gallery{
+	margin: 50px 0 50px 0;
+}
+
+.details-form{
+	position: relative;	
+	text-align: left;
+	margin-left: 20px;
+}
+
+.details-form .input{
+	padding: 0;
+}
+
+.details-form .input li{
+	margin-top: 10px;
+	list-style: none;
+}
+
+.details-form .input input{
+	width: 180px;
+}
+
+.details-form .input .desc{
+	font-style: italic;
+	padding-left: 5px;
+	font-size: 12px;
+}
+
+.team-info-body{
+	text-align: left;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 180px;
 }
 
 .team-select-wrapper{
@@ -551,6 +648,14 @@ textarea.chat-box{
 	padding: 10px;
 }
 
+.feed-item-main.failed, .feed-item-main.mad{
+	background: #f0d690;
+}
+
+.feed-item-main.success, .feed-item-main.success-me{
+	background: #be564d;
+}
+
 .feed-item-plain {
 	margin: -5px;
 	padding: 5px;
@@ -629,9 +734,30 @@ textarea.chat-box{
 	z-index : -1;	
 }
 
-.top{
-	top: 0;
-	height: 80px;
+.top{	
+	height: 90px;
+	max-height: 90px;
+}
+
+.top span{
+	float: left;
+	max-width: 840px;
+	max-height: 90px;	
+	padding: 10px 30px 10px 10px;		
+	font-size: 50px;
+	background: white;
+	border-bottom: 2px solid #E5E5E5;
+}
+
+.top span.peasant{
+	background: #be564d;
+	color: white;
+}
+
+.top span.king{
+	background: #3c7399;
+	color: white;
+	border-bottom: 4px solid #E5E5E5;
 }
 
 .top h1{

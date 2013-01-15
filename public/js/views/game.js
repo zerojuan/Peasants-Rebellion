@@ -7,9 +7,10 @@ define('GameView',[
 	'text!templates/move-item.html',
 	'text!templates/chat-item.html',
 	'text!templates/result-sidebar.html',
+	'text!templates/usurp-item.html',
 	'GameModel',
 	'PlayChess'
-], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, GameModel, PlayChess){
+], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, usurpTpl, GameModel, PlayChess){
 	var GameView;
 
 	var that = GameView;
@@ -32,6 +33,7 @@ define('GameView',[
 			this.statusTemplate = _.template(statusTpl);
 			this.moveTemplate = _.template(moveTpl);
 			this.resultTemplate = _.template(resultTpl);
+			this.usurpTemplate = _.template(usurpTpl);
 
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
@@ -50,8 +52,7 @@ define('GameView',[
 								that.ortcClient.onConnected = function(ortc){
 									console.log('Connected...');
 									$('.overlay').fadeOut();
-									$('.chat-box').prop('disabled', false);
-									that.updateTurn(that.model.get('turn'));
+									$('.chat-box').prop('disabled', false);									
 									that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
 										true, function(ortc, channel, message){
 											console.log('Message Recieved: ' + message);
@@ -82,13 +83,19 @@ define('GameView',[
 				tmpl;
 
 			var game = this.model.toJSON();		
+			var color = 'king';
+			if(this.side == 'W'){
+				color = 'peasant';
+			}
 
-			var tmpl = this.template({game: game, side : this.side});
+			var tmpl = this.template({color: color, game: game, side : this.side});
 
 			$(that.el).html(tmpl);					
 			
-			var canvas = $(that.el).find('#gameboard')[0];			
+			var canvas = $(that.el).find('#gameboard')[0];
+						
 			this.playChess.initialize(canvas, game, function(){
+				that.updateTurn(that.model.get('turn'));
 				if(!game.alive){
 					console.log('GAME IS DEAD!');
 					$(that.el).find('.overlay').hide();				
@@ -107,6 +114,7 @@ define('GameView',[
 		onChatBlur : function(){
 			var msg = $.trim($(this.el).find('.chat-box').val());
 			if(msg === ""){
+				$(this.el).find('.chat-box').attr('placeholder', 'Say something...');
 				$(this.el).find('.chat-form').removeClass('expanded');
 				$(this.el).find('.chat-form').addClass('condensed');	
 			}			
@@ -165,6 +173,8 @@ define('GameView',[
 			$('time').timeago();	
 		},
 		onChatFocus : function(){
+			console.log('Chat form');
+			$(this.el).find('.chat-box').attr('placeholder', 'Type "!usurp <passkey> <newpasskey>" to usurp the king. Otherwise, type whatever.');
 			$(this.el).find('.chat-form').removeClass('condensed');
 			$(this.el).find('.chat-form').addClass('expanded');
 		},
@@ -212,6 +222,12 @@ define('GameView',[
 			
 			var tmpl = this.statusTemplate({msg : msg, timestamp : new Date().toISOString(), timestring: timestring});					
 			$(this.el).find('.feed-content-inner').prepend(tmpl);					
+		},
+		createUsurpElement : function(status, data){
+			var timestring = $.timeago(new Date());
+			var kingName = this.model.get('king').name;
+			var tmpl = this.usurpTemplate({timestamp: new Date().toISOString(), timestring: timestring, status : status, name : data.player.name, kingName: kingName});
+			$(this.el).find('.feed-content-inner').prepend(tmpl);
 		},
 		createMoveElement : function(data){
 			var date = new Date(data.time);
@@ -291,19 +307,30 @@ define('GameView',[
 						console.log('All Hail the new King');
 						if(this.model.get('player').playerCode == data.player.playerCode){													
 							$.cookie(this.model.get('code') + '.auth_king', data.player.authId);
-							this.updateColor('B');
+							console.log("Loading cookie: " + $.cookie(this.model.get('code') + '.auth_king'));
+							this.updateColor('B');							
 							this.updateTurn(this.model.get('turn'));	
-							//I AM A KING NOW
+							this.createUsurpElement('success', data);
+							this.model.set('king', data.player);
 						}else{
-							if(this.side == 'B'){ //I was the former King
-								//SHUT ME DOWN
+							if(this.side == 'B'){ //I was the former King								
 								console.log('Goodbye, former king!');
-							}
-							//HE IS KING NOW							
+								this.createUsurpElement('success-me', data);
+								this.playChess.showGameOver('D');
+								$(this.el).find('#turn-wrapper').html('You have been usurped...');
+							}else{
+								this.createUsurpElement('success', data);	
+							}																					
 						}	
 					}else{
 						//FAILED ATTEMPT!
-						console.log('Failed attempt to usurp the King');
+						console.log('failed attempt');
+						if(data.player.color == 'B'){
+							this.createUsurpElement('mad', data);
+						}else{
+							this.createUsurpElement('failed', data);	
+						}
+						
 					}
 					
 					break;

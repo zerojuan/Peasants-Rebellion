@@ -178,7 +178,7 @@ app.post('/api/v1/game', function(req, res){
 	
 
 	if(password == ''){
-		password = 'hijackthis';
+		password = 'usurpthis';
 	}
 
 	Game.count({alive:true}, function(err, count){
@@ -224,14 +224,14 @@ app.post('/api/v1/game', function(req, res){
 				return res.send({
 					code : savedGame.code,
 					king : {
-						name : savedGame.king.name,
+						name : game.shortenName(savedGame.king.name),
 						title : savedGame.king.title,
 						authId : savedGame.king.authId
 					},
 					turn : 'W',
 					board : savedGame.board,
 					player : {
-						name : savedGame.king.name,
+						name : game.shortenName(savedGame.king.name),
 						authId : savedGame.king.authId,
 						playerCode : savedGame.king.playerCode
 					},
@@ -247,7 +247,7 @@ app.post('/api/v1/game', function(req, res){
 		// 		}
 		// 	});
 		// }
-		
+		mongodb://julius:magician@linus.mongohq.com:10054/peasant-prod
 	});
 	
 });
@@ -285,11 +285,11 @@ app.get('/api/v1/game/random', function(req, res, next){
 
 			for(i in game.peasants){
 				if(game.peasants[i].name == name){
-					name += game.peasants.length;
+					name += " " + game.peasants.length;
 				}
 			}
 			peasant = {
-				name : name,
+				name : game.shortenName(name),
 				title : game.getRandomPeasantTitle(),
 				alive : true,
 				playerCode : game.generateAuthKey()
@@ -327,7 +327,12 @@ app.get('/api/v1/game/:code', function(req, res, next){
 	Game.findOne({ code: req.params.code}, function(err, game){
 		if(err){
 			console.log('Error loading: ' + req.params.code);
-			console.log(err);
+			return res.send({
+				error : {
+					msg : 'Unable to connect to database ',
+					code : 1
+				}
+			});
 			return;			
 		}
 
@@ -346,9 +351,10 @@ app.get('/api/v1/game/:code', function(req, res, next){
 			player;
 
 		if(game.king.authId == authId){
+			console.log('Correct King Found!');
 			//correct auth, reply with a king object
 			king = {
-				name : game.king.name,
+				name : game.shortenName(game.king.name),
 				title : game.king.title,
 				authId : game.king.authId,
 				playerCode : game.king.playerCode
@@ -356,15 +362,16 @@ app.get('/api/v1/game/:code', function(req, res, next){
 
 			player = king;
 		}else{
+			console.log('False King Found! ' + game.king.authId);
 			//invalid, create a random name								
 			var name = game.getRandomPeasantName();
 			for(i in game.peasants){
 				if(game.peasants[i].name == name){
-					name += game.peasants.length;
+					name += " " + game.peasants.length;
 				}
 			}
 			peasant = {
-				name : name,
+				name : game.shortenName(name),
 				title : game.getRandomPeasantTitle(),
 				alive : true,
 				playerCode : game.generateAuthKey()

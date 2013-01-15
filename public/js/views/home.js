@@ -14,10 +14,13 @@ define('HomeView', [
 			this.template = _.template(tpl);
 		},
 		events : {
+			"keyup #peasant-name" : "onPeasantNameType",
+			"keyup #king-name" : "onKingNameType",
+			"keyup #king-pass" : "onKingPassType",
 			"click #peasant-submit" : "submitPeasant",
 			"click #king-submit" : "submitKing",
-			"click .team.left img" : "clickTeamKing",
-			"click .team.right img" : "clickTeamPeasant"
+			"click .team.left img" : "clickTeam",
+			"click .team.right img" : "clickTeam"
 		},
 		render : function(){
 			var that = this,
@@ -28,32 +31,31 @@ define('HomeView', [
 			$(that.el).html(tmpl);
 			return this;
 		},
-		clickTeamKing : function(){
-			if(this.currSelected == 'KING'){				
-				this.currSelected = 'NONE';
-				$(this.el).find('.team-details').addClass('hidden');
-			}else{
-				$(this.el).find('.team-details').removeClass('hidden');
-				$(this.el).find('.team-details').removeClass('peasant');
-				$(this.el).find('.team-details').addClass('king');
-				$(this.el).find('.team-details .team-info').addClass('hidden');
-				$(this.el).find('.team-info.king').removeClass('hidden');
-				//show King div and set currSelected to KING
-				this.currSelected = 'KING';
-			}
+		clickTeam : function(){
+			$('html, body').animate({
+		         scrollTop: $("#form-start").offset().top - 50
+		     }, 800);
 		},
-		clickTeamPeasant : function(){
-			if(this.currSelected == 'PEASANT'){
-				this.currSelected = 'NONE';
-				$(this.el).find('.team-details').addClass('hidden');
-			}else{
-				$(this.el).find('.team-details').removeClass('hidden');
-				$(this.el).find('.team-details').removeClass('king');
-				$(this.el).find('.team-details').addClass('peasant');
-				$(this.el).find('.team-details .team-info').addClass('hidden');
-				$(this.el).find('.team-info.peasant').removeClass('hidden');
-				this.currSelected = 'PEASANT';
+		onKingNameType : function(e){
+			var kingName = $(this.el).find('#king-name').val().trim();			
+			if(kingName == ''){				
+				kingName = "&lt; your name here &gt;";
 			}
+			$(this.el).find("#king-name-preview").html(kingName);			
+		},
+		onKingPassType : function(e){
+			var kingName = $(this.el).find('#king-pass').val().trim();
+			if(kingName == ''){
+				kingName = "usurpthis";
+			}
+			$(this.el).find("#king-pass-preview").html(kingName);			
+		},
+		onPeasantNameType : function(e){
+			var kingName = $(this.el).find('#peasant-name').val().trim();
+			if(kingName == ''){
+				kingName = "&lt; your name here &gt;";
+			}
+			$(this.el).find("#peasant-name-preview").html(kingName);			
 		},
 		submitPeasant : function(){
 			var that = this,

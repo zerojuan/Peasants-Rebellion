@@ -14,36 +14,64 @@
 		</div>		
 	</div>
 	<div class="clearfix"></div>
-	<div class="team-details hidden king">
-		<div class="arrow"></div>
-		<div class="details-content">
-			<div class="team-info king hidden">
-				<header><h1>Proclamation of Divine Right</h1></header>
-				<div class="details-body">
-					<p>I, <span>King Herod</span>, have been blessed by God as the executor of His Will on this domain.</p>
-					<p>It is my duty to ensure the blah blah. Any threaths is considered a direct insult to my rule and shall be dealt with swiftly and ruthlessly in God's Will.</p>
-					<p>Signed,</p>
+	<div class="details">
+		<div class="details-info">
+				<header><h1>The Peasants are Revolting!</h1></header>
+				<div class="details-gallery">
+					<img src="./assets/preview-2.png" width="250px" height= "250px"></img>
+					<img src="./assets/preview-3.png" width="250px" height= "250px"></img>
+					<img src="./assets/preview-1.png" width="250px" height= "250px"></img>
 				</div>
-				<div class="details-form">
-					<input type="text" id="king-name" placeholder="Input Name Here"></input>
-					<input type="text" id="king-pass" placeholder="Input Key"></input>
-					<input type="submit" id="king-submit"></input>
-				</div>
-			</div>
-			<div class="team-info peasant hidden">
-				<header><h1>Declaration of Independence</h1></header>
-				<div class="details-body">
-					<p>I, <span>&lt; your name here &gt;</span>, of level mind and under my free will make it known that I am taking part of the Rebellion.</p>
-					<p>This is the second paragraph, filled with more words.</p>
-					<p>Signed,</p>
-				</div>
-				<div class="details-form">
-					<input type="text" id="peasant-name" placeholder="Input Name Here"></input>
-					<input type="submit" id="peasant-submit"></input>
-				</div>
-			</div>
+				<div class="details-body">															
+					<p>Peasant's Rebellion is a game about a king, his peasants and a rebellion staged on a chess board.</p>
+					<p>It's a multiplayer take on the classic chess variant, Peasant's Revolt. Inspired by <a href="http://en.wikipedia.org/wiki/Kasparov_versus_the_World">Kasparov vs the World</a>, players can play as the King and defend 
+					against a mob of Peasants (random players on the internet who happened to click a link to your game).</p>
+					<p>To get started, "sign" either of the forms below: </p>								
+				</div>							
 		</div>
-		
+		<div id="form-start" class="divider"><img src="http://www.roguestory.com/images/doodad.png"></img></div>
+		<div class="details-info king">
+				<header><h1>Affirmation of Divine Right</h1></header>
+				<div class="team-info-body">
+					<p>I, <span id="king-name-preview">&lt; your name here &gt;</span>, have been blessed by God as the executor of His Will on this domain.</p>								
+					<p>It is my duty to protect the integrity of this kingdom. Any threat to my rule shall be dealt with swiftly and ruthlessly under God's Will.</p>
+					<p>In the event that I am unable to fulfill my duties as King, the rightful heir shall
+						bear the key: <span id="king-pass-preview">usurpthis</span></p>
+				</div>
+				<div class="details-form">
+					<p>Signed,</p>
+					<ul class="input">
+						<li><input type="text" id="king-name" placeholder="King Richard"></input><span class="desc">Leave blank to generate random name</span></li>
+						<li><input type="text" id="king-pass" placeholder="usurpthis"></input><span class="desc">Secret key for the rightful successor</span></li>
+						<li><button type="submit" id="king-submit"> Submit </button></li>
+					</ul>								
+				</div>
+			</div>
+		<div class="details-info peasant">
+				<header><h1>Declaration of Rebellion</h1></header>
+				<div class="team-info-body">
+					<p>I, <span id="peasant-name-preview">&lt; your name here &gt;</span>, of level mind and under my free will make it known that I am taking part in the Rebellion.</p>
+					<p>While we believe in the idea of government and a society bound by law and order, the corrupted reality of the former has resulted to the terrible state of the later.</p>
+					<p>We declare an end to the monarchy and we shall enact this by any means necessary.</p>
+				</div>
+				<div class="details-form">
+					<p>Signed,</p>
+					<ul class="input">
+						<li><input type="text" id="peasant-name" placeholder="Robin Hood"></input><span class="desc">Leave blank to generate random name</span></li>
+						<li><button type="submit" id="peasant-submit">Submit</button></li>
+					</ul>
+				</div>
+			</div>					
 	</div>
-	
+	<div class="clearfix"></div>
+	<div class="footer">
+		<div class="powered-by">
+			<p>Powered by:</p>
+			<a href="http://nodejs.org/"><img src="./assets/nodejs.png"></img></a>
+			<a href="http://realtime.co"><img src="./assets/ortc.png"></img></a>
+		</div>
+		<div class="signature">
+			An open game experiment by <a href="http://twitter.com/tusongtupa">@tusongtupa</a>. Everything here is publicly available on <a href="https://github.com/zerojuan/game-off-2012">Github</a>
+		</div>
+	</div>						
 </div>

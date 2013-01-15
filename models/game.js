@@ -71,6 +71,13 @@ GameSchema.methods.createNewBoard = function(){
 	return board;
 }
 
+GameSchema.methods.shortenName = function(name){
+	if(name.length > 13){
+		 return name.substr(0,n-1)+(this.length>13?'&hellip;':'');
+	}
+	return name;
+}
+
 GameSchema.methods.getRandomPeasantName = function(){
 	var peasantsLength = miscData.peasants.length;
 	return miscData.peasants[Math.floor((Math.random() * peasantsLength))];

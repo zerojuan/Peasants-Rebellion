@@ -1,0 +1,34 @@
+<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">						
+	<div class="feed-item-inner tip-arrow-inner">
+		<div class="tip-arrow" style="background: #efefef; box-shadow: none; z-index: 0;"></div>
+		<div class="feed-item-main <%- status %>">
+			<div class="media media-mini">
+				<div class="media-img">
+					<% if(status == 'mad') { %>		
+						<img src="./assets/king-icon-small.png"></img>						
+					<% }else { %>							
+						<img src="./assets/peasant-icon-small.png"></img>
+					<% }%>
+				</div>
+				<div class="media-body">
+					<aside class="align-right time">
+						<time data-time-format="short" datetime="<%- timestamp %>"><%- timestring %></time>	
+					</aside>
+					<div class="media-content">
+						<p>
+							<% if(status == 'failed') { %>
+								<a class="player-name"><%- name %></a> attempted to usurp the throne but failed		
+							<% }else if(status == 'success'){ %>
+								<a class="player-name"><%- name %></a> succeeded in usurping <a class="player-name"><%- kingName %></a>
+							<% }else if(status == 'mad'){ %>
+								<a class="player-name"><%- name %></a> has gone mad. He tried usurping himself!
+							<% }else { %>							
+								<a class="player-name"><%- name %></a> has usurped you, My King
+							<% }%>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
