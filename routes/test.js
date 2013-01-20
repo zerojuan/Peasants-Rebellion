@@ -1,7 +1,7 @@
 var Game = require('../models/game');
 
 exports.reset = function(req, res){
-	console.log('Resetting test databases');
+	console.log('Resetting test databases');		
 		Game.findOne({ code: 'CHKMTE'}, function(err, game){
 			if(err){
 				console.log('Error finding CheckMate Test Game');

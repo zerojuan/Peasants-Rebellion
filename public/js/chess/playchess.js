@@ -81,7 +81,8 @@ define('PlayChess', [
 			};
 			this.loader.onComplete = function(evt){
 				var boardMap, dividerMap;
-				var boardData = that.gameData.board; 
+				var boardData = that.gameData.board;
+				that.piecesLayer = new createjs.Container(); 
 
 				for(var i = 0; i < that.assets.length; i++){
 					var item = that.assets[i];
@@ -98,7 +99,8 @@ define('PlayChess', [
 							console.log('BLACK pieces loaded');
 							that.blackPieceManager = new PieceManager({
 								color : 'B',
-								bitmap : result
+								bitmap : result,
+								container : that.piecesLayer
 							});
 							//get all black pieces on board
 							for(var row = 0; row < boardData.length; row++){
@@ -116,7 +118,8 @@ define('PlayChess', [
 							console.log('WHITE pieces loaded');
 							that.whitePieceManager = new PieceManager({
 								color : 'W',
-								bitmap : result
+								bitmap : result,
+								container : that.piecesLayer
 							});
 							for(var row = 0; row < boardData.length; row++){
 								for(var col = 0; col < boardData[row].length; col++){
@@ -156,16 +159,15 @@ define('PlayChess', [
 				that.movesLayer.graphics.y = that.offset.y;
 				that.movesLayer.graphics.x = that.offset.x;
 
-				that.whitePieceManager.graphics.x = that.offset.x;
-				that.whitePieceManager.graphics.y = that.offset.y - 20;
-				that.blackPieceManager.graphics.x = that.offset.x;
-				that.blackPieceManager.graphics.y = that.offset.y - 20;
+				that.piecesLayer.x = that.offset.x;
+				that.piecesLayer.y = that.offset.y - 20;				
 
 				that.stage.addChild(tileMap, that.movesLayer.graphics, 
-					that.whitePieceManager.graphics,
-					that.blackPieceManager.graphics);
+					that.piecesLayer);
 
 				that.setTurn(that.turn);
+
+				that.restackPieceLayers();
 
 				createjs.Ticker.setFPS(40);
 				createjs.Ticker.addListener(that);
@@ -299,8 +301,21 @@ define('PlayChess', [
 				this.whitePieceManager.movePiece(data.from, data.to);
 				this.blackPieceManager.removePiece(data.to);
 			}
+			this.restackPieceLayers();
 			this.setTurn(data.turn);
 			this.movesLayer.deactivate();
+		},
+		restackPieceLayers : function(){
+			var sortFunction = function(a, b){
+				if(a.y < b.y){
+					return -1;
+				}else if(a.y > b.y){
+					return 1;
+				}
+				return 0;
+			}
+
+			this.piecesLayer.sortChildren(sortFunction);
 		},		
 		tick : function(){
 			this.stage.update();

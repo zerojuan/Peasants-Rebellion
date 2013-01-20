@@ -121,7 +121,7 @@ define('PieceManager', [
 			imgSrc = 'assets/black-piece.png';
 		}
 
-		this.graphics = new createjs.Container();
+		this.graphics = opts.container;
 	};
 
 	PieceManager.prototype = {
