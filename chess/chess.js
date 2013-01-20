@@ -477,7 +477,7 @@
 					if(piece.col != 7 && piece.row != 0 ){
 						if(myTurn && this.isEnemyOwned(boardData, piece.row-1, piece.col+1, piece)){
 							if(checker){
-								if(checker.from.row == piece.row-1 && checker.from.col == piece.from.col+1){
+								if(checker.from.row == piece.row-1 && checker.from.col == piece.col+1){
 									possibleMoves.push(constructMove({
 										row : piece.row-1,
 										col : piece.col+1

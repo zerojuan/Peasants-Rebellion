@@ -72,8 +72,9 @@ define("ChessPiece",[
 			}			
 			this.row = row;
 			this.col = col;
-			this.graphics.x = this.col * 64;
-			this.graphics.y = this.row * 64;
+			createjs.Tween.get(this.graphics).to({x: this.col * 64, y: this.row * 64}, 800, createjs.Ease.cubicOut);
+			//this.graphics.x = this.col * 64;
+			//this.graphics.y = this.row * 64;
 		},
 		remove : function(row, col){
 			this.row = -1;
