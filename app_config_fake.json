@@ -1,9 +1,0 @@
-{
-	"database" : {
-		"uri" : "URI OF FAKENESS"
-	},
-	"ortc" : {
-		"app_key" : "SECRET APP KEY"
-		"auth_key" : "SECRET AUTH KEY"
-	}
-}

@@ -73,7 +73,7 @@ GameSchema.methods.createNewBoard = function(){
 
 GameSchema.methods.shortenName = function(name){
 	if(name.length > 13){
-		 return name.substr(0,n-1)+(this.length>13?'&hellip;':'');
+		 return name.substr(0,12)+(this.length>13?'&hellip;':'');
 	}
 	return name;
 }

@@ -1,7 +1,10 @@
 Peasants and Kings
 ==================
 
-A multiplayer twist to a traditional chess variant.
+An always-on, zero-signup multiplayer chess variant about Peasant and Kings.
+
+A Player who plays 'King' faces a mob of Peasants.
+A Peasant must work with other peasants.
 
 ## Dependencies
 * Express 3.0

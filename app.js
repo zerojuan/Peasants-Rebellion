@@ -1,6 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
-var ortcNodeclient = require('ibtrealtimesjnode').IbtRealTimeSJNode;
+var ChessRTC = require('./realtime/chessRTC');
 var Chess = require('./chess/chess');
 var ChatCommands = require('./chess/chatcommands');
 
@@ -28,42 +28,7 @@ var Game = require('./models/game');
 //=========================
 // ORTC Client
 //=========================
-
-
-var ortcClient = new ortcNodeclient();
-
-var ortcSubscriber = function(code){
-	console.log('Subscribing to: ' + 'peasant_chess_server_'+code);
-	ortcClient.subscribe('peasant_chess_server_'+code, true, 
-		function(ortc, channel, message){
-			console.log('Recieved Message: ');
-			var msgObj = JSON.parse(message);
-			handleORTCMessage(code, msgObj);
-		});
-}
-
-var ortcPublisher = function(code, message){
-	var browserChannel = 'peasant_chess_browser_'+code;
-	ortcClient.send(browserChannel, JSON.stringify(message));
-}
-
-ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
-
-ortcClient.onConnected = function(ortc){
-	console.log("ORTC Connected...");
-	//Connected
-	/** GET ALL EXISTING GAMES AND RESUBSCRIBE TO ALL OF THEM **/
-	Game.find({alive:true}, function(err, games){
-		if(err){
-			console.log('Unable to create subscribers for games');
-		}
-
-		for(var i in games){
-			var game = games[i];
-				ortcSubscriber(game.code);	
-		}
-	});	
-}
+var chessRTC = new ChessRTC('http://ortc-developers.realtime.co/server/2.1/');
 
 Game.find({alive:true}, function(err, games){
 		if(err){
@@ -79,7 +44,7 @@ Game.find({alive:true}, function(err, games){
 		}
 
 		// Post permissions
-		ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true, 
+		chessRTC.ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true, 
 			'peasantchessauth', 0, 
 			process.env.ORTC_APP_KEY, 1400, 
 			process.env.ORTC_PRIVATE_KEY, channels, function (error, success) {
@@ -87,7 +52,7 @@ Game.find({alive:true}, function(err, games){
 		        console.log('Error saving authentication: ' + error);
 		    } else if (success) {
 		        console.log('Successfully authenticated');
-		        ortcClient.connect(process.env.ORTC_APP_KEY, 'peasantchessauth');
+		        chessRTC.ortcClient.connect(process.env.ORTC_APP_KEY, 'peasantchessauth');
 		    } else {
 		        console.log('Not authenticated');
 		    }
@@ -95,83 +60,21 @@ Game.find({alive:true}, function(err, games){
 });	
 
 
+//=========================
+// Routes for easy testing
+//=========================
 
-
+var test = require("./routes/test");
 app.configure('development', function(){
-	console.log('Development mode: Test database mode is open');
-	app.get('/testreset', function(req, res){
-		console.log('Resetting test databases');
-		Game.findOne({ code: 'CHKMTE'}, function(err, game){
-			if(err){
-				console.log('Error finding CheckMate Test Game');
-				console.log(err);
-				return;
-			}
-
-			if(!game){
-				console.log('Game not found');
-				game.				
-				return;
-			}
-
-			//Black checkmate in 2 moves
-			var chkMateBoard = [
-				['0', '0', 'BK', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', 'WP', '0', '0'],
-				['0', 'WP', 'WP', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', '0', '0', '0'],
-				['0', '0', 'WK', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', '0', '0', '0'],
-				['0', '0', '0', '0', '0', '0', '0', '0']
-			];
-
-			game.board = chkMateBoard;
-			game.turn = 'B';
-			game.alive = true;
-			game.king.passkey = 'hijackthis';
-			game.peasants = [];
-			game.moves = [];
-			game.save();
-			Game.findOne({code : 'STLMTE'}, function(err,game){
-				if(err){
-					console.log('Error finding Stalemate Test Game');
-					console.log(err);
-					return;
-				}
-
-				if(!game){
-					console.log('Game not found');
-					return;
-				}
-				var staleMateBoard = [
-					['0', 'BK', '0', '0', '0', '0', '0', '0'],
-					['WP', '0', '0', '0', '0', '0', '0', '0'],
-					['WQ', 'WP', 'WP', '0', '0', '0', '0', '0'],
-					['0', '0', '0', '0', '0', '0', '0', '0'],
-					['0', '0', 'WK', '0', '0', '0', '0', '0'],
-					['0', '0', '0', '0', '0', '0', '0', '0'],
-					['0', '0', '0', '0', '0', '0', '0', '0'],
-					['0', '0', '0', '0', '0', '0', '0', '0']
-				];
-				game.board = staleMateBoard;
-				game.turn = 'B';
-				game.alive = true;
-				game.king.passkey = 'hijackthis';
-				game.peasants = [];
-				game.moves = [];
-				game.save();
-				console.log('Done!');
-				res.send('Test setup done.');	
-			});			
-		});
-	});
+	console.log('Development mode: Test routes are open');
+	app.get('/testreset', test.reset);
 });
 
 
 //=========================
 // RESTful Resources
 //=========================
+var gameRoutes = require("./routes/game");
 app.post('/api/v1/game', function(req, res){
 	var name = req.body.kingName;
 	var password = req.body.kingPass;
@@ -188,379 +91,63 @@ app.post('/api/v1/game', function(req, res){
 			return;
 		}
 
-//		if(count <= 4){
-			var game = new Game();
+		var game = new Game();
 
-			if(name == ''){						
-				name = game.getRandomKingName();
-			}
-			
-			var king = {
-				name : name,
-				title : game.getRandomKingTitle(),
-				passkey : password,
-				authId : game.generateAuthKey(),
-				playerCode : game.generateAuthKey()
-			};
-			var board = game.createNewBoard();
-
-			game.code = game.generateGameCode();
-			game.king = king;
-			game.alive = true;
-			game.board = board;
-			game.moves = [];
-			game.turn = 'W';
-			var https = require('https');
-			
-			game.save(function(err, savedGame){
-				if(err){
-					console.log('Error saving new game');			
-					return;
-				}
-
-				/*CREATE A NEW CHANNEL*/
-				ortcSubscriber(savedGame.code);
-
-				return res.send({
-					code : savedGame.code,
-					king : {
-						name : game.shortenName(savedGame.king.name),
-						title : savedGame.king.title,
-						authId : savedGame.king.authId
-					},
-					turn : 'W',
-					board : savedGame.board,
-					player : {
-						name : game.shortenName(savedGame.king.name),
-						authId : savedGame.king.authId,
-						playerCode : savedGame.king.playerCode
-					},
-					alive : true
-				});
-			});	
-		// }else{
-		// 	console.log('Game is full:' + count);
-		// 	return res.send({
-		// 		error : {
-		// 			msg : 'All game slots are full',
-		// 			code : 2
-		// 		}
-		// 	});
-		// }		
-	});
-	
-});
-
-app.get('/api/v1/game/random', function(req, res, next){
-	var playerName = req.params.peasantName;
-	console.log(req.params);	
-
-	Game.count({alive:true}, function(err, count){
-		if(err){
-			console.log('Error count query');
-			return;
+		if(name == ''){						
+			name = game.getRandomKingName();
 		}
-		var random = Math.max(0, Math.round(Math.random() * count - 1));
-		console.log('Getting result: ' + random);
-		Game.find().limit(1).skip(random).exec(function(err, game){
+		
+		var king = {
+			name : name,
+			title : game.getRandomKingTitle(),
+			passkey : password,
+			authId : game.generateAuthKey(),
+			playerCode : game.generateAuthKey()
+		};
+		var board = game.createNewBoard();
 
+		game.code = game.generateGameCode();
+		game.king = king;
+		game.alive = true;
+		game.board = board;
+		game.moves = [];
+		game.turn = 'W';
+		var https = require('https');
+		
+		game.save(function(err, savedGame){
 			if(err){
-				console.log('Error looking for random game');
-				console.dir(err);
+				console.log('Error saving new game');			
 				return;
 			}
 
-			var game = game[0];
-			var name = "";
-			console.dir(game);
-			if(playerName == null || playerName.length <= 0){												
-				name = game.getRandomPeasantName();
-			}else{
-				name = playerName;
-			}			
-
-			for(i in game.peasants){
-				if(game.peasants[i].name == name){
-					name += " " + game.peasants.length;
-				}
-			}
-			peasant = {
-				name : game.shortenName(name),
-				title : game.getRandomPeasantTitle(),
-				alive : true,
-				playerCode : game.generateAuthKey()
-			};
-			game.peasants.push(peasant);
-			game.markModified('peasants');
-			game.save();
+			/*CREATE A NEW CHANNEL*/
+			chessRTC.ortcSubscriber(savedGame.code);
 
 			return res.send({
-				code : game.code,
+				code : savedGame.code,
 				king : {
-					name : game.king.name,
-					title : game.king.title
+					name : game.shortenName(savedGame.king.name),
+					title : savedGame.king.title,
+					authId : savedGame.king.authId
 				},
-				peasants : game.peasants,
-				board : game.board,
-				turn : game.turn,
-				player : peasant,
-				alive : game.alive
-			}); 
-		});
+				turn : 'W',
+				board : savedGame.board,
+				player : {
+					name : game.shortenName(savedGame.king.name),
+					authId : savedGame.king.authId,
+					playerCode : savedGame.king.playerCode
+				},
+				alive : true
+			});
+		});			
 	});
-});
-
-app.get('/api/v1/game/:code', function(req, res, next){
-	var authId;
-
-	if(req.query.authId){
-		authId = req.query.authId;
-		console.log('AuthId is present');
-		console.log(authId);
-	}
-
-
-	Game.findOne({ code: req.params.code}, function(err, game){
-		if(err){
-			console.log('Error loading: ' + req.params.code);
-			return res.send({
-				error : {
-					msg : 'Unable to connect to database ',
-					code : 1
-				}
-			});
-			return;			
-		}
-
-		if(!game){
-			console.log('Cannot find game :' + req.params.code);
-			return res.send({
-				error : {
-					msg : 'Cannot find game : ' + req.params.code,
-					code : 1
-				}
-			});
-		}
-
-		var king,
-			peasant,
-			player;
-
-		if(game.king.authId == authId){
-			console.log('Correct King Found!');
-			//correct auth, reply with a king object
-			king = {
-				name : game.shortenName(game.king.name),
-				title : game.king.title,
-				authId : game.king.authId,
-				playerCode : game.king.playerCode
-			};
-
-			player = king;
-		}else{
-			console.log('False King Found! ' + game.king.authId);
-			//invalid, create a random name								
-			var name = game.getRandomPeasantName();
-			for(i in game.peasants){
-				if(game.peasants[i].name == name){
-					name += " " + game.peasants.length;
-				}
-			}
-			peasant = {
-				name : game.shortenName(name),
-				title : game.getRandomPeasantTitle(),
-				alive : true,
-				playerCode : game.generateAuthKey()
-			};
-
-			if(!game.alive){
-				peasant.name = 'A Historian';
-				peasant.title = 'Lover of History';
-			}
-
-			player = peasant;
-
-			game.peasants.push(peasant);
-			game.markModified('peasants');
-			game.save();
-		}
-
-		
-		return res.send({
-			code : game.code,
-			king : {
-				name : game.king.name,
-				title : game.king.title
-			},
-			board : game.board,
-			turn : game.turn,
-			peasants : game.peasants,
-			player : player,
-			alive : game.alive,
-			winner : game.winner,
-			moves : game.moves			
-		});
-	});
-});
-
-//======================================
-// GAME UTILS (PUT THIS IN ANOTHER FILE)
-//======================================
-var handleORTCMessage = function(code, message){
-	console.log('Message From: ' + code + '>> ' + message.type);
-	console.log(message);
-	var type = message.type;
-	switch(type){
-		case 'connect' :
-			var player = message.data.player;
-			console.log('Player ' + player.name + ' connected to ' + code);
-			ortcPublisher(code, message);
-			break;
-		case 'chat' :
-			var player = message.data.player;
-			var playerColor = 'W';
-				if(player.authId) playerColor = 'B';
-			console.log(player.name + ':' + message.data.message);
-			var command = ChatCommands.parseChatMessage(message.data.message);
-			if(command && command.command == 'usurp'){
-				console.log('Usurpation attempt!');
-				Game.findOne({ code: code}, function(err, game){
-					if(err){
-						console.log('Error finding game: ' + err.message);
-					}
-					if(!game){
-						console.log('Cannot find game');
-						return;
-					}
-					var result = ChatCommands.doUsurp(game, player, command.passcode, command.newPasscode);
-					message.type = 'usurp';
-					if(result){			
-
-						message.data = {
-							player : {
-								playerCode : player.playerCode,
-								title : player.title,
-								name : player.name,
-								authId : game.king.authId
-							},
-							success : true
-						};
-						game.save();
-						console.log('Success! All hail the new King ' + player.name );						
-					}else{
-						
-						message.data = {
-							player : {								
-								name : player.name,								
-								color : playerColor
-							},
-							success : false
-						};
-						console.log('Failed! ' + player.name);
-					}
-					ortcPublisher(code, message);
-				});
-			}else{
-				var parsedPlayer = {
-					name : message.data.player.name,
-					color : playerColor
-				};
-				message.data.player = parsedPlayer;
-				ortcPublisher(code, message); 	
-			}
-			
-			break;
-		case 'touch' :
-			var player = message.data.player;
-			console.log(player.name + ' touched ' 
-				+ message.data.piece + ' at ' 
-				+ message.data.from.row + ', ' + message.data.from.col);
-			var parsedPlayer = {
-				name : player.name
-			};
-			message.data.player = parsedPlayer;
-			ortcPublisher(code, message);
-			break;
-		case 'move' :
-			var piece = message.data.piece;
-			var from = message.data.from;
-			var to = message.data.to;
-			var color = message.data.color;
-			//query database
-			Game.findOne({ code: code}, function(err, game){
-				if(err){
-					console.log('Error finding game: ' + err.message);
-				}
-				if(!game){
-					console.log('Cannot find game');
-					return;
-				}
-
-				//check if valid move	
-				var board = game.board;
-				if(color == game.turn){
-					if(board[from.row][from.col] == color+''+piece){
-						console.log('Correct starting piece');
-						//confirm if chess piece move is correct
-						if(Chess.isValidMove(board, piece, from, to, color)){
-							console.log('Valid move found');
-							//update game state
-							//check if move is a promotion
-							if(piece == 'P'){
-								//promote to queen
-								if(color == 'W' && to.row == 0){
-									piece = 'Q';				
-									message.data.type = 'promote';					
-								}else if(color == 'B' && to.row == 7){									
-									piece = 'Q';
-									message.data.type = 'promote';
-								}
-							}							
-
-							if(color == 'W'){
-								game.turn = 'B';
-							}else{
-								game.turn = 'W';
-							}							
-
-							board[from.row][from.col] = '0';
-							board[to.row][to.col] = color+''+piece;
-
-							//check if move is a gameover
-							var endGameCheck = Chess.endGameCheck(board, 'K', {
-									row : 0,
-									col : 0
-								},{
-									row : 0,
-									col : 0
-								}, game.turn);
-							if(endGameCheck.checkMate){
-								message.data.type = 'checkmate';
-								game.alive = false;
-								game.winner = color;
-							}else if(endGameCheck.staleMate){
-								message.data.type = 'stalemate';
-								game.alive = false;
-								game.winner = 'D';
-							}
-							message.data.time = Date.now();
-							game.moves.push(message.data);
-							game.board = board;
-							game.markModified('board');
-							game.save();
-							message.data.turn = game.turn;
-
-							ortcPublisher(code, message);
-						}
-					}	
-				}
-				
-			});
-			
-			break;
-	}
 	
-}
+});
+
+
+app.get('/api/v1/game/random', gameRoutes.randomGame);
+
+app.get('/api/v1/game/:code', gameRoutes.getByCode);
 
 
 

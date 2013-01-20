@@ -10,7 +10,7 @@ define('App', [
 
 		Backbone.history.start(); 
 	}
-
+	
 	return {
 		initialize : initialize
 	};
