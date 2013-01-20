@@ -60,19 +60,24 @@ define("ChessPiece",[
 			}
 		},
 		move : function(row, col){
-			if(this.type == 'P'){
-				console.log('CHANGING PROMOTION:  ' + this.type);
-				console.log('Row: ' + row);
-				console.log('Color: ' + this.color);
-				//promote to queen
-				if((this.color == 'W' && row == 0) ||
-					(this.color == 'B' && row == 7)){
-					this.promote();									
-				}
-			}			
+			var that = this;			
 			this.row = row;
 			this.col = col;
-			createjs.Tween.get(this.graphics).to({x: this.col * 64, y: this.row * 64}, 800, createjs.Ease.cubicOut);
+			createjs.Tween.get(this.graphics).to({x: this.col * 64, y: this.row * 64}, 800, createjs.Ease.cubicOut)
+				.call(function(){
+					if(that.type == 'P'){
+						console.log('CHANGING PROMOTION:  ' + this.type);
+						console.log('Row: ' + row);
+						console.log('Color: ' + this.color);
+						//promote to queen
+						if((that.color == 'W' && row == 0) ||
+							(that.color == 'B' && row == 7)){
+							this.promote();									
+						}
+					}		
+					that.graphics.x = that.col * 64;
+					that.graphics.y = that.row * 64;
+				});
 			//this.graphics.x = this.col * 64;
 			//this.graphics.y = this.row * 64;
 		},

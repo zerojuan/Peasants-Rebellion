@@ -18,6 +18,10 @@ var db = mongoose.connect(process.env.MONGO_URI);
 app.configure(function(){
 	app.use(express.bodyParser());
 	app.use(express.static(__dirname + '/public'));
+	app.use(function(err, req, res, next){
+		console.error(err.stack);
+		res.send(500, 'Something broke!');
+	});
 });
 
 //=========================
@@ -74,6 +78,8 @@ app.configure('development', function(){
 //=========================
 // RESTful Resources
 //=========================
+
+
 var gameRoutes = require("./routes/game");
 app.post('/api/v1/game', function(req, res){
 	var name = req.body.kingName;
