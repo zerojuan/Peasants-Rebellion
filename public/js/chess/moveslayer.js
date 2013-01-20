@@ -26,10 +26,18 @@ define('MovesLayer',[
 				setVisible : function(visible){
 					this.visible = visible;
 					if(this.visible){
-						this.graphics.alpha = .5;
+						//this.graphics.alpha = .5;
+						this.glow();
 					}else{
-						this.graphics.alpha = 0;
+						this.fadeOut();						
 					}
+				},
+				glow : function(){					
+					this.graphics.alpha = .3;
+					createjs.Tween.get(this.graphics, {override: true, loop: true}).to({alpha:.5}, 900).to({alpha:.2}, 900);
+				},
+				fadeOut : function(){					
+					createjs.Tween.get(this.graphics, {override: true}).to({alpha:0}, 900);
 				}
 			};
 			var graphics = new createjs.Graphics();
