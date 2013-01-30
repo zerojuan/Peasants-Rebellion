@@ -74,6 +74,7 @@ suite('Chess Mechanics: ', function(){
 	setup(function(){
 
 	});
+
 	
 	test('en passant', function(){
 		var board = [
@@ -202,6 +203,29 @@ suite('Chess Mechanics: ', function(){
 			row : 0,
 			col : 0
 		}, 'B').checkMate, 'Black King checkmate 2');		
+
+		board = [
+			['0', 'BK', '0', '0', '0', '0', '0', '0'],
+			['WP', '0', 'WP', '0', '0', '0', '0', '0'],
+			['0', 'WK', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+			['0', '0', '0', '0', '0', '0', '0', '0'],
+		];
+		assert.ok(chess.isValidMove(board, 'K',
+			{row: 0, col: 1},
+			{row: 0, col: 0},
+			'B'), "King can move away from check with Pawn");
+		assert.ok(chess.isValidMove(board, 'K',
+			{row: 0, col: 1},
+			{row: 0, col: 2},
+			'B'), "King can move away from check with Pawn 2");
+		assert.ok(!chess.isValidMove(board, 'K',
+			{row: 0, col: 1},
+			{row: 1, col: 1},
+			'B'), "King cannot move to an area protected by Enemy King");
 	});
 
 	test('valid rook', function(){

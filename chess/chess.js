@@ -9,6 +9,7 @@
 			pos, piece.color);
 		var allPossibleMoves = endGame.allPossibleMoves;
 		var myPossibleMoves = [];
+		
 		for(var i in allPossibleMoves){
 			var move = allPossibleMoves[i];
 			if(move.from.row == pos.row && move.from.col == pos.col){
@@ -290,9 +291,9 @@
 						for(var col_i = pos.col - 1; col_i <= pos.col+1; col_i++){
 							if(col_i >= 0 && col_i < 8){
 								if(this.canMoveHere(boardData, row_i, col_i, piece, myTurn)){
-									if(!this.isEnemyControlled(row_i, col_i, enemyMoves)){
-										if(col_i != pos.col || row_i != pos.row){
-											if(myTurn){
+									if(myTurn){
+										if(!this.isEnemyControlled(row_i, col_i, enemyMoves)){
+											if(col_i != pos.col || row_i != pos.row){
 												if(!this._kingsMoveChecked(boardData, {
 													from : {row: piece.row, col: piece.col},
 													to : {row: row_i, col: col_i}
@@ -303,8 +304,14 @@
 													}));		
 												}
 											}
-											
 										}	
+									}else{
+										if(col_i != pos.col || row_i != pos.row){
+											possibleMoves.push(constructMove({
+												row : row_i,
+												col: col_i
+											}));
+										}
 									}
 								}
 							}
