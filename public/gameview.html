@@ -4,9 +4,38 @@
 		<title>Peasant's Revolt</title>
 		<link rel="stylesheet" type="text/css" href="/css/normalize.css"/>
 		<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/antiscroll.css"/>
+		<style>
+			.antiscroll-inner{
+				width: 290px;
+			}
+		</style>
 		<script type="text/javascript" src="/js/lib/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="/js/lib/antiscroll.js"></script>
 	</head>
-	<body>		
+	<body>
+	<script type="text/html" id="chat-template">
+		<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">
+			<div class="feed-item-inner tip-arrow-inner">
+				<div class="tip-arrow"></div>
+				<div class="feed-item-main">
+					<div class="media media-mini">
+						<div class="media-img"><img src="http://placekitten.com/20/20"></div>
+						<div class="media-body">
+							<aside class="align-right time">
+								<time data-time-format="short">1d</time>	
+							</aside>
+							<div class="media-content">
+								<p>
+									<a class="player-name">Lowly Peasant</a> totally did not say this.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>		
 		<div class="page-content">
 			<div class="main-wrapper">
 				<div class="main">
@@ -52,92 +81,10 @@
 								</nav>
 							</header>
 							<div class="feed">
-								<div class="feed-content-wrapper nano">
-									<div class="feed-content content">
-										<div class="feed-content-inner padded">
-											<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">
-												
-												<div class="feed-item-inner tip-arrow-inner">
-													<div class="tip-arrow"></div>
-													<div class="feed-item-main">
-														<div class="media media-mini">
-															<div class="media-img"><img src="http://placekitten.com/20/20"></div>
-															<div class="media-body">
-																<aside class="align-right time">
-																	<time data-time-format="short">21h</time>	
-																</aside>
-																<div class="media-content">
-																	<p>
-																		<a class="player-name">King Heroic Lyric</a> Yes, that is a very fine move indeed. This reply is very long so please bear with me.
-																	</p>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">											
-												<div class="feed-item-inner tip-arrow-inner">
-													<div class="tip-arrow"></div>
-													<div class="feed-item-main">
-														<div class="media media-mini">
-															<div class="media-img"><img src="http://placekitten.com/20/20"></div>
-															<div class="media-body">
-																<aside class="align-right time">
-																	<time data-time-format="short">1d</time>	
-																</aside>
-																<div class="media-content">
-																	<p>
-																		<a class="player-name">Lowly Peasant</a> totally did not say this.
-																	</p>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="feed-item feed-item-plain">											
-												<div class="feed-item-inner tip-arrow-inner">
-													<div class="tip-arrow"></div>
-													<div class="feed-item-main">
-														<div class="media media-mini">
-															<div class="media-img"><img src="http://placekitten.com/20/20"></div>
-															<div class="media-body">
-																<aside class="align-right time">
-																	<time data-time-format="short">1d</time>	
-																</aside>
-																<div class="media-content">
-																	<p>
-																		<a class="player-name">Lowly Peasant</a> ordered 
-																		<a class="player-name">Pawn</a> to 
-																		<a class="player-name">c3</a>
-																	</p>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">											
-												<div class="feed-item-inner tip-arrow-inner">
-													<div class="tip-arrow"></div>
-													<div class="feed-item-main">
-														<div class="media media-mini">
-															<div class="media-img"><img src="http://placekitten.com/20/20"></div>
-															<div class="media-body">
-																<aside class="align-right time">
-																	<time data-time-format="short">1d</time>	
-																</aside>
-																<div class="media-content">
-																	<p>
-																		<a class="player-name">Lowly Peasant</a> guys, can I move this pawn here?
-																	</p>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
+								<div class="feed-content-wrapper antiscroll-wrap">
+									<div class="feed-content content ">
+										<div class="feed-content-inner padded antiscroll-inner ">
+											Default 
 										</div>
 									</div>
 								</div>
@@ -148,8 +95,30 @@
 			</aside>
 		</div>			
 		<script>
-	
-			
+			$(function () {
+				$(window).resize(function(){
+					console.log('RESIZING>..');
+						var height = $('.content-slider-wrapper').height();
+					var headerHeight = $('.side-bar-header').height();
+					console.log('HEIGHT: ' + height);
+					$('.antiscroll-inner').css('height', (height-headerHeight)+'px');
+					scroller = $('.antiscroll-wrap').antiscroll().data('antiscroll');
+				});
+				var height = $('.content-slider-wrapper').height();
+				var headerHeight = $('.side-bar-header').height();
+				console.log('HEIGHT: ' + height);
+				$('.antiscroll-inner').css('height', (height-headerHeight)+'px');
+				scroller = $('.antiscroll-wrap').antiscroll().data('antiscroll');
+				$('.chat-box').keyup(function(e){
+					if(e.which == 13){
+						e.preventDefault();
+						var feedItem = $('#chat-template').html();
+						$('.feed-content-inner').append(feedItem);
+						$('.chat-box').val('');	
+						scroller.refresh();
+					}
+				})     	
+		   	});			
 		</script>
 	</body>
 </html>

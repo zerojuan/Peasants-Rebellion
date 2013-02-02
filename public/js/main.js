@@ -15,7 +15,7 @@ requirejs.config({
 			deps : ['jquery']
 		},
 		'GameView' : {
-			deps : ['xrtml', 'timeago']
+			deps : ['xrtml', 'timeago', 'antiscroll']
 		},
 		'PlayChess' : {
 			deps : ['easel', 'preload', 'tween', 'chess-client', 'Tilemap']
@@ -29,6 +29,7 @@ requirejs.config({
 		'preload' : 'lib/preloadjs-0.2.0.min',
 		'timeago' : 'lib/jquery.timeago',
 		'xrtml' : 'lib/xrtml-custom-3.0-min',
+		'antiscroll' : 'lib/antiscroll',
 		'sound' : 'lib/soundjs-0.3.0.min',
 		'backbone' : 'lib/backbone',
 		'underscore' : 'lib/underscore',
