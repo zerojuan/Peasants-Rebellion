@@ -76,6 +76,7 @@ define('GameView',[
 			"keyup .chat-box" : "onChatType",
 			"focus .chat-box" : "onChatFocus",
 			"blur .chat-box" : "onChatBlur",
+			"resize window" : "onResizeWindow",
 			"click #results-panel" : "onHideResultsPanel"
 		},
 		render : function(){
@@ -107,9 +108,27 @@ define('GameView',[
 				}
 			});
 
-			
-
+			$(window).resize(function(){
+				that._resizeScroller();
+			})
+			//initialize antiscroll here
+				
 			return this;
+		},
+		initializeAntiscroll : function(){
+			this._resizeScroller();
+		},
+		_resizeScroller : function(){
+			var this_el = $(this.el);
+			var height = this_el.find('.content-slider-wrapper').height();
+			var headerHeight = this_el.find('.side-bar-header').height() + 20;
+			console.log('Height: ' + height + " HeaderHeight: " + headerHeight);	
+			this_el.find('.antiscroll-inner').css('height', (height-headerHeight)+'px')
+				.css('width', '290px');
+			this.scroller = this_el.find('.antiscroll-wrap').antiscroll().data('antiscroll');
+		},
+		onResizeWindow : function(){
+			this._resizeScroller();
 		},
 		onChatBlur : function(){
 			var msg = $.trim($(this.el).find('.chat-box').val());
@@ -208,10 +227,14 @@ define('GameView',[
 				to : move_to
 			});
 		},
+		_appendToFeed : function(tmpl){
+			$(this.el).find('.feed-content-inner').prepend(tmpl);
+			this.scroller.refresh();
+		},
 		createChatElement : function(data){
 			var timestring = $.timeago(data.timestamp);
 			var tmpl = this.chatTemplate({color: data.player.color, name: data.player.name, message: data.message, timestamp : data.timestamp, timestring : timestring});
-			$(this.el).find('.feed-content-inner').prepend(tmpl);
+			this._appendToFeed(tmpl);
 		},
 		createStatusElement : function(data, msg){
 			var timestring = $.timeago(new Date());
@@ -221,13 +244,13 @@ define('GameView',[
 			}
 			
 			var tmpl = this.statusTemplate({msg : msg, timestamp : new Date().toISOString(), timestring: timestring});					
-			$(this.el).find('.feed-content-inner').prepend(tmpl);					
+			this._appendToFeed(tmpl);
 		},
 		createUsurpElement : function(status, data){
 			var timestring = $.timeago(new Date());
 			var kingName = this.model.get('king').name;
 			var tmpl = this.usurpTemplate({timestamp: new Date().toISOString(), timestring: timestring, status : status, name : data.player.name, kingName: kingName});
-			$(this.el).find('.feed-content-inner').prepend(tmpl);
+			this._appendToFeed(tmpl);
 		},
 		createMoveElement : function(data){
 			var date = new Date(data.time);
@@ -268,7 +291,7 @@ define('GameView',[
 			var to = cols[data.to.col]+ ""+ (data.to.row + 1)				
 
 			var tmpl = this.moveTemplate({data: data, result : "", from: from, to: to, piece: piece, timestamp: date.toISOString(), timestring: timestring});
-			$(this.el).find('.feed-content-inner').prepend(tmpl);					
+			this._appendToFeed(tmpl);
 		},
 		updateColor : function(color){
 			this.side = color;

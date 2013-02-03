@@ -107,7 +107,7 @@ define('Router', [
 			console.log(this.currentGame.get('board'));
 
 			this.elms['page-content'].html(this.gameView.render().el);	
-
+			this.gameView.initializeAntiscroll();
 		}
 	});
 

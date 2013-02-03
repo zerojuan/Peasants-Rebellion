@@ -39,44 +39,43 @@
 </div>
 <aside class="side-bar" id="side-bar">
 	<div class="side-bar-inner">
-	<header class="user-info padded">
-		<div class="media clearfix">
-			<div class="avatar">
-				<a><% if(game.player.authId) { %>
-					<img src="./assets/king-icon-big.png"></img>
-					<% }else{ %>
-					<img src="./assets/peasant-icon-big.png"></img>
-					<% } %>
-				</a>						
-			</div>
-			<div class="details">							
-				<h3 class="player-name"><%- game.player.name %></h3>
-				<div class="player-detail">
-					<%- game.player.title %>
+		<header class="user-info padded">
+			<div class="media clearfix">
+				<div class="avatar">
+					<a><% if(game.player.authId) { %>
+						<img src="./assets/king-icon-big.png"></img>
+						<% }else{ %>
+						<img src="./assets/peasant-icon-big.png"></img>
+						<% } %>
+					</a>						
+				</div>
+				<div class="details">							
+					<h3 class="player-name"><%- game.player.name %></h3>
+					<div class="player-detail">
+						<%- game.player.title %>
+					</div>
 				</div>
 			</div>
-		</div>
-	</header>
-	<div class="content-slider-wrapper">
-		<div class="content-slider-item">
-			<header class="side-bar-header bar-shadow">
-				<nav class="button-bar">
-					<div class="chat-form condensed">
-						<textarea class="chat-box" placeholder="Say something..." disabled=true></textarea>
-					</div>
-				</nav>
-			</header>
-			<div class="feed">
-				<div class="feed-content-wrapper antiscroll-wrap">
-					<div class="feed-content content">
-						<div class="feed-content-inner padded antiscroll-inner">
-							<span style="font-size: 12px; font-style: italic;">Note: you can share this game's URL to have more players play as Peasants against the King</span>
+		</header>
+		<div class="content-slider-wrapper">
+			<div class="content-slider-item">
+				<header class="side-bar-header bar-shadow">
+					<nav class="button-bar">
+						<div class="chat-form condensed">
+							<textarea class="chat-box" placeholder="Say something..." disabled=true></textarea>
+						</div>
+					</nav>
+				</header>
+				<div class="feed">
+					<div class="feed-content-wrapper antiscroll-wrap">
+						<div class="feed-content content">
+							<div class="feed-content-inner padded antiscroll-inner">
+								<span style="font-size: 12px; font-style: italic;">Note: you can share this game's URL to have more players play as Peasants against the King</span>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	</div>
-	</aside>
-	</div>
+</aside>

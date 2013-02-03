@@ -785,3 +785,7 @@ textarea.chat-box{
 	text-align: center;
 	font-size: 30px;
 }
+
+.antiscroll-inner{
+	width: 290px;
+}
