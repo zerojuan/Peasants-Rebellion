@@ -38,31 +38,28 @@ define('GameView',[
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
 
-			if(this.model.get('alive')){
+			//if game is still running
+			if(this.model.get('alive')){  
 				xRTML.ready(function(){
-					loadOrtcFactory(IbtRealTimeSJType, function(factory, error){
-						if(error != null){
-							console.log('Factory error: ' + error.message);
-						}else{
-							if(factory != null){
-								that.ortcClient = factory.createClient();
-
-								that.ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
-		                 
-								that.ortcClient.onConnected = function(ortc){
-									console.log('Connected...');
-									$('.overlay').fadeOut();
-									$('.chat-box').prop('disabled', false);									
-									that.ortcClient.subscribe('peasant_chess_browser_' + that.channel,
-										true, function(ortc, channel, message){
-											console.log('Message Recieved: ' + message);
-											that._parseMessage(message);
-										});
-								}
-
-								that.ortcClient.connect('Qy9W72', 'peasantchessauth');
-							}
-						}
+					var connection = xRTML.ConnectionManager.create({
+						url : 'http://ortc-developers.realtime.co/server/2.1/',
+						id : 'Peasant-Chess-Connection',
+						appKey : 'Qy9W72',
+						authToken : 'peasantchessauth',
+						channels : [{
+							name : 'peasant_chess_browser_' + that.channel,
+							onMessage : xRTML.Common.Function.proxy(function(e){
+								var message = e.message;
+								console.log('Message Recieved: ' + message);
+								that._parseMessage(message);
+							}, this)
+						}],
+						onConnect : xRTML.Common.Function.proxy(function(e){
+							console.log('Connected...');
+							$('.overlay').fadeOut();
+							$('.chat-box').prop('disabled', false);									
+						}, this),
+						metadata : xRTML.JSON.stringify(that.model.get('player'))
 					});
 				});		
 			}else{
@@ -404,15 +401,26 @@ define('GameView',[
 						type : type,
 						data : data
 					};
-					this.ortcClient.send(channel,JSON.stringify(message));
+					var xrtmlMessage = xRTML.MessageManager.create({
+						trigger : 'chat',
+						action : '',
+						data : message
+					})
+					xRTML.ConnectionManager.sendMessage({connections: ['Peasant-Chess-Connection'],
+						channel : channel, content : xrtmlMessage});
 					break;
 				case 'move' :
 					var message = {
 						type : type,
 						data : data
 					};
-					this.ortcClient.send(channel,
-						JSON.stringify(message));
+					var xrtmlMessage = xRTML.MessageManager.create({
+						trigger : 'move',
+						action : '',
+						data : message
+					})
+					xRTML.ConnectionManager.sendMessage({connections: ['Peasant-Chess-Connection'],
+						channel : channel, content : xrtmlMessage});
 					break;
 			}
 		}

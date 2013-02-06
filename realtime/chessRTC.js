@@ -20,6 +20,16 @@ var ChessRTC = function(clusterURL){
 				var game = games[i];
 					that.ortcSubscriber(game.code);	
 			}
+			that.ortcClient.subscribe('ortcClientConnected', true, 
+				function(ortc, channel, message){
+					console.log('ONClient Connect Message: ' + message);
+					console.log('Channel: ' + channel);
+				});
+			that.ortcClient.subscribe('ortcClientDisconnected', true,
+				function(ortc, channel, message){
+					console.log('Disconnected: ' + message);
+					console.log('Channel: ' + channel);
+				});
 		});	
 	}
 }
