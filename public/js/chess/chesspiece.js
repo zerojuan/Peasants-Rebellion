@@ -40,7 +40,7 @@ define("ChessPiece",[
 			this.animation.gotoAndPlay(this.type+"_up"+"_awake");	
 		},
 		updateTurn : function(isMyTurn){
-			console.log('Is My Turn: ' + isMyTurn);
+			// console.log('Is My Turn: ' + isMyTurn);
 			if(this.animation.currentAnimation == 'P_up_promote'){
 				return;
 			}

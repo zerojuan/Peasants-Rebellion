@@ -294,6 +294,7 @@ define('PlayChess', [
 			return possibleMoves;
 		},
 		updatePiece : function(data){
+			console.log('Updating Piece');
 			if(data.color == 'B'){
 				this.blackPieceManager.movePiece(data.from, data.to);
 				this.whitePieceManager.removePiece(data.to);

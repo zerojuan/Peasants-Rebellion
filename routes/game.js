@@ -30,7 +30,7 @@ exports.randomGame = function(req, res, next){
 
 			for(i in game.peasants){
 				if(game.peasants[i].name == name){
-					name += " " + game.peasants.length;
+					name += " " + game.romanize(game.peasants.length);
 				}
 			}
 			peasant = {
@@ -112,7 +112,7 @@ exports.getByCode = function(req, res, next){
 			var name = game.getRandomPeasantName();
 			for(i in game.peasants){
 				if(game.peasants[i].name == name){
-					name += " " + game.peasants.length;
+					name += " " + game.romanize(game.peasants.length);
 				}
 			}
 			peasant = {

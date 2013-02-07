@@ -21,14 +21,42 @@ var ChessRTC = function(clusterURL){
 					that.ortcSubscriber(game.code);	
 			}
 			that.ortcClient.subscribe('ortcClientConnected', true, 
-				function(ortc, channel, message){
-					console.log('ONClient Connect Message: ' + message);
+				function(ortc, channel, message){					
 					console.log('Channel: ' + channel);
+					console.log('Connected: ' + message);				
 				});
 			that.ortcClient.subscribe('ortcClientDisconnected', true,
 				function(ortc, channel, message){
-					console.log('Disconnected: ' + message);
 					console.log('Channel: ' + channel);
+					console.log('Disconnected: ' + message);
+					var messageObj = JSON.parse(message);			
+					var disconnectionObj = JSON.parse(messageObj.cm);
+					console.log(disconnectionObj);
+
+					//Check database on which game this came from
+					Game.findOne({ code: disconnectionObj.code}, function(err, game){
+						if(err){
+							console.log('Error looking up game ' + disconnectionObj.code);
+							console.log(err);
+							return;
+						}
+
+						if(game){
+							console.log('Game found, peasant count: ' + game.peasants.length);
+							for(var i in game.peasants){
+								if(game.peasants[i].playerCode == disconnectionObj.player.playerCode){
+									game.peasants.remove(game.peasants[i]);
+								}
+							}
+							game.save(function(){
+								console.log('Peasant count after disconnect: ' + game.peasants.length);
+							});							
+						}else{
+							console.log('Game ' + disconnectionObj.code + " does not exist.");
+							return null;
+						}
+					});
+					
 				});
 		});	
 	}
@@ -49,8 +77,10 @@ ChessRTC.prototype = {
 		var browserChannel = 'peasant_chess_browser_'+code;
 		this.ortcClient.send(browserChannel, JSON.stringify(message));
 	},
-	handleORTCMessage : function(code, message){
+	handleORTCMessage : function(code, xRTMLMessage){
 		var that = this;
+		console.log(xRTMLMessage);
+		message = xRTMLMessage.xrtml.d;
 		console.log('Message From: ' + code + '>> ' + message.type);
 		console.log(message);
 		var type = message.type;

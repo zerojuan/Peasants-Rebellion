@@ -59,7 +59,10 @@ define('GameView',[
 							$('.overlay').fadeOut();
 							$('.chat-box').prop('disabled', false);									
 						}, this),
-						metadata : xRTML.JSON.stringify(that.model.get('player'))
+						metadata : xRTML.JSON.stringify({
+							player : that.model.get('player'),
+							code : that.model.get('code')
+						})
 					});
 				});		
 			}else{
