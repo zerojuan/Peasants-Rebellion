@@ -4,6 +4,7 @@
   "dependencies": {
     "express": "3.0.3",
     "mongoose": "3.4.0",
+    "less-middleware": "",
     "mocha": "",
     "ibtrealtimesjnode": ""
   },

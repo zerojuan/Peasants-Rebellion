@@ -23,7 +23,32 @@ var ChessRTC = function(clusterURL){
 			that.ortcClient.subscribe('ortcClientConnected', true, 
 				function(ortc, channel, message){					
 					console.log('Channel: ' + channel);
-					console.log('Connected: ' + message);				
+					console.log('Connected: ' + message);
+					var messageObj = JSON.parse(message);			
+					var connectionObj = JSON.parse(messageObj.cm);
+					console.log(connectionObj);
+					//Add the player back to the list
+					Game.findOne({code : connectionObj.code}, function(err, game){
+						if(err){
+							console.log('Error looking up game ' + connectionObj.code);
+							console.log(err);
+							return;
+						}
+
+						if(game){
+							console.log('Game found, peasant count: ' + game.peasants.length);
+							for(var i in game.peasants){
+								if(game.peasants[i].playerCode == connectionObj.player.playerCode){
+									//player is already signed in before, don't add
+									return;
+								}
+							}
+							game.peasants.push(connectionObj.player);
+							game.save(function(){
+								console.log('Peasant count after disconnect: ' + game.peasants.length);
+							});
+						}
+					});			
 				});
 			that.ortcClient.subscribe('ortcClientDisconnected', true,
 				function(ortc, channel, message){
@@ -132,7 +157,7 @@ ChessRTC.prototype = {
 							};
 							console.log('Failed! ' + player.name);
 						}
-						this.ortcPublisher(code, message);
+						that.ortcPublisher(code, message);
 					});
 				}else{
 					var parsedPlayer = {
@@ -145,14 +170,13 @@ ChessRTC.prototype = {
 				
 				break;
 			case 'touch' :
-				var player = message.data.player;
+				var player = message.data;
 				console.log(player.name + ' touched ' 
-					+ message.data.piece + ' at ' 
-					+ message.data.from.row + ', ' + message.data.from.col);
+					+ player.piece + ' at ' 
+					+ player.from.row + ', ' + player.from.col);
 				var parsedPlayer = {
 					name : player.name
 				};
-				message.data.player = parsedPlayer;
 				this.ortcPublisher(code, message);
 				break;
 			case 'move' :

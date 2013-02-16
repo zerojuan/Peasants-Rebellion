@@ -34,10 +34,10 @@ define('MovesLayer',[
 				},
 				glow : function(){					
 					this.graphics.alpha = .3;
-					createjs.Tween.get(this.graphics, {override: true, loop: true}).to({alpha:.5}, 900).to({alpha:.2}, 900);
+					createjs.Tween.get(this.graphics, {override: true, loop: true}).to({alpha:.5}, 300).to({alpha:.2}, 300);
 				},
 				fadeOut : function(){					
-					createjs.Tween.get(this.graphics, {override: true}).to({alpha:0}, 900);
+					createjs.Tween.get(this.graphics, {override: true}).to({alpha:0}, 200);
 				}
 			};
 			var graphics = new createjs.Graphics();
@@ -69,7 +69,7 @@ define('MovesLayer',[
 				}else{
 					tile.setVisible(false);
 				}
-			}
+		 	}
 		},
 		canMoveHere : function(boardData, row, col, piece){
 			return boardData[row][col].charAt(0) != piece.color;	

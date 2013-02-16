@@ -33,6 +33,12 @@ define('PlayChess', [
 				listener.onMove(piece, move_to);
 			}
 		},
+		dispatchTouchEvent : function(piece){
+			for(var i in this.listeners){
+				var listener = this.listeners[i];
+				listener.onTouch(piece);
+			}
+		},
 		setColor : function(team){
 			this.color = team;
 		},
@@ -252,6 +258,8 @@ define('PlayChess', [
 				if(this.activePiece)
 					this.activePiece.deactivate();
 				piece.activate();
+				this.dispatchTouchEvent(piece);
+				//touch
 				this.movesLayer.setPossibleMoves(
 						this.getPossibleMoves(piece)
 					);

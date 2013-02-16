@@ -227,6 +227,18 @@ define('GameView',[
 				to : move_to
 			});
 		},
+		onTouch : function(piece){
+			this._publishMessage('touch', {
+				name : this.model.get('player').name,
+				code : this.model.get('player').playerCode,
+				piece : piece.type,
+				color : piece.color,
+				from : {
+					row: piece.row,
+					col : piece.col
+				}
+			});
+		},
 		_appendToFeed : function(tmpl){
 			$(this.el).find('.feed-content-inner').prepend(tmpl);
 			this.scroller.refresh();
@@ -365,6 +377,9 @@ define('GameView',[
 					}
 					this.createChatElement(data);
 					break;
+				case 'touch' : 
+					console.log('TOUCH:');
+					//check if the player code is the same as mine
 				case 'move' :
 					console.log('MOVE: ');
 					this.createMoveElement(data);
@@ -409,6 +424,19 @@ define('GameView',[
 						action : '',
 						data : message
 					})
+					xRTML.ConnectionManager.sendMessage({connections: ['Peasant-Chess-Connection'],
+						channel : channel, content : xrtmlMessage});
+					break;
+				case 'touch' : 
+					var message = {
+						type : type,
+						data : data
+					}
+					var xrtmlMessage = xRTML.MessageManager.create({
+						trigger : 'touch',
+						action : '',
+						data : message
+					});
 					xRTML.ConnectionManager.sendMessage({connections: ['Peasant-Chess-Connection'],
 						channel : channel, content : xrtmlMessage});
 					break;

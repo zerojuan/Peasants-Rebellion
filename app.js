@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var less = require('less-middleware');
 var ChessRTC = require('./realtime/chessRTC');
 var Chess = require('./chess/chess');
 var ChatCommands = require('./chess/chatcommands');
@@ -16,6 +17,7 @@ var db = mongoose.connect(process.env.MONGO_URI);
 // Setup Express
 //========================= 
 app.configure(function(){
+	app.use(less({ src: __dirname + '/public' }));
 	app.use(express.bodyParser());
 	app.use(express.static(__dirname + '/public'));
 	app.use(function(err, req, res, next){
