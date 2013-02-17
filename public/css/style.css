@@ -270,6 +270,7 @@ header.main h1 {
   width: 320px;
   height: 100%;
   z-index: 1;
+  border-left: 1px solid #e7e7e7;
 }
 .side-bar .side-bar-inner {
   width: 100%;
@@ -286,8 +287,10 @@ header.main h1 {
   border-bottom: 1px solid #E5E5E5;
 }
 .user-info .details {
-  overflow: visible;
+  overflow: hidden;
   position: relative;
+  float: left;
+  margin-left: 10px;
 }
 .user-info .details .player-name {
   font-size: 1.65em;
@@ -309,9 +312,6 @@ header.main h1 {
 .avatar {
   float: left;
   width: 50px;
-}
-.details {
-  float: left;
 }
 .clearfix {
   clear: both;

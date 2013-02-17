@@ -243,7 +243,7 @@ define('GameView',[
 			});
 		},
 		_appendToFeed : function(tmpl){
-			$(this.el).find('.feed-content-inner').prepend(tmpl);
+			$(tmpl).hide().prependTo($(this.el).find('.feed-content-inner')).fadeIn("slow");
 			this.scroller.refresh();
 		},
 		createAnnouncementElement : function(type, data){
