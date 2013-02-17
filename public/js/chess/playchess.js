@@ -4,9 +4,10 @@ define('PlayChess', [
 	'ChessPiece',
 	'PieceManager',
 	'MovesLayer',
+	'TouchMovesLayer',
 	'easel',
 	'preload'
-], function($, Tilemap, ChessPiece, PieceManager, MovesLayer){
+], function($, Tilemap, ChessPiece, PieceManager, MovesLayer, TouchMovesLayer){
 	var PlayChess;
 
 	var assetManifest = [

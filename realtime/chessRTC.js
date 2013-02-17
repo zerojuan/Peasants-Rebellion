@@ -40,6 +40,11 @@ var ChessRTC = function(clusterURL){
 							for(var i in game.peasants){
 								if(game.peasants[i].playerCode == connectionObj.player.playerCode){
 									//player is already signed in before, don't add
+									connectionObj.type = 'connection';
+									var message = {};
+									message.type = 'connection';
+									message.data = connectionObj;
+									that.ortcPublisher(connectionObj.code, message);
 									return;
 								}
 							}
@@ -47,6 +52,11 @@ var ChessRTC = function(clusterURL){
 							game.save(function(){
 								console.log('Peasant count after disconnect: ' + game.peasants.length);
 							});
+							connectionObj.type = 'connection';
+							var message = {};
+							message.type = 'connection';
+							message.data = connectionObj;
+							that.ortcPublisher(connectionObj.code, message);
 						}
 					});			
 				});
@@ -76,6 +86,11 @@ var ChessRTC = function(clusterURL){
 							game.save(function(){
 								console.log('Peasant count after disconnect: ' + game.peasants.length);
 							});							
+							disconnectionObj.type = 'disconnection';
+							var message = {};
+							message.type = 'disconnection';
+							message.data = disconnectionObj;
+							that.ortcPublisher(disconnectionObj.code, message);
 						}else{
 							console.log('Game ' + disconnectionObj.code + " does not exist.");
 							return null;
@@ -83,8 +98,11 @@ var ChessRTC = function(clusterURL){
 					});
 					
 				});
-		});	
+		});		
 	}
+	this.ortcClient.onException = function (ortc, exception) {
+		console.log('Exception occured:', exception);
+	};
 }
 
 ChessRTC.prototype = {

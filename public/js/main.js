@@ -41,6 +41,7 @@ requirejs.config({
 		'PlayChess' : 'chess/playchess',
 		'ChessPiece' : 'chess/chesspiece',
 		'MovesLayer' : 'chess/moveslayer', 
+		'TouchMovesLayer' : 'chess/touchmoveslayer',
 		'PieceManager' : 'chess/piecemanager',
 		'HeaderView' : 'views/header',
 		'HomeView' : 'views/home',

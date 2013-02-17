@@ -8,9 +8,10 @@ define('GameView',[
 	'text!templates/chat-item.html',
 	'text!templates/result-sidebar.html',
 	'text!templates/usurp-item.html',
+	'text!templates/announcement-item.html',
 	'GameModel',
 	'PlayChess'
-], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, usurpTpl, GameModel, PlayChess){
+], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, usurpTpl, announcementTpl, GameModel, PlayChess){
 	var GameView;
 
 	var that = GameView;
@@ -34,6 +35,7 @@ define('GameView',[
 			this.moveTemplate = _.template(moveTpl);
 			this.resultTemplate = _.template(resultTpl);
 			this.usurpTemplate = _.template(usurpTpl);
+			this.announcementTemplate = _.template(announcementTpl);
 
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
@@ -61,6 +63,7 @@ define('GameView',[
 						}, this),
 						metadata : xRTML.JSON.stringify({
 							player : that.model.get('player'),
+							color : that.side,
 							code : that.model.get('code')
 						})
 					});
@@ -243,6 +246,33 @@ define('GameView',[
 			$(this.el).find('.feed-content-inner').prepend(tmpl);
 			this.scroller.refresh();
 		},
+		createAnnouncementElement : function(type, data){
+			var timestring = $.timeago(new Date());
+			var message = "";
+			var status = 'king';
+			if(data.color == 'B'){
+				status = 'king';
+			}else{
+				status = 'peasant';
+			}
+			if(type == "disconnect"){
+				if(data.color == 'B'){
+					message = " has left the throne!"
+				}else{
+					message = " has left.";	
+				}
+				
+			}else{
+				if(data.color == 'B'){
+					message = " is back!";
+				}else{
+					message = " has joined the Rebels!";
+				}
+			}
+			
+			var tmpl = this.announcementTemplate({type: type, color: data.color, name: data.player.name, timestamp: new Date(), timestring: timestring, message: message, status: status});
+			this._appendToFeed(tmpl);
+		},
 		createChatElement : function(data){
 			var timestring = $.timeago(data.timestamp);
 			var tmpl = this.chatTemplate({color: data.player.color, name: data.player.name, message: data.message, timestamp : data.timestamp, timestring : timestring});
@@ -335,6 +365,14 @@ define('GameView',[
 			var data = msgObj.data;
 			//the message is global
 			switch(msgObj.type){
+				case 'connection':
+					console.log('Connected: ' + data.player.name);
+					this.createAnnouncementElement('connect', data);
+					break;
+				case 'disconnection':
+					console.log('Disconnected: ' + data.player.name);
+					this.createAnnouncementElement('disconnect', data);
+					break;
 				case 'usurp':
 					console.log('USURPATION!');
 					$(this.el).find('.chat-box').removeAttr('disabled');
@@ -380,6 +418,7 @@ define('GameView',[
 				case 'touch' : 
 					console.log('TOUCH:');
 					//check if the player code is the same as mine
+					break;
 				case 'move' :
 					console.log('MOVE: ');
 					this.createMoveElement(data);

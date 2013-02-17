@@ -470,6 +470,12 @@ textarea.chat-box {
 .feed-item-bubble .feed-item-main {
   padding: 10px;
 }
+.feed-item-main.peasant {
+  background: #cc7972;
+}
+.feed-item-main.king {
+  background: #4e8eba;
+}
 .feed-item-main.failed,
 .feed-item-main.mad {
   background: #f0d690;
@@ -567,7 +573,6 @@ textarea.chat-box {
 }
 .top {
   height: 80px;
-  border-bottom: 2px solid #E5E5E5;
   margin-bottom: 5px;
   text-align: center;
 }
@@ -579,11 +584,12 @@ textarea.chat-box {
 .top.peasant {
   background: #be564d;
   color: white;
+  border-right: 4px solid #e0afaa;
 }
 .top.king {
   background: #3c7399;
   color: white;
-  border-bottom: 4px solid #E5E5E5;
+  border-right: 4px solid #85b1cf;
 }
 .top span {
   max-width: 840px;

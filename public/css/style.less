@@ -3,6 +3,9 @@
 	height: 100%;
 }*/
 
+@peasant-color: #be564d;
+@king-color: #3c7399;
+
 body{
 	background-image: url('../assets/pw_maze_white.png');
 	font-family: 'Alegreya', Arial;
@@ -160,14 +163,14 @@ textarea {
 				float: left;
 				padding-top: 20px;
 				margin-left: 80px;
-				background: #3c7399;
+				background: @king-color;
 			}
 
 			&.peasant{
 				padding-top: 20px;
 				float: right;
 				margin-right: 70px;
-				background: #be564d;
+				background: @peasant-color;
 			}		
 		}
 	}
@@ -527,6 +530,15 @@ textarea.chat-box{
 	padding: 10px;
 }
 
+.feed-item-main{
+	&.peasant{
+		background: lighten(@peasant-color, 10%);
+	}
+	&.king{
+		background: lighten(@king-color, 10%);
+	}
+}
+
 .feed-item-main.failed, .feed-item-main.mad{
 	background: #f0d690;
 }
@@ -615,20 +627,22 @@ textarea.chat-box{
 
 .top{	
 	height: 80px;
-	border-bottom: 2px solid #E5E5E5;	
+	// border-bottom: 2px solid #E5E5E5;	
 	margin-bottom: 5px;
 	text-align: center;
 
 	@media only screen and (max-width : 1024px) { height: 50px; }
 	&.peasant{
-		background: #be564d;
+		background: @peasant-color;
 		color: white;
+		border-right: 4px solid lighten(@peasant-color, 25%);
 	}
 
 	&.king{
-		background: #3c7399;
+		background: @king-color;
 		color: white;
-		border-bottom: 4px solid #E5E5E5;		
+		// border-bottom: 4px solid #E5E5E5;
+		border-right: 4px solid lighten(@king-color, 25%);		
 	}
 
 	span{
