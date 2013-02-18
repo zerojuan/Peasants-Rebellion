@@ -185,16 +185,17 @@ define('PlayChess', [
 			this.loader.loadManifest(assetManifest);
 		},
 		handleInput : function(evt){
-			var mouseX = this.stage.mouseX - this.offset.x;
-			var mouseY = this.stage.mouseY - this.offset.y;
-
+			console.log("Handling input");			
+			var mouseX = evt.stageX - this.offset.x;
+			var mouseY = evt.stageY - this.offset.y;
+			console.log(evt);
 			if(mouseX < 0 || mouseY < 0){
-				console.log('Out of bounds');
+				console.log('Out of bounds');				
 				return;
 			}
 
 			if(mouseX > 64 * 8 || mouseY > 64 * 8){
-				console.log('Out of bounds');
+				console.log('Out of bounds');				
 				return;
 			}
 
@@ -250,11 +251,12 @@ define('PlayChess', [
 			console.log('Tapped: [' + row + ', ' + col +']');
 		},
 		activatePiece : function(piece){
-			if(piece == null){
+			if(piece == null){				
 				console.log('Deactivating piece');
-				this.activePiece.deactivate();
+				if(this.activePiece)
+					this.activePiece.deactivate();
 				this.movesLayer.deactivate();
-			}else{
+			}else{				
 				console.log('Activating piece');
 				if(this.activePiece)
 					this.activePiece.deactivate();
@@ -311,6 +313,7 @@ define('PlayChess', [
 				this.whitePieceManager.movePiece(data.from, data.to);
 				this.blackPieceManager.removePiece(data.to);
 			}
+			this.activatePiece(null);
 			this.restackPieceLayers();
 			this.setTurn(data.turn);
 			this.movesLayer.deactivate();

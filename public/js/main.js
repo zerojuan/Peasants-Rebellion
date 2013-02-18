@@ -51,6 +51,16 @@ requirejs.config({
 	}
 });
 
+requirejs.onError = function(err){
+	console.log('THIS IS THE SUPER ERROR HANDLER: ', err);
+}
+
 require(['App'], function(App){
-	App.initialize();
+	try{
+		App.initialize();	
+	}catch(exception){
+		console.log('This error just blinded us!!!!!!!!!!!!');
+		console.log(exception);
+	}
+	
 });

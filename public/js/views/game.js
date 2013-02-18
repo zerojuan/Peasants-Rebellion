@@ -143,7 +143,7 @@ define('GameView',[
 		},
 		onHideResultsPanel : function(){			
 			$(this.el).find('#results-panel').animate({top: "-1000px", bottom: "1000px"}, 600);					
-			$(this.el).find('#results-panel .bg').animate({bottom: "1000px"}, 600);
+			$(this.el).find('#results-panel .bg').animate({bottom: "1000px"}, 600);			
 			//$(this.el).find('#results-panel .bg').fadeOut(500, function(){$(this).hide()});
 		},
 		showResultsPanel : function(winner){			
@@ -175,6 +175,7 @@ define('GameView',[
 			var tmpl = this.resultTemplate({winner: winnerTxt, message: message});
 			$(this.el).find('.content-slider-item').html(tmpl).hide().fadeIn();
 			this.showMoves(moves);
+			this._resizeScroller();
 		},
 		showMoves : function(moves){
 			for(var i in moves){
@@ -244,7 +245,10 @@ define('GameView',[
 		},
 		_appendToFeed : function(tmpl){
 			$(tmpl).hide().prependTo($(this.el).find('.feed-content-inner')).fadeIn("slow");
-			this.scroller.refresh();
+			if(this.scroller){
+				this.scroller.refresh();	
+			}
+			
 		},
 		createAnnouncementElement : function(type, data){
 			var timestring = $.timeago(new Date());
@@ -270,7 +274,7 @@ define('GameView',[
 				}
 			}
 			
-			var tmpl = this.announcementTemplate({type: type, color: data.color, name: data.player.name, timestamp: new Date(), timestring: timestring, message: message, status: status});
+			var tmpl = this.announcementTemplate({type: type, color: data.color, name: data.player.name, timestamp: new Date().toISOString(), timestring: timestring, message: message, status: status});
 			this._appendToFeed(tmpl);
 		},
 		createChatElement : function(data){
@@ -339,6 +343,21 @@ define('GameView',[
 			this.side = color;
 			this.playChess.setColor(color);
 		},
+		updateBanner : function(status, data){
+			console.log('Updating banner');
+			if(status == 'me'){
+				console.log('Updating banner');
+				$('.top').removeClass('peasant');
+				$('.top').addClass('king');
+				$('.top span').hide().html('Peasants Revolt Against ' + data.player.name).fadeIn();
+			}else if(status == 'me-lose'){
+				$('.top').removeClass('king');
+				$('.top').addClass('peasant');
+				$('.top span').hide().html('Peasants Revolt Against ' + data.player.name).fadeIn();
+			}else{
+				$('.top span').hide().html('Peasants Revolt Against ' + data.player.name).fadeIn();
+			}
+		},
 		updateTurn : function(currentTurn){
 			var name = (this.side == 'W') ? 'Peasant' : 'King';
 			console.log('Current Turn: ' + currentTurn);
@@ -364,6 +383,7 @@ define('GameView',[
 			var msgObj = JSON.parse(message);
 			var data = msgObj.data;
 			//the message is global
+			try{
 			switch(msgObj.type){
 				case 'connection':
 					console.log('Connected: ' + data.player.name);
@@ -377,21 +397,24 @@ define('GameView',[
 					console.log('USURPATION!');
 					$(this.el).find('.chat-box').removeAttr('disabled');
 					if(data.success){
-						console.log('All Hail the new King');
+						console.log('All Hail the new King');						
 						if(this.model.get('player').playerCode == data.player.playerCode){													
 							$.cookie(this.model.get('code') + '.auth_king', data.player.authId);
 							console.log("Loading cookie: " + $.cookie(this.model.get('code') + '.auth_king'));
-							this.updateColor('B');							
-							this.updateTurn(this.model.get('turn'));	
+							this.updateColor('B');			
+							this.updateBanner('me',data);				
+							this.updateTurn(this.model.get('turn'));							
 							this.createUsurpElement('success', data);
 							this.model.set('king', data.player);
 						}else{
 							if(this.side == 'B'){ //I was the former King								
 								console.log('Goodbye, former king!');
+								this.updateBanner('me-lose',data);				
 								this.createUsurpElement('success-me', data);
 								this.playChess.showGameOver('D');
 								$(this.el).find('#turn-wrapper').html('You have been usurped...');
 							}else{
+								this.updateBanner('default', data);
 								this.createUsurpElement('success', data);	
 							}																					
 						}	
@@ -442,6 +465,10 @@ define('GameView',[
 						this.playChess.updatePiece(data);
 					}
 					break;
+			}
+			}catch(exception){
+				console.log("OH MY GOD THIS EXCEPTION IS SUCKS!");
+				throw exception;
 			}
 			$('time').timeago();
 		},

@@ -10,9 +10,18 @@ exports.reset = function(req, res){
 			}
 
 			if(!game){
-				console.log('Game not found');
+				console.log('Game not found.. creating game.');
 				//TODO: Create new game here							
-				return;
+				game = new Game();
+				game.code = 'CHKMTE';
+				var king = {
+					name : "King Checque",
+					title : "Tester of Checkmates",
+					passkey : 'hijackthis',
+					authId : game.generateAuthKey(),
+					playerCode : game.generateAuthKey()
+				};
+				game.king = king;							
 			}
 
 			//Black checkmate in 2 moves
@@ -42,8 +51,17 @@ exports.reset = function(req, res){
 				}
 
 				if(!game){
-					console.log('Game not found');
-					return;
+					console.log('Game not found.. creating game.');
+					game = new Game();
+					game.code = 'STLMTE';
+					var king = {
+						name : "King Stale",
+						title : "Tester of Stalemates",
+						passkey : 'hijackthis',
+						authId : game.generateAuthKey(),
+						playerCode : game.generateAuthKey()
+					};
+					game.king = king;					
 				}
 				var staleMateBoard = [
 					['0', 'BK', '0', '0', '0', '0', '0', '0'],

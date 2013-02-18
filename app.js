@@ -47,7 +47,7 @@ Game.find({alive:true}, function(err, games){
 				console.log('Subscribing... ' + game.code);
 				channels['peasant_chess_server_'+game.code] = 'r';
 				channels['peasant_chess_browser_'+game.code] = 'w';
-		}
+		}		
 
 		// Post permissions
 		chessRTC.ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true, 
