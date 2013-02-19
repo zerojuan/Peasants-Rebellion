@@ -38,7 +38,8 @@ var ChessRTC = function(clusterURL){
 						if(game){
 							console.log('Game found, peasant count: ' + game.peasants.length);
 							for(var i in game.peasants){
-								if(game.peasants[i].playerCode == connectionObj.player.playerCode){
+								if(game.peasants[i].playerCode == connectionObj.player.playerCode
+									|| game.king.playerCode == connectionObj.player.playerCode){
 									//player is already signed in before, don't add
 									connectionObj.type = 'connection';
 									var message = {};
@@ -50,7 +51,7 @@ var ChessRTC = function(clusterURL){
 							}
 							game.peasants.push(connectionObj.player);
 							game.save(function(){
-								console.log('Peasant count after disconnect: ' + game.peasants.length);
+								console.log('Peasant count after connecting: ' + game.peasants.length);
 							});
 							connectionObj.type = 'connection';
 							var message = {};
@@ -202,8 +203,21 @@ ChessRTC.prototype = {
 				var from = message.data.from;
 				var to = message.data.to;
 				var color = message.data.color;
+				var publishMessage = function(message){
+					console.log('Enclosing '+ message.data.name+'\'s move');
+					return function(customData){
+						message.data.type = customData.type;
+						message.data.time = customData.time;
+						message.data.turn = customData.turn;
+						console.log('Publishing '+ message.data.name+'\'s move');
+						that.ortcPublisher(code, message);	
+					};
+				};
+				var msgPublisher = publishMessage(message);
 				//query database
+				console.log("Processing Move...");				
 				Game.findOne({ code: code}, function(err, game){
+					console.log("Queried...");
 					if(err){
 						console.log('Error finding game: ' + err.message);
 					}
@@ -220,16 +234,17 @@ ChessRTC.prototype = {
 							//confirm if chess piece move is correct
 							if(Chess.isValidMove(board, piece, from, to, color)){
 								console.log('Valid move found');
+								var customData = {};
 								//update game state
 								//check if move is a promotion
 								if(piece == 'P'){
 									//promote to queen
 									if(color == 'W' && to.row == 0){
 										piece = 'Q';				
-										message.data.type = 'promote';					
+										customData.type = 'promote';					
 									}else if(color == 'B' && to.row == 7){									
 										piece = 'Q';
-										message.data.type = 'promote';
+										customData.type = 'promote';
 									}
 								}							
 
@@ -251,27 +266,57 @@ ChessRTC.prototype = {
 										col : 0
 									}, game.turn);
 								if(endGameCheck.checkMate){
-									message.data.type = 'checkmate';
+									customData.type = 'checkmate';
 									game.alive = false;
 									game.winner = color;
 								}else if(endGameCheck.staleMate){
-									message.data.type = 'stalemate';
+									customData.type = 'stalemate';
 									game.alive = false;
 									game.winner = 'D';
 								}
-								message.data.time = Date.now();
+								customData.time = Date.now();
 								game.moves.push(message.data);
 								game.board = board;
 								game.markModified('board');
-								game.save();
-								message.data.turn = game.turn;
+								console.log("VERSION:"+ game.toJSON().__v);
+								// console.log(game.versionKey);
+								// console.log(game.version);
+								// console.log(game);															
+								game.save(function(err){
+									if(err){
+										console.log(err);
+										return;
+									}									
+									customData.turn = game.turn;	
+									console.log('PUBLISHED MESSAGE! NEW DATA HAS BEEN SAVED');
+									msgPublisher(customData);
+								});	
+								// Game.findOne({ code: code, __v: game.toJSON().__v}, function(err, newGame){
+								//  	if(err){
+								//  		console.log(err);
+								//  		return;
+								//  	}
 
-								that.ortcPublisher(code, message);
+								//  	if(newGame.turn == color){
+								 																
+								//  	}else{
+								//  		console.log("Game with version not found...");
+								//  		return;
+								//  	}
+								// });
+								
+							}else{
+								console.log('INVALID MOVE! Not gonna process this');
 							}
+						}else{
+							console.log('INVALID MOVE! Incorrect starting piece');
 						}	
+					}else{
+						console.log('Error Color Doesnt Match');
 					}
 					
-				});				
+				});	
+				console.log("Move processor over...");			
 				break;
 		}		
 	}

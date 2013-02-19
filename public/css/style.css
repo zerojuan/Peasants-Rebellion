@@ -13,8 +13,25 @@ header {
   font-family: 'Alegreya', serif;
 }
 canvas {
+  transition: border 1s;
+  -moz-transition: border 1s;
+  /* Firefox 4 */
+
+  -webkit-transition: border 1s;
+  /* Safari and Chrome */
+
+  -o-transition: border 1s;
+  /* Opera */
+
   position: relative;
   background: #ccc;
+  border: 1px dashed #e7e7e7;
+}
+canvas.king {
+  border: 1px solid #3c7399;
+}
+canvas.peasant {
+  border: 1px solid #be564d;
 }
 textarea {
   -webkit-appearance: textarea;
@@ -71,14 +88,14 @@ textarea {
 }
 .mini-overlay {
   z-index: 1;
-  top: -1000px;
-  bottom: 1000px;
+  top: -2000px;
+  bottom: 2000px;
   margin-right: 320px;
   cursor: pointer;
 }
 .mini-overlay .bg {
-  top: -1000px;
-  bottom: 1000px;
+  top: -2000px;
+  bottom: 2000px;
 }
 .mini-overlay .overlay-content {
   width: 640px;

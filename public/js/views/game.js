@@ -142,8 +142,8 @@ define('GameView',[
 			}			
 		},
 		onHideResultsPanel : function(){			
-			$(this.el).find('#results-panel').animate({top: "-1000px", bottom: "1000px"}, 600);					
-			$(this.el).find('#results-panel .bg').animate({bottom: "1000px"}, 600);			
+			$(this.el).find('#results-panel').animate({top: "-2000px", bottom: "2000px"}, 600);					
+			$(this.el).find('#results-panel .bg').animate({bottom: "2000px"}, 600);			
 			//$(this.el).find('#results-panel .bg').fadeOut(500, function(){$(this).hide()});
 		},
 		showResultsPanel : function(winner){			
@@ -156,7 +156,7 @@ define('GameView',[
 				$(this.el).find('#results-panel figcaption').html('Stalemate...');
 			}
 			this.showWinnerBG(winner);
-			$(this.el).find('#results-panel').css('top', '-1000px').animate({top: "0", bottom: "0"}, 600);					
+			$(this.el).find('#results-panel').css('top', '-2000px').animate({top: "0", bottom: "0"}, 600);					
 			$(this.el).find('#results-panel .bg').css('bottom', '1000px').animate({bottom: "0"}, 600);
 		},
 		showResultSidebar : function(winner, moves){
@@ -360,22 +360,24 @@ define('GameView',[
 		},
 		updateTurn : function(currentTurn){
 			var name = (this.side == 'W') ? 'Peasant' : 'King';
+			var myClass = (this.side == 'W') ? 'peasant' : 'king';
 			console.log('Current Turn: ' + currentTurn);
 			this.playChess.setTurn(currentTurn);
 			this.model.set('turn', currentTurn);
-			if(this.side == currentTurn){
+			if(this.side == currentTurn){ 
 				if(this.side == 'W'){
 					$(this.el).find('#turn-wrapper').html('Our turn, Brother');	
 				}else{
 					$(this.el).find('#turn-wrapper').html('Your turn, Your Highness');	
 				}
-				
+				$(this.el).find('canvas').addClass(myClass);
 			}else{				
 				if(this.side == 'W'){
 					name = "the King's turn";
 				}else{
 					name = "the peasants' move";
 				}
+				$(this.el).find('canvas').removeClass(myClass);
 				$(this.el).find('#turn-wrapper').html('Waiting for ' + name);
 			}
 		},
@@ -441,6 +443,8 @@ define('GameView',[
 				case 'touch' : 
 					console.log('TOUCH:');
 					//check if the player code is the same as mine
+					if(data.code != this.model.get('player').playerCode)
+						this.playChess.onTouch(data);
 					break;
 				case 'move' :
 					console.log('MOVE: ');
@@ -467,7 +471,7 @@ define('GameView',[
 					break;
 			}
 			}catch(exception){
-				console.log("OH MY GOD THIS EXCEPTION IS SUCKS!");
+				console.error("OH MY GOD THIS EXCEPTION IS SUCKS!");
 				throw exception;
 			}
 			$('time').timeago();

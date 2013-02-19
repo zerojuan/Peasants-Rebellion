@@ -58,6 +58,13 @@ define('PlayChess', [
 			this.whitePieceManager.updateWinner(winner);
 			this.blackPieceManager.updateWinner(winner);						
 		},
+		onTouch : function(touchData){
+			if(this.touchMovesLayer){
+
+				this.touchMovesLayer.onTouch(this.getBoardData(), touchData);
+			}
+				
+		},
 		initialize : function(canvas, gameData, onReady){
 			var that = this;
 
@@ -76,10 +83,23 @@ define('PlayChess', [
 				that.handleInput(evt);
 			}
 
+			this.stage.onMouseDown = function(evt){
+				that.handleMouseDown(evt);
+			}
+
 			this.offset = {
 				x : 32,
 				y : 32
 			}
+
+			var tileDownG = new createjs.Graphics();
+			tileDownG.beginFill('#cc0');
+			tileDownG.drawRect(0, 0, 64, 64);
+			tileDownG.endFill();
+
+
+			this.tileDown = new createjs.Shape(tileDownG);
+			this.tileDown.alpha = 0;			
 
 			this.loader = new createjs.PreloadJS();
 			this.loader.useXHR = false;			
@@ -166,10 +186,15 @@ define('PlayChess', [
 				that.movesLayer.graphics.y = that.offset.y;
 				that.movesLayer.graphics.x = that.offset.x;
 
+				that.touchMovesLayer = new TouchMovesLayer();
+				that.touchMovesLayer.graphics.x = that.offset.x;
+				that.touchMovesLayer.graphics.y = that.offset.y;
+
 				that.piecesLayer.x = that.offset.x;
 				that.piecesLayer.y = that.offset.y - 20;				
 
-				that.stage.addChild(tileMap, that.movesLayer.graphics, 
+				that.stage.addChild(tileMap, that.touchMovesLayer.graphics, that.movesLayer.graphics,
+					that.tileDown, 
 					that.piecesLayer);
 
 				that.setTurn(that.turn);
@@ -183,6 +208,27 @@ define('PlayChess', [
 			};
 
 			this.loader.loadManifest(assetManifest);
+		},
+		handleMouseDown : function(evt){
+			console.log("Handle Mousedown");
+			var mouseX = evt.stageX - this.offset.x;
+			var mouseY = evt.stageY - this.offset.y;
+			console.log(evt);
+			if(mouseX < 0 || mouseY < 0){
+				console.log('Out of bounds');				
+				return;
+			}
+
+			if(mouseX > 64 * 8 || mouseY > 64 * 8){
+				console.log('Out of bounds');				
+				return;
+			}
+
+			var col = Math.floor(mouseX / 64);
+			var row = Math.floor(mouseY / 64);
+			this.tileDown.x = col * 64 + this.offset.x;
+			this.tileDown.y = row * 64 + this.offset.y;
+			createjs.Tween.get(this.tileDown, {override: true}).to({alpha: .6}, 500);
 		},
 		handleInput : function(evt){
 			console.log("Handling input");			
@@ -198,7 +244,8 @@ define('PlayChess', [
 				console.log('Out of bounds');				
 				return;
 			}
-
+			this.tileDown.alpha = .6;
+			createjs.Tween.get(this.tileDown, {override: true}).to({alpha: 0}, 500);
 			var col = Math.floor(mouseX / 64);
 			var row = Math.floor(mouseY / 64);
 
@@ -263,7 +310,7 @@ define('PlayChess', [
 				piece.activate();
 				this.dispatchTouchEvent(piece);
 				//touch
-				this.movesLayer.setPossibleMoves(
+				this.movesLayer.setPossibleMoves(piece,
 						this.getPossibleMoves(piece)
 					);
 			}
@@ -275,7 +322,7 @@ define('PlayChess', [
 			}
 			return null;
 		},
-		getPossibleMoves : function(piece){
+		getBoardData : function(){
 			var boardData = [
 				['0', '0', '0', '0', '0', '0', '0', '0'],
 				['0', '0', '0', '0', '0', '0', '0', '0'],
@@ -299,6 +346,10 @@ define('PlayChess', [
 					boardData[p1.row][p1.col] = 'W'+p1.type;	
 				}
 			}
+			return boardData;
+		},
+		getPossibleMoves : function(piece){
+			var boardData = this.getBoardData();
 			
 			var possibleMoves = chessLogic.exports.getPossibleMoves(boardData, piece);
 

@@ -14,30 +14,43 @@ define('MovesLayer',[
 			var tile = {
 				row : 0,
 				col : 0,
+				piece : null,
 				graphics : null,
 				visible : false,
 				setPosition : function(row, col){
 					console.log('Setting Position: ' + row + ', ' + col);
 					this.row = row;
 					this.col = col;
-					this.graphics.y = row * 64;
-					this.graphics.x = col * 64;
 				},
-				setVisible : function(visible){
+				setVisible : function(piece, visible){
 					this.visible = visible;
 					if(this.visible){
 						//this.graphics.alpha = .5;
-						this.glow();
-					}else{
+						this.piece = piece;
+						this.glow(piece);
+					}else{						
 						this.fadeOut();						
+						//this.piece = null;
 					}
 				},
 				glow : function(){					
+					var that = this;
 					this.graphics.alpha = .3;
-					createjs.Tween.get(this.graphics, {override: true, loop: true}).to({alpha:.5}, 300).to({alpha:.2}, 300);
+					this.graphics.y = this.piece.row * 64;
+					this.graphics.x = this.piece.col * 64;
+					createjs.Tween.get(this.graphics, {override: true}).to({x: this.col * 64, y: this.row * 64}, 150);					
+					//createjs.Tween.get(this.graphics, {override: true, loop: true}).to({alpha:.5}, 300).to({alpha:.2}, 300);
 				},
 				fadeOut : function(){					
-					createjs.Tween.get(this.graphics, {override: true}).to({alpha:0}, 200);
+					//createjs.Tween.get(this.graphics, {override: true}).to({alpha:0}, 200);
+					if(this.piece){
+						createjs.Tween.get(this.graphics, {override: true}).to({x: this.piece.col * 64, y: this.piece.row * 64, alpha: 0}, 300);//.to({alpha:.2}, 300);
+						this.piece = null;
+					}else{
+						this.graphics.alpha = 0;
+						this.piece = null;
+					}											
+					
 				}
 			};
 			var graphics = new createjs.Graphics();
@@ -57,17 +70,18 @@ define('MovesLayer',[
 		initialize : function(){
 
 		},
-		setPossibleMoves : function(possibles){
+		setPossibleMoves : function(piece, possibles){
 			this.possibles = possibles;
-			for(var i  = 0; i < this.tiles.length; i++){
+			for(var i  = 0, j = 0; i < this.tiles.length; i++){
 				var tile = this.tiles[i];
-				if(possibles != null && i < possibles.length){
-					var possible = possibles[i];					
+				if(possibles != null && j < possibles.length){
+					var possible = possibles[j];					
 					console.log('Printing: ' + possible.to.row + ',' + possible.to.col);
 					tile.setPosition(possible.to.row, possible.to.col);
-					tile.setVisible(true);	
+					tile.setVisible(piece, true);
+					j++;
 				}else{
-					tile.setVisible(false);
+					tile.setVisible(piece, false);
 				}
 		 	}
 		},
@@ -87,7 +101,7 @@ define('MovesLayer',[
 			//tween possible moves
 
 		},
-		deactivate : function(){
+		deactivate : function(){			
 			this.setPossibleMoves(null);
 		}
 	}

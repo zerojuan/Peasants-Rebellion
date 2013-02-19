@@ -72,7 +72,7 @@ define("ChessPiece",[
 						//promote to queen
 						if((that.color == 'W' && row == 0) ||
 							(that.color == 'B' && row == 7)){
-							this.promote();									
+							that.promote();									
 						}
 					}		
 					that.graphics.x = that.col * 64;
