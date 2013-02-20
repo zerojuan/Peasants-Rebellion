@@ -211,8 +211,8 @@ define('PlayChess', [
 		},
 		handleMouseDown : function(evt){
 			console.log("Handle Mousedown");
-			var mouseX = evt.stageX - this.offset.x;
-			var mouseY = evt.stageY - this.offset.y;
+			var mouseX = evt.rawX - this.offset.x;
+			var mouseY = evt.rawY - this.offset.y;
 			console.log(evt);
 			if(mouseX < 0 || mouseY < 0){
 				console.log('Out of bounds');				
@@ -226,14 +226,15 @@ define('PlayChess', [
 
 			var col = Math.floor(mouseX / 64);
 			var row = Math.floor(mouseY / 64);
+			console.log(col, row);
 			this.tileDown.x = col * 64 + this.offset.x;
 			this.tileDown.y = row * 64 + this.offset.y;
 			createjs.Tween.get(this.tileDown, {override: true}).to({alpha: .6}, 500);
 		},
 		handleInput : function(evt){
 			console.log("Handling input");			
-			var mouseX = evt.stageX - this.offset.x;
-			var mouseY = evt.stageY - this.offset.y;
+			var mouseX = evt.rawX - this.offset.x;
+			var mouseY = evt.rawY - this.offset.y;
 			console.log(evt);
 			if(mouseX < 0 || mouseY < 0){
 				console.log('Out of bounds');				

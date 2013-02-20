@@ -401,6 +401,12 @@ header.main h1 {
   height: 60px;
   color: #000;
 }
+.chat-form.expanded .chat-box::-webkit-input-placeholder {
+  color: #ccc;
+}
+.chat-form.expanded .chat-box:-moz-placeholder {
+  color: #ccc;
+}
 .chat-box {
   width: 270px;
   padding: 6px 8px 5px;

@@ -203,6 +203,8 @@ ChessRTC.prototype = {
 				var from = message.data.from;
 				var to = message.data.to;
 				var color = message.data.color;
+
+				/**SETUP CLOSURE SO WE CAN SEND THE RIGHT MESSAGE**/
 				var publishMessage = function(message){
 					console.log('Enclosing '+ message.data.name+'\'s move');
 					return function(customData){
@@ -214,6 +216,8 @@ ChessRTC.prototype = {
 					};
 				};
 				var msgPublisher = publishMessage(message);
+
+
 				//query database
 				console.log("Processing Move...");				
 				Game.findOne({ code: code}, function(err, game){
@@ -278,10 +282,7 @@ ChessRTC.prototype = {
 								game.moves.push(message.data);
 								game.board = board;
 								game.markModified('board');
-								console.log("VERSION:"+ game.toJSON().__v);
-								// console.log(game.versionKey);
-								// console.log(game.version);
-								// console.log(game);															
+								console.log("VERSION:"+ game.toJSON().__v);								
 								game.save(function(err){
 									if(err){
 										console.log(err);
@@ -291,19 +292,6 @@ ChessRTC.prototype = {
 									console.log('PUBLISHED MESSAGE! NEW DATA HAS BEEN SAVED');
 									msgPublisher(customData);
 								});	
-								// Game.findOne({ code: code, __v: game.toJSON().__v}, function(err, newGame){
-								//  	if(err){
-								//  		console.log(err);
-								//  		return;
-								//  	}
-
-								//  	if(newGame.turn == color){
-								 																
-								//  	}else{
-								//  		console.log("Game with version not found...");
-								//  		return;
-								//  	}
-								// });
 								
 							}else{
 								console.log('INVALID MOVE! Not gonna process this');
