@@ -96,10 +96,19 @@ define('PlayChess', [
 			tileDownG.beginFill('#cc0');
 			tileDownG.drawRect(0, 0, 64, 64);
 			tileDownG.endFill();
+			var greenG = new createjs.Graphics();
+			greenG.beginFill('#c00');
+			greenG.drawRect(0, 0, 64, 64);
+			greenG.endFill();
 
 
 			this.tileDown = new createjs.Shape(tileDownG);
-			this.tileDown.alpha = 0;			
+			this.tileDown.alpha = 0;
+
+			this.checkerStart = new createjs.Shape(greenG);
+			this.checkerStart.alpha = 0;
+			this.checkerEnd = new createjs.Shape(greenG);
+			this.checkerEnd.alpha = 0;			
 
 			this.loader = new createjs.PreloadJS();
 			this.loader.useXHR = false;			
@@ -194,7 +203,7 @@ define('PlayChess', [
 				that.piecesLayer.y = that.offset.y - 20;				
 
 				that.stage.addChild(tileMap, that.touchMovesLayer.graphics, that.movesLayer.graphics,
-					that.tileDown, 
+					that.checkerStart, that.checkerEnd, that.tileDown, 
 					that.piecesLayer);
 
 				that.setTurn(that.turn);
@@ -304,6 +313,7 @@ define('PlayChess', [
 				if(this.activePiece)
 					this.activePiece.deactivate();
 				this.movesLayer.deactivate();
+				this.deactivateChecker();
 			}else{				
 				console.log('Activating piece');
 				if(this.activePiece)
@@ -311,9 +321,26 @@ define('PlayChess', [
 				piece.activate();
 				this.dispatchTouchEvent(piece);
 				//touch
-				this.movesLayer.setPossibleMoves(piece,
-						this.getPossibleMoves(piece)
-					);
+				var possibleMoves = this.getPossibleMoves(piece);
+				if(possibleMoves && possibleMoves.length > 0){
+					this.movesLayer.setPossibleMoves(piece, possibleMoves);	
+				}else{
+					//must be a check?					
+					var checkers = this.getPossibleCheckers(piece);
+					if(checkers && checkers.length > 0){						
+						this.checker = checkers[0];
+						console.log("Possible Checkers: ", this.checker);
+						if(this.checker.color == 'B'){
+							this.checker = this.blackPieceManager.findSelectedGamePiece(checkers[0].from.row, checkers[0].from.col)	
+						}else{
+							this.checker = this.whitePieceManager.findSelectedGamePiece(checkers[0].from.row, checkers[0].from.col)	
+						}					
+						this.activateChecker(checkers[0]);	
+					}
+					
+
+				}
+				
 			}
 			this.activePiece = piece;
 		},
@@ -322,6 +349,28 @@ define('PlayChess', [
 				return tileData.charAt(1);
 			}
 			return null;
+		},
+		activateChecker : function(piece){
+			console.log('Activating checkers');
+			this.checker.activate();
+			this.checkerStart.x = piece.from.col * 64 + this.offset.x;
+			this.checkerStart.y = piece.from.row * 64 + this.offset.y;
+
+			this.checkerEnd.x = piece.to.col * 64 + this.offset.x;
+			this.checkerEnd.y = piece.to.row * 64 + this.offset.y;
+
+			this.checkerStart.alpha = this.checkerEnd.alpha = 0;
+			createjs.Tween.get(this.checkerStart, {override: true, loop: true}).to({alpha: .3}, 300).wait(300).to({alpha: .1}, 200); 
+			createjs.Tween.get(this.checkerEnd, {override: true, loop: true}).to({alpha: .3}, 300).wait(300).to({alpha: .1}, 200);
+		},
+		deactivateChecker : function(){
+			if(this.checker){
+				this.checker.sleep();
+				this.checker = null;
+				this.checkerStart.alpha = this.checkerEnd.alpha = .3;
+				createjs.Tween.get(this.checkerStart, {override: true}).to({alpha: 0}, 300); 
+				createjs.Tween.get(this.checkerEnd, {override: true}).to({alpha: 0}, 300); 
+			}			
 		},
 		getBoardData : function(){
 			var boardData = [
@@ -349,6 +398,16 @@ define('PlayChess', [
 			}
 			return boardData;
 		},
+		getPossibleCheckers : function(piece){
+			var boardData = this.getBoardData();
+			var pos = {
+				row: piece.row,
+				col: piece.col
+			};
+
+			var checkers = chessLogic.exports.endGameCheck(boardData, piece.type, pos, pos, piece.color).checkers;
+			return checkers;
+		},
 		getPossibleMoves : function(piece){
 			var boardData = this.getBoardData();
 			
@@ -358,17 +417,24 @@ define('PlayChess', [
 		},
 		updatePiece : function(data){
 			console.log('Updating Piece');
+			var that = this;
+			var movePiecePromise = function(){
+				that.activatePiece(null);
+				that.restackPieceLayers();
+				that.setTurn(data.turn);
+				that.movesLayer.deactivate();
+			}
 			if(data.color == 'B'){
-				this.blackPieceManager.movePiece(data.from, data.to);
+				this.blackPieceManager.movePiece(data.from, data.to, movePiecePromise);
 				this.whitePieceManager.removePiece(data.to);
 			}else if(data.color == 'W'){
-				this.whitePieceManager.movePiece(data.from, data.to);
+				this.whitePieceManager.movePiece(data.from, data.to, movePiecePromise);
 				this.blackPieceManager.removePiece(data.to);
 			}
-			this.activatePiece(null);
-			this.restackPieceLayers();
-			this.setTurn(data.turn);
-			this.movesLayer.deactivate();
+			// this.activatePiece(null);
+			// this.restackPieceLayers();
+			// this.setTurn(data.turn);
+			// this.movesLayer.deactivate();
 		},
 		restackPieceLayers : function(){
 			var sortFunction = function(a, b){

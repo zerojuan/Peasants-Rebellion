@@ -39,6 +39,9 @@ define("ChessPiece",[
 		deactivate : function(){
 			this.animation.gotoAndPlay(this.type+"_up"+"_awake");	
 		},
+		sleep : function(){
+			this.animation.gotoAndPlay(this.type+"_up"+"_idle");	
+		},
 		updateTurn : function(isMyTurn){
 			// console.log('Is My Turn: ' + isMyTurn);
 			if(this.animation.currentAnimation == 'P_up_promote'){
@@ -59,7 +62,7 @@ define("ChessPiece",[
 				this.animation.gotoAndPlay(this.type+"_up_idle");
 			}
 		},
-		move : function(row, col){
+		move : function(row, col, promise){
 			var that = this;			
 			this.row = row;
 			this.col = col;
@@ -77,6 +80,7 @@ define("ChessPiece",[
 					}		
 					that.graphics.x = that.col * 64;
 					that.graphics.y = that.row * 64;
+					promise();
 				});
 			//this.graphics.x = this.col * 64;
 			//this.graphics.y = this.row * 64;

@@ -1,5 +1,6 @@
 define('TouchMovesLayer',[
-	'easel'
+	'easel',
+	'tween'
 ], function(){
 	var TouchMovesLayer;
 

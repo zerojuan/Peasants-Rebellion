@@ -24,8 +24,14 @@ var ChessRTC = function(clusterURL){
 				function(ortc, channel, message){					
 					console.log('Channel: ' + channel);
 					console.log('Connected: ' + message);
-					var messageObj = JSON.parse(message);			
-					var connectionObj = JSON.parse(messageObj.cm);
+					var messageObj = JSON.parse(message);
+					try{
+						var connectionObj = JSON.parse(messageObj.cm);	
+					}catch(exception){
+						console.log('Error Occured: ', exception);
+						return;
+					}			
+					
 					console.log(connectionObj);
 					//Add the player back to the list
 					Game.findOne({code : connectionObj.code}, function(err, game){
@@ -67,6 +73,12 @@ var ChessRTC = function(clusterURL){
 					console.log('Disconnected: ' + message);
 					var messageObj = JSON.parse(message);			
 					var disconnectionObj = JSON.parse(messageObj.cm);
+					try{
+						var connectionObj = JSON.parse(messageObj.cm);	
+					}catch(exception){
+						console.log('Error Occured: ', exception);
+						return;
+					}	
 					console.log(disconnectionObj);
 
 					//Check database on which game this came from

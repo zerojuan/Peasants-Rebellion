@@ -322,7 +322,7 @@ define('GameView',[
 						   	piece = 'Peasant';
 						   break;
 			}
-
+			console.log("DATA TYPE: ", data);
 			if(data.type == 'promote'){
 				
 			}else if(data.type == 'stalemate'){
@@ -362,7 +362,7 @@ define('GameView',[
 			var name = (this.side == 'W') ? 'Peasant' : 'King';
 			var myClass = (this.side == 'W') ? 'peasant' : 'king';
 			console.log('Current Turn: ' + currentTurn);
-			this.playChess.setTurn(currentTurn);
+			//this.playChess.setTurn(currentTurn);
 			this.model.set('turn', currentTurn);
 			if(this.side == currentTurn){ 
 				if(this.side == 'W'){

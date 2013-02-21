@@ -17,6 +17,9 @@ requirejs.config({
 		'GameView' : {
 			deps : ['xrtml', 'timeago', 'antiscroll']
 		},
+		'tween': {
+            deps: ['easel']            
+        },
 		'PlayChess' : {
 			deps : ['easel', 'preload', 'tween', 'chess-client', 'Tilemap']
 		}

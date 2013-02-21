@@ -150,15 +150,14 @@ define('PieceManager', [
 			}
 			return null;
 		},
-		movePiece : function(from, to){
+		movePiece : function(from, to, promise){
 			var piece = this.findSelectedGamePiece(from.row, from.col);
 			if(piece){
 				console.log('Piece moved');
-				piece.move(to.row, to.col);
+				piece.move(to.row, to.col, promise);
 			}else{
 				console.log('Piece not found');
-			}
-				
+			}				
 		},
 		removePiece : function(from){
 			var piece = this.findSelectedGamePiece(from.row, from.col);

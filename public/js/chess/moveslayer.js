@@ -1,5 +1,6 @@
 define('MovesLayer',[
-	'easel'
+	'easel',
+	'tween'
 ], function(){
 	var MovesLayer;
 
