@@ -67,7 +67,7 @@
 		var checkers = this.getChecker(board, enemyMoves, turn);
 		
 		//checked
-		var allPossibleMoves = this._getAllPossibleMoves(board, color, true, enemyMoves, checkers);
+		var allPossibleMoves = this._getAllPossibleMoves(board, color, true, enemyMoves, checkers);		
 		var checkMate = false;
 		var staleMate = false;
 		if(checkers){
@@ -153,9 +153,13 @@
 
 			var slopeA = (x3 - x1) * (y2 - y1);
 			var slopeB = (y3 - y1) * (x2 - x1);
-			if(slopeA == slopeB){
-				return true;
+
+			var distance = function(a, b){
+				return Math.sqrt(((a.col - b.col)*(a.col - b.col)) + 
+					  			 ((a.row - b.row)*(a.row - b.row)));
 			}
+			//console.log(slopeA, slopeB);
+			return distance(checker.from, move) + distance(move, checker.to) == distance(checker.from, checker.to);		
 		}
 		return false;
 	},
@@ -384,17 +388,38 @@
 						
 				//search diagonal left/right
 				if(pos.row - 2 >= 0){
-					if(pos.col-1 >= 0 && this.canMoveHere(boardData, pos.row-2, pos.col-1, piece, myTurn)){
-						possibleMoves.push(constructMove({
-								row : pos.row - 2,
-								col : pos.col - 1
-						}));
+					if(pos.col-1 >= 0 && this.canMoveHere(boardData, pos.row-2, pos.col-1, piece, myTurn)){						
+						if(checker){
+							var currPos = {row : piece.row - 2, col: piece.col - 1}
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){								
+								possibleMoves.push(constructMove({
+									row : pos.row - 2,
+									col : pos.col - 1
+								}));	
+							}							
+						}else{
+							possibleMoves.push(constructMove({
+									row : pos.row - 2,
+									col : pos.col - 1
+							}));
+						}						
 					}
 					if(pos.col+1 < 8 && this.canMoveHere(boardData, pos.row-2, pos.col+1, piece, myTurn)){
-						possibleMoves.push(constructMove({
-								row : pos.row - 2,
-								col : pos.col + 1
-						}));
+						if(checker){
+							var currPos = {row : piece.row - 2, col: piece.col + 1};
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){
+								possibleMoves.push(constructMove({
+									row : pos.row - 2,
+									col : pos.col + 1
+								}));	
+							}
+						}else{
+							possibleMoves.push(constructMove({
+									row : pos.row - 2,
+									col : pos.col + 1
+							}));	
+						}
+						
 					}
 				}
 						
@@ -402,18 +427,39 @@
 				//search down
 						
 				//search diagonal left/right
-				if(pos.row + 2 < 8){
+				if(pos.row + 2 < 8){					
 					if(pos.col-1 >= 0 && this.canMoveHere(boardData, pos.row+2, pos.col-1, piece, myTurn)){
-						possibleMoves.push(constructMove({
-							row : pos.row + 2,
-							col : pos.col - 1
-						}));
+						if(checker){
+							var currPos = {row : piece.row + 2, col: piece.col - 1};
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){								
+								possibleMoves.push(constructMove({
+									row : pos.row + 2,
+									col : pos.col - 1
+								}));
+							}	
+						}else{
+							possibleMoves.push(constructMove({
+								row : pos.row + 2,
+								col : pos.col - 1
+							}));
+						}												
 					}
 					if(pos.col+1 < 8 && this.canMoveHere(boardData, pos.row+2, pos.col+1, piece, myTurn)){
-						possibleMoves.push(constructMove({
-							row : pos.row + 2,
-							col : pos.col + 1
-						}));
+						if(checker){
+							var currPos = {row : piece.row + 2, col: piece.col + 1};
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){
+								console.log(this._willBlockChecker(checker, currPos));
+								possibleMoves.push(constructMove({
+									row : pos.row + 2,
+									col : pos.col + 1
+								}));
+							}	
+						}else{
+							possibleMoves.push(constructMove({
+								row : pos.row + 2,
+								col : pos.col + 1
+							}));
+						}
 					}	
 				}	
 						
@@ -423,16 +469,38 @@
 				//search diagonal up/down
 				if(pos.col - 2 >= 0){
 					if(pos.row-1 >= 0 && this.canMoveHere(boardData, pos.row-1, pos.col-2, piece, myTurn)){
-						possibleMoves.push(constructMove({
-							row : pos.row - 1,
-							col : pos.col - 2
-						}));
+						if(checker){
+							var currPos = {row : piece.row - 1, col: piece.col - 2}
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){
+								possibleMoves.push(constructMove({
+									row : pos.row - 1,
+									col : pos.col - 2
+								}));
+							}
+						}else{
+							possibleMoves.push(constructMove({
+								row : pos.row - 1,
+								col : pos.col - 2
+							}));	
+						}
+						
 					}
 					if(pos.row+1 < 8 && this.canMoveHere(boardData, pos.row+1, pos.col-2, piece, myTurn)){
-						possibleMoves.push(constructMove({
-							row : pos.row + 1,
-							col : pos.col - 2
-						}));
+						if(checker){
+							var currPos = { row : pos.row + 1, col : pos.col - 2 };
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){
+								possibleMoves.push(constructMove({
+									row : pos.row + 1,
+									col : pos.col - 2
+								}));		
+							}
+						}else{
+							possibleMoves.push(constructMove({
+								row : pos.row + 1,
+								col : pos.col - 2
+							}));	
+						}
+						
 					}
 				}
 						
@@ -440,16 +508,37 @@
 				//search right
 				if(pos.col + 2 < 8){
 					if(pos.row-1 >= 0 && this.canMoveHere(boardData, pos.row-1, pos.col+2, piece, myTurn)){
-						possibleMoves.push(constructMove({
-							row : pos.row - 1,
-							col : pos.col + 2
-						}));
+						if(checker){
+							var currPos = {row : piece.row - 1, col: piece.col + 2};
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){							
+								possibleMoves.push(constructMove({
+									row : pos.row - 1,
+									col : pos.col + 2
+								}));		
+							}
+						}else{
+							possibleMoves.push(constructMove({
+								row : pos.row - 1,
+								col : pos.col + 2
+							}));	
+						}
+						
 					}
 					if(pos.row+1 < 8 && this.canMoveHere(boardData, pos.row+1, pos.col+2, piece, myTurn)){
-						possibleMoves.push(constructMove({
-							row : pos.row + 1,
-							col : pos.col + 2
-						}));
+						if(checker){
+							var currPos = {row : piece.row - 1, col: piece.col + 2};
+							if(this._willBlockChecker(checker, currPos) || this._willCaptureChecker(checker, currPos)){
+								possibleMoves.push(constructMove({
+									row : pos.row + 1,
+									col : pos.col + 2
+								}));	
+							}
+						}else{
+							possibleMoves.push(constructMove({
+								row : pos.row + 1,
+								col : pos.col + 2
+							}));
+						}						
 					}
 				}					
 				break;

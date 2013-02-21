@@ -226,6 +226,25 @@ suite('Chess Mechanics: ', function(){
 			{row: 0, col: 1},
 			{row: 1, col: 1},
 			'B'), "King cannot move to an area protected by Enemy King");
+
+		board = [
+			[ "0", "0", "0", "0", "0", "0", "0", "0" ],
+    		[ "0", "0", "0", "0", "0", "0", "0", "0" ],
+    		[ "0", "0", "0", "0", "0", "0", "0", "0" ],
+    		[ "0", "BN", "0", "0", "0", "0", "0", "0"],
+    		[ "0", "0", "0", "0", "0", "0", "0", "0"],
+    		[ "BK", "WQ", "0", "0", "0", "0", "0", "0"],
+    		[ "0", "0", "WQ", "0", "WK", "0", "BN", "WP"],
+    		[ "0", "0", "0", "0", "0", "0", "0", "0"] 
+		];
+		
+		assert.ok(chess.endGameCheck(board, 'K', {
+			row : 5,
+			col : 0
+		},{
+			row : 0,
+			col : 0
+		}, 'B').checkMate, 'Black King Checkmate');
 	});
 
 	test('valid rook', function(){
