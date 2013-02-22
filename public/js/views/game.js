@@ -9,9 +9,10 @@ define('GameView',[
 	'text!templates/result-sidebar.html',
 	'text!templates/usurp-item.html',
 	'text!templates/announcement-item.html',
+	'text!templates/playerlist-item.html',
 	'GameModel',
 	'PlayChess'
-], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, usurpTpl, announcementTpl, GameModel, PlayChess){
+], function($, _, Backbone, tpl, statusTpl, moveTpl, chatTpl, resultTpl, usurpTpl, announcementTpl, playerListTpl, GameModel, PlayChess){
 	var GameView;
 
 	var that = GameView;
@@ -20,6 +21,7 @@ define('GameView',[
 		initialize : function(model){
 			var that = this;
 			this.model = model;
+			console.log(this.model.toJSON())
 			this.channel = this.model.get('code');
 			this.side = (this.model.get('player').authId == null) ? 'W' : 'B';
 			this.playChess = new PlayChess({
@@ -36,6 +38,7 @@ define('GameView',[
 			this.resultTemplate = _.template(resultTpl);
 			this.usurpTemplate = _.template(usurpTpl);
 			this.announcementTemplate = _.template(announcementTpl);
+			this.playerListTemplate = _.template(playerListTpl);
 
 			xRTML.Config.debug = true;
 			this.ortcClient = null;
@@ -71,8 +74,7 @@ define('GameView',[
 			}else{
 				$('.overlay').fadeOut();
 			}
-				
-			
+							
 			$('time').timeago();
 		},
 		events : {
@@ -80,6 +82,8 @@ define('GameView',[
 			"focus .chat-box" : "onChatFocus",
 			"blur .chat-box" : "onChatBlur",
 			"resize window" : "onResizeWindow",
+			"click .player-name" : "onClickPlayerName",
+			"click #back-btn" : "onBackClicked",
 			"click #results-panel" : "onHideResultsPanel"
 		},
 		render : function(){
@@ -115,11 +119,32 @@ define('GameView',[
 				that._resizeScroller();
 			})
 			//initialize antiscroll here
+			this.initializePlayerList();
 				
 			return this;
 		},
 		initializeAntiscroll : function(){
 			this._resizeScroller();
+		},
+		initializePlayerList : function(){
+			var kingData = this.model.get('king');
+			var data = {
+				color : 'B',
+				player : kingData
+			};
+			console.log(data);
+			this.createConnectionElement(data);
+			var peasants = this.model.get('peasants');
+			console.log("PEASANTS: ", peasants);
+			for(var i in peasants){
+				var peasant = peasants[i];
+				data = {
+					color : 'W',
+					player : peasant
+				};
+				console.log("Peasant", data);
+				this.createConnectionElement(data);
+			}
 		},
 		_resizeScroller : function(){
 			var this_el = $(this.el);
@@ -132,6 +157,13 @@ define('GameView',[
 		},
 		onResizeWindow : function(){
 			this._resizeScroller();
+		},
+		onClickPlayerName : function(){
+			console.log("Clicked player name");
+			$(this.el).find("#main-feed-slider").animate({marginLeft: "-320px"}, 300);
+		},
+		onBackClicked : function(){
+			$(this.el).find("#main-feed-slider").animate({marginLeft: "0px"}, 300);		
 		},
 		onChatBlur : function(){
 			var msg = $.trim($(this.el).find('.chat-box').val());
@@ -244,9 +276,42 @@ define('GameView',[
 			});
 		},
 		_appendToFeed : function(tmpl){
-			$(tmpl).hide().prependTo($(this.el).find('.feed-content-inner')).fadeIn("slow");
+			$(tmpl).hide().prependTo($(this.el).find('#main-feed')).fadeIn("slow");
 			if(this.scroller){
 				this.scroller.refresh();	
+			}			
+		},
+		createConnectionElement : function(data){	
+			var status = 'king';
+			if(data.color == 'B'){								
+				status = 'king';
+			}else{
+				status = 'peasant';
+			}		
+			console.log('Creating Connection Element...');
+			var tmpl = this.playerListTemplate({alive: data.player.alive, color: status, code: data.player.playerCode, name : data.player.name, title: data.player.title});
+			$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
+			if(data.color == 'B'){				
+				$(tmpl).hide().prependTo($(this.el).find('.king-container')).fadeIn("slow");
+			}else{
+				$(this.el).find('.peasant-container .sample').remove();				
+				$(tmpl).hide().prependTo($(this.el).find('.peasant-container')).fadeIn("slow");
+			}
+			if(this.scroller){
+				this.scroller.refresh();	
+			}
+		},
+		createDisconnectionElement : function(data){
+			$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
+			if(data.color == 'B'){
+				$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
+				var tmpl = this.playerListTemplate({alive: false, color: 'king', code: data.player.playerCode, name : data.player.name, title: data.player.title});
+				$(tmpl).hide().prependTo($(this.el).find('.king-container')).fadeIn("slow");
+			}else{
+				if($(this.el).find('.peasant-container .feed-item').length == 0){
+					$(this.el).find('.peasant-container').html('');
+					$('<p class="sample">No one. Share this url to your friends (and enemies)!</p>').hide().appendTo($(this.el).find('.peasant-container')).fadeIn("slow");
+				}	
 			}
 			
 		},
@@ -261,7 +326,7 @@ define('GameView',[
 			}
 			if(type == "disconnect"){
 				if(data.color == 'B'){
-					message = " has left the throne!"
+					message = " has left the throne! His passkey is rumored to be: " + data.passkey;
 				}else{
 					message = " has left.";	
 				}
@@ -390,10 +455,12 @@ define('GameView',[
 				case 'connection':
 					console.log('Connected: ' + data.player.name);
 					this.createAnnouncementElement('connect', data);
+					this.createConnectionElement(data);
 					break;
 				case 'disconnection':
 					console.log('Disconnected: ' + data.player.name);
 					this.createAnnouncementElement('disconnect', data);
+					this.createDisconnectionElement(data);
 					break;
 				case 'usurp':
 					console.log('USURPATION!');

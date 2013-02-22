@@ -64,6 +64,19 @@ textarea {
 	background: #ccc;
 }
 
+.button-bar-div{
+	padding-top: 5px;
+}
+
+.button{
+	padding: 5px;
+	border: 1px solid #ccc;
+	cursor: pointer;
+	span{
+		padding: 10px;
+	}
+}
+
 .overlay, .mini-overlay{
 	position: fixed;
 	top: 0;
@@ -386,7 +399,11 @@ header.main{
 	bottom: 0;
 	right: 0;
 	left: 0;
+	width: 640px;
 	overflow: hidden;
+	.content-slider-item{
+		float: left;		
+	}
 }
 
 .side-bar .side-bar-header {
@@ -430,6 +447,16 @@ header.main{
 	min-height: 35px;
 	padding: 10px 15px;
 	background-color: white;
+	h3{
+		color: #777;
+		z-index: -1;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		margin: 15px 0px;
+		text-align: center;
+	}
 }
 
 .chat-form{
@@ -485,6 +512,10 @@ textarea.chat-box{
 
 .feed-content .player-name {
 	font-weight: bold;
+	cursor: pointer;
+	&:hover{
+		color: #00c;
+	}	
 }
 
 .feed-item-bubble{

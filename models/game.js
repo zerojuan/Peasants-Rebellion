@@ -11,7 +11,8 @@ var GameSchema = new Schema({
 		passkey : String,
 		playerCode : String,
 		title : String,
-		authId : String
+		authId : String,
+		alive : Boolean
 	},
 	peasants : [{
 		name : String,
@@ -76,6 +77,17 @@ GameSchema.methods.shortenName = function(name){
 		 return name.substr(0,12)+(this.length>13?'&hellip;':'');
 	}
 	return name;
+}
+
+GameSchema.methods.obscurePasskey = function(passkey){
+	var obfuscateLength = passkey.length;
+	var newPasskey = passkey;
+	for(var i = 0; i < obfuscateLength; i++){
+		var random = Math.round(Math.random() * passkey.length);		
+		if(random > passkey.length-1) continue;
+    	newPasskey = newPasskey.substr(0,random) + '*' + passkey.substr(random+1);
+	}
+	return newPasskey;
 }
 
 //http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter

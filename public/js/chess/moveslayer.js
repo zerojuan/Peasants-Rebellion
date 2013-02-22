@@ -19,7 +19,7 @@ define('MovesLayer',[
 				graphics : null,
 				visible : false,
 				setPosition : function(row, col){
-					console.log('Setting Position: ' + row + ', ' + col);
+					//console.log('Setting Position: ' + row + ', ' + col);
 					this.row = row;
 					this.col = col;
 				},
@@ -77,7 +77,7 @@ define('MovesLayer',[
 				var tile = this.tiles[i];
 				if(possibles != null && j < possibles.length){
 					var possible = possibles[j];					
-					console.log('Printing: ' + possible.to.row + ',' + possible.to.col);
+					//console.log('Printing: ' + possible.to.row + ',' + possible.to.col);
 					tile.setPosition(possible.to.row, possible.to.col);
 					tile.setVisible(piece, true);
 					j++;

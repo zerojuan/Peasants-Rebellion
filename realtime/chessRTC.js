@@ -43,19 +43,27 @@ var ChessRTC = function(clusterURL){
 
 						if(game){
 							console.log('Game found, peasant count: ' + game.peasants.length);
-							for(var i in game.peasants){
-								if(game.peasants[i].playerCode == connectionObj.player.playerCode
-									|| game.king.playerCode == connectionObj.player.playerCode){
-									//player is already signed in before, don't add
-									connectionObj.type = 'connection';
-									var message = {};
-									message.type = 'connection';
-									message.data = connectionObj;
-									that.ortcPublisher(connectionObj.code, message);
-									return;
-								}
+							if(game.king.playerCode == connectionObj.player.playerCode){
+								console.log("King Has Connected!");
+								game.king.alive = true;
+								connectionObj.player.alive = true;
+							}else{
+								for(var i in game.peasants){
+									if(game.peasants[i].playerCode == connectionObj.player.playerCode){
+										//player is already signed in before, don't add
+										connectionObj.type = 'connection';
+										var message = {};
+										message.type = 'connection';
+										message.data = connectionObj;
+										that.ortcPublisher(connectionObj.code, message);
+										return;
+									}
+								}	
 							}
-							game.peasants.push(connectionObj.player);
+							if(game.king.playerCode != connectionObj.player.playerCode){
+								game.peasants.push(connectionObj.player);
+							}
+							
 							game.save(function(){
 								console.log('Peasant count after connecting: ' + game.peasants.length);
 							});
@@ -91,11 +99,17 @@ var ChessRTC = function(clusterURL){
 
 						if(game){
 							console.log('Game found, peasant count: ' + game.peasants.length);
-							for(var i in game.peasants){
-								if(game.peasants[i].playerCode == disconnectionObj.player.playerCode){
-									game.peasants.remove(game.peasants[i]);
-								}
+							if(game.king.playerCode == disconnectionObj.player.playerCode){
+								game.king.alive = false;
+								disconnectionObj.passkey = game.obscurePasskey(game.king.passkey);
+							}else{
+								for(var i in game.peasants){
+									if(game.peasants[i].playerCode == disconnectionObj.player.playerCode){
+										game.peasants.remove(game.peasants[i]);
+									}
+								}	
 							}
+							
 							game.save(function(){
 								console.log('Peasant count after disconnect: ' + game.peasants.length);
 							});							

@@ -56,6 +56,17 @@ textarea {
   margin: auto;
   background: #ccc;
 }
+.button-bar-div {
+  padding-top: 5px;
+}
+.button {
+  padding: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+.button span {
+  padding: 10px;
+}
 .overlay,
 .mini-overlay {
   position: fixed;
@@ -349,7 +360,11 @@ header.main h1 {
   bottom: 0;
   right: 0;
   left: 0;
+  width: 640px;
   overflow: hidden;
+}
+.side-bar .content-slider-wrapper .content-slider-item {
+  float: left;
 }
 .side-bar .side-bar-header {
   position: relative;
@@ -389,6 +404,16 @@ header.main h1 {
   min-height: 35px;
   padding: 10px 15px;
   background-color: white;
+}
+.button-bar h3 {
+  color: #777;
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin: 15px 0px;
+  text-align: center;
 }
 .chat-form.condensed .chat-box {
   height: 19px;
@@ -432,6 +457,10 @@ textarea.chat-box {
 }
 .feed-content .player-name {
   font-weight: bold;
+  cursor: pointer;
+}
+.feed-content .player-name:hover {
+  color: #00c;
 }
 .feed-item-bubble {
   /*-webkit-border-radius: 3px;

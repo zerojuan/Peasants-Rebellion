@@ -110,7 +110,8 @@ app.post('/api/v1/game', function(req, res){
 			title : game.getRandomKingTitle(),
 			passkey : password,
 			authId : game.generateAuthKey(),
-			playerCode : game.generateAuthKey()
+			playerCode : game.generateAuthKey(),
+			alive : true
 		};
 		var board = game.createNewBoard();
 
@@ -136,7 +137,8 @@ app.post('/api/v1/game', function(req, res){
 				king : {
 					name : game.shortenName(savedGame.king.name),
 					title : savedGame.king.title,
-					authId : savedGame.king.authId
+					authId : savedGame.king.authId,
+					alive : savedGame.king.alive
 				},
 				turn : 'W',
 				board : savedGame.board,

@@ -219,10 +219,10 @@ define('PlayChess', [
 			this.loader.loadManifest(assetManifest);
 		},
 		handleMouseDown : function(evt){
-			console.log("Handle Mousedown");
+			//console.log("Handle Mousedown");
 			var mouseX = evt.rawX - this.offset.x;
 			var mouseY = evt.rawY - this.offset.y;
-			console.log(evt);
+			//console.log(evt);
 			if(mouseX < 0 || mouseY < 0){
 				console.log('Out of bounds');				
 				return;
@@ -241,17 +241,17 @@ define('PlayChess', [
 			createjs.Tween.get(this.tileDown, {override: true}).to({alpha: .6}, 500);
 		},
 		handleInput : function(evt){
-			console.log("Handling input");			
+			//console.log("Handling input");			
 			var mouseX = evt.rawX - this.offset.x;
 			var mouseY = evt.rawY - this.offset.y;
-			console.log(evt);
+			//console.log(evt);
 			if(mouseX < 0 || mouseY < 0){
-				console.log('Out of bounds');				
+				//console.log('Out of bounds');				
 				return;
 			}
 
 			if(mouseX > 64 * 8 || mouseY > 64 * 8){
-				console.log('Out of bounds');				
+				//console.log('Out of bounds');				
 				return;
 			}
 			this.tileDown.alpha = .6;
@@ -431,10 +431,6 @@ define('PlayChess', [
 				this.whitePieceManager.movePiece(data.from, data.to, movePiecePromise);
 				this.blackPieceManager.removePiece(data.to);
 			}
-			// this.activatePiece(null);
-			// this.restackPieceLayers();
-			// this.setTurn(data.turn);
-			// this.movesLayer.deactivate();
 		},
 		restackPieceLayers : function(){
 			var sortFunction = function(a, b){
