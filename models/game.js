@@ -24,6 +24,7 @@ var GameSchema = new Schema({
 	turn : String,
 	winner : String, //B, W, D,
 	moves : [{
+		moveType : String,
 		name : String,
 		color : String,
 		piece : String,
@@ -35,6 +36,8 @@ var GameSchema = new Schema({
 			row : Number,
 			col : Number
 		},
+		turn : String,
+		captured : String,
 		time : { type : Date, default: Date.now() }
 	}]	
 });
@@ -73,8 +76,8 @@ GameSchema.methods.createNewBoard = function(){
 }
 
 GameSchema.methods.shortenName = function(name){
-	if(name.length > 13){
-		 return name.substr(0,12)+(this.length>13?'&hellip;':'');
+	if(name.length > 18){
+		 return name.substr(0,17)+(this.length>18?'&hellip;':'');
 	}
 	return name;
 }

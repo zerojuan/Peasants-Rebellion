@@ -25,7 +25,7 @@
 				</div>
 				<div class="details-body">															
 					<p>Peasant's Rebellion is a game about a king, his peasants and a rebellion staged on a chess board.</p>
-					<p>It's a multiplayer take on the classic chess variant, Peasant's Revolt. Inspired by <a href="http://en.wikipedia.org/wiki/Kasparov_versus_the_World">Kasparov vs the World</a>, players can play as the King and defend 
+					<p>It's a multiplayer take on the classic chess variant: Peasant's Revolt. Inspired by <a href="http://en.wikipedia.org/wiki/Kasparov_versus_the_World">Kasparov vs the World</a>, players can play as the King and defend 
 					against a mob of Peasants (random players on the internet who happened to click a link to your game).</p>
 					<p>To get started, "sign" either of the forms below: </p>								
 				</div>							
@@ -44,7 +44,10 @@
 					<ul class="input">
 						<li><input type="text" id="king-name" placeholder="King Richard"></input><span class="desc">Leave blank to generate random name</span></li>
 						<li><input type="text" id="king-pass" placeholder="usurpthis"></input><span class="desc">Secret key for the rightful successor</span></li>
-						<li><button type="submit" id="king-submit"> Submit </button></li>
+						<li>
+							<button type="submit" id="king-submit"> Submit </button>
+							<span id="king-loading" style="display: none;">Loading...</span>
+						</li>
 					</ul>								
 				</div>
 			</div>
@@ -59,7 +62,10 @@
 					<p>Signed,</p>
 					<ul class="input">
 						<li><input type="text" id="peasant-name" placeholder="Robin Hood"></input><span class="desc">Leave blank to generate random name</span></li>
-						<li><button type="submit" id="peasant-submit">Submit</button></li>
+						<li>
+							<button type="submit" id="peasant-submit">Submit</button>
+							<span id="peasant-loading" style="display: none;">Loading...</span>
+						</li>
 					</ul>
 				</div>
 		</div>					

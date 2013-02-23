@@ -5,9 +5,10 @@ define('PlayChess', [
 	'PieceManager',
 	'MovesLayer',
 	'TouchMovesLayer',
+	'MovesHistory',
 	'easel',
 	'preload'
-], function($, Tilemap, ChessPiece, PieceManager, MovesLayer, TouchMovesLayer){
+], function($, Tilemap, ChessPiece, PieceManager, MovesLayer, TouchMovesLayer, MovesHistory){
 	var PlayChess;
 
 	var assetManifest = [
@@ -40,6 +41,12 @@ define('PlayChess', [
 				listener.onTouch(piece);
 			}
 		},
+		dispatchTapEvent : function(){
+			for(var i in this.listeners){
+				var listener = this.listeners[i];
+				listener.onTap();
+			}
+		},
 		setColor : function(team){
 			this.color = team;
 		},
@@ -52,6 +59,12 @@ define('PlayChess', [
 			this.whitePieceManager.updateTurn(turn);
 			this.blackPieceManager.updateTurn(turn);
 		},
+		showMove : function(id, moves){
+			this.movesHistory.showMove(id, moves, this.getBoardData());
+		},
+		hideMove : function(){
+			this.movesHistory.hideMove();
+		},
 		showGameOver : function(winner){
 			this.gameOver = true;
 			this.stage.onMouseUp = null;
@@ -60,10 +73,8 @@ define('PlayChess', [
 		},
 		onTouch : function(touchData){
 			if(this.touchMovesLayer){
-
 				this.touchMovesLayer.onTouch(this.getBoardData(), touchData);
-			}
-				
+			}				
 		},
 		initialize : function(canvas, gameData, onReady){
 			var that = this;
@@ -201,12 +212,16 @@ define('PlayChess', [
 				that.touchMovesLayer.graphics.x = that.offset.x;
 				that.touchMovesLayer.graphics.y = that.offset.y;
 
+				that.movesHistory = new MovesHistory();
+				that.movesHistory.graphics.x = that.offset.x;
+				that.movesHistory.graphics.y = that.offset.y - 20;
+
 				that.piecesLayer.x = that.offset.x;
 				that.piecesLayer.y = that.offset.y - 20;				
 
 				that.stage.addChild(tileMap, that.touchMovesLayer.graphics, that.movesLayer.graphics,
 					that.checkerStart, that.checkerEnd, that.tileDown, 
-					that.piecesLayer);
+					that.piecesLayer, that.movesHistory.graphics);
 
 				that.setTurn(that.turn);
 
@@ -257,6 +272,8 @@ define('PlayChess', [
 				return;
 			}
 			this.tileDown.alpha = .6;
+			this.dispatchTapEvent();
+			this.hideMove();
 			createjs.Tween.get(this.tileDown, {override: true}).to({alpha: 0}, 500);
 			var col = Math.floor(mouseX / 64);
 			var row = Math.floor(mouseY / 64);

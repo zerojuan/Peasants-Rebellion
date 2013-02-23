@@ -1,4 +1,4 @@
-<div class="feed-item feed-item-plain">											
+<div id="<%- data._id %>" class="feed-item feed-item-plain move-feed">											
 	<div class="feed-item-inner tip-arrow-inner">
 		<div class="tip-arrow"></div>
 		<div class="feed-item-main">
@@ -16,10 +16,10 @@
 					</aside>
 					<div class="media-content">
 						<p>							
-							<a class="player-name"><%- data.name %></a> moved 
-							<a class="player-name"><%- piece %> </a> from 
-							<a class="player-name"><%- from %></a> to
-							<a class="player-name"><%- to %></a> 
+							<b><%- data.name %></b> moved 
+							<b><%- piece %> </b> from 
+							<b><%- from %></b> to
+							<b><%- to %></b> 
 							<%- result %>
 						</p>
 					</div>

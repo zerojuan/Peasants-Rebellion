@@ -61,9 +61,25 @@ textarea {
   padding-top: 5px;
 }
 .button {
+  transition: background 0.3s;
+  -moz-transition: background 0.3s;
+  /* Firefox 4 */
+
+  -webkit-transition: background 0.3s;
+  /* Safari and Chrome */
+
+  -o-transition: background 0.3s;
+  /* Opera */
+
   padding: 5px;
   border: 1px solid #ccc;
   cursor: pointer;
+}
+.button:hover {
+  background: #ffa;
+}
+.button:active {
+  background: #ffffdd;
 }
 .button span {
   padding: 10px;
@@ -649,10 +665,22 @@ textarea.chat-box {
   color: white;
   border-right: 4px solid #e0afaa;
 }
+.top.peasant .button:hover {
+  background: #9e423a;
+}
+.top.peasant .button:active {
+  background: #79322c;
+}
 .top.king {
   background: #3c7399;
   color: white;
   border-right: 4px solid #85b1cf;
+}
+.top.king .button:hover {
+  background: #2e5774;
+}
+.top.king .button:active {
+  background: #1f3c50;
 }
 .top span {
   max-width: 840px;
@@ -714,6 +742,24 @@ textarea.chat-box {
 #turn-wrapper {
   text-align: center;
   font-size: 20pt;
+}
+.move-feed {
+  -webkit-transition: background .3s ease;
+  -moz-transition: background .3s ease;
+  -o-transition: background .3s ease;
+  -ms-transition: background .3s ease;
+  transition: background .3s ease;
+  cursor: pointer;
+}
+.move-feed.active {
+  background: #fff;
+  border: 1px dashed #ccc;
+}
+.move-feed:hover {
+  background: #fff;
+}
+.move-feed:active {
+  background: #fff;
 }
 .antiscroll-inner {
   width: 290px;

@@ -117,8 +117,7 @@ define('PieceManager', [
 					width : 56, height: 76
 				},
 				images : ['assets/black-piece.png']				
-			};
-			imgSrc = 'assets/black-piece.png';
+			};			
 		}
 
 		this.graphics = opts.container;

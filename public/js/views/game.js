@@ -85,6 +85,7 @@ define('GameView',[
 			"click .player-name" : "onClickPlayerName",
 			"click #back-btn" : "onBackClicked",
 			"click .top .button" : "onShareClicked",
+			"click .move-feed" : "onMoveFeedClicked",
 			"click #share-panel .bg" : "onHideSharePanel",
 			"click #results-panel" : "onHideResultsPanel"
 		},
@@ -106,14 +107,15 @@ define('GameView',[
 						
 			this.playChess.initialize(canvas, game, function(){
 				that.updateTurn(that.model.get('turn'));
+				var moves = that.model.get("moves");
 				if(!game.alive){
 					console.log('GAME IS DEAD!');
 					$(that.el).find('.overlay').hide();				
 					that.showWinnerBG(game.winner);
-					that.showResultSidebar(game.winner, game.moves);
+					that.showResultSidebar(game.winner, moves);
 					that.playChess.showGameOver(game.winner);
 				}else{
-					that.showMoves(game.moves);
+					that.showMoves(moves);
 				}
 			});
 
@@ -160,13 +162,26 @@ define('GameView',[
 		onResizeWindow : function(){
 			this._resizeScroller();
 		},
-		onShareClicked : function(){
-			console.log("Clicked share");
+		onTap : function(){
+			$('.move-feed').removeClass('active');
+		},
+		onMoveFeedClicked : function(e){			
+			if($(e.currentTarget).hasClass('active')){
+				//deactivate
+				$(e.currentTarget).removeClass('active');
+				this.playChess.hideMove();	
+			}else{
+				$('.move-feed').removeClass('active');
+				$(e.currentTarget).addClass('active');
+				var id = $(e.currentTarget).attr('id');
+				this.playChess.showMove(id, this.model.get('moves'));	
+			}					
+		},
+		onShareClicked : function(){			
 			$(this.el).find('#share-panel').css('top', '-2000px').animate({top: "250px", bottom: "0"}, 600);
 			$(this.el).find('#share-panel .bg').css('bottom', '1000px').animate({bottom: "0"}, 600);
 		},
-		onHideSharePanel : function(){
-			console.log("Clicked share");
+		onHideSharePanel : function(){			
 			$(this.el).find('#share-panel').animate({top: "-2000px", bottom: "2000px"}, 600);					
 			$(this.el).find('#share-panel .bg').animate({bottom: "2000px"}, 600);			
 		},
@@ -526,6 +541,7 @@ define('GameView',[
 					break;
 				case 'move' :
 					console.log('MOVE: ');
+					this.model.get('moves').push(data);
 					this.createMoveElement(data);
 					if(data.type == 'stalemate'){
 						console.log('Stalemate');

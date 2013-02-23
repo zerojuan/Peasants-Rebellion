@@ -46,6 +46,7 @@ var ChessRTC = function(clusterURL){
 							if(game.king.playerCode == connectionObj.player.playerCode){
 								console.log("King Has Connected!");
 								game.king.alive = true;
+								connectionObj.player.authId = null;
 								connectionObj.player.alive = true;
 							}else{
 								for(var i in game.peasants){
@@ -101,6 +102,7 @@ var ChessRTC = function(clusterURL){
 							console.log('Game found, peasant count: ' + game.peasants.length);
 							if(game.king.playerCode == disconnectionObj.player.playerCode){
 								game.king.alive = false;
+								disconnectionObj.player.authId = null;
 								disconnectionObj.player.passkey = game.obscurePasskey(game.king.passkey);
 							}else{
 								for(var i in game.peasants){
@@ -116,7 +118,7 @@ var ChessRTC = function(clusterURL){
 							disconnectionObj.type = 'disconnection';
 							var message = {};
 							message.type = 'disconnection';
-							message.data = disconnectionObj;
+							message.data = disconnectionObj;							
 							that.ortcPublisher(disconnectionObj.code, message);
 						}else{
 							console.log('Game ' + disconnectionObj.code + " does not exist.");
@@ -234,9 +236,10 @@ ChessRTC.prototype = {
 				var publishMessage = function(message){
 					console.log('Enclosing '+ message.data.name+'\'s move');
 					return function(customData){
-						message.data.type = customData.type;
+						message.data.moveType = customData.moveType;
 						message.data.time = customData.time;
 						message.data.turn = customData.turn;
+						message.data.captured = customData.captured;
 						console.log('Publishing '+ message.data.name+'\'s move');
 						that.ortcPublisher(code, message);	
 					};
@@ -271,10 +274,10 @@ ChessRTC.prototype = {
 									//promote to queen
 									if(color == 'W' && to.row == 0){
 										piece = 'Q';				
-										customData.type = 'promote';					
+										customData.moveType = 'promote';					
 									}else if(color == 'B' && to.row == 7){									
 										piece = 'Q';
-										customData.type = 'promote';
+										customData.moveType = 'promote';
 									}
 								}							
 
@@ -285,6 +288,11 @@ ChessRTC.prototype = {
 								}							
 
 								board[from.row][from.col] = '0';
+								if(board[to.row][to.col] != '0'){
+									customData.moveType = 'capture';
+									customData.captured = board[to.row][to.col];
+									message.data.captured = customData.captured;
+								}
 								board[to.row][to.col] = color+''+piece;
 
 								//check if move is a gameover
@@ -296,15 +304,18 @@ ChessRTC.prototype = {
 										col : 0
 									}, game.turn);
 								if(endGameCheck.checkMate){
-									customData.type = 'checkmate';
+									customData.moveType = 'checkmate';
 									game.alive = false;
 									game.winner = color;
 								}else if(endGameCheck.staleMate){
-									customData.type = 'stalemate';
+									customData.moveType = 'stalemate';
 									game.alive = false;
 									game.winner = 'D';
 								}
 								customData.time = Date.now();
+								message.data.moveType = customData.moveType;
+								message.data.time = customData.time;								
+								message.data.turn = customData.turn;
 								game.moves.push(message.data);
 								game.board = board;
 								game.markModified('board');
