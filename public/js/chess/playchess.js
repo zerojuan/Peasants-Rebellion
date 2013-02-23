@@ -104,6 +104,8 @@ define('PlayChess', [
 
 			this.tileDown = new createjs.Shape(tileDownG);
 			this.tileDown.alpha = 0;
+			this.tileDown.x = -300;
+			this.tileDown.y = -300;
 
 			this.checkerStart = new createjs.Shape(greenG);
 			this.checkerStart.alpha = 0;

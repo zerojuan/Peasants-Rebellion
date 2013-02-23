@@ -11,16 +11,17 @@
 				</div>
 				<div class="media-body">
 					<aside class="align-right time">
-						<% if(alive) { %>
+						<% if(alive) { %>							
 							<span style="color: #e7e7e7;">online</span>
 						<% }else{ %>
+							[<%- passkey %>]
 							<span style="color: #ccc;">offline</span>
 						<% } %>					
 						
 					</aside>
 					<div class="media-content">
 						<p style="font-size: 8pt">
-							<a class="player-name"><%- name %></a> <%- title %>
+							<b><%- name %></b> <%- title %>
 						</p>
 					</div>
 				</div>

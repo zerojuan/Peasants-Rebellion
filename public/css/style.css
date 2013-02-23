@@ -8,6 +8,7 @@ body {
 }
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 header {
   font-family: 'Alegreya', serif;
@@ -628,6 +629,16 @@ textarea.chat-box {
   margin-bottom: 5px;
   text-align: center;
 }
+.top .button {
+  padding: 0px;
+  position: absolute;
+  top: 20pt;
+}
+@media only screen and (max-width: 1024px) {
+  .top .button {
+    top: 10pt;
+  }
+}
 @media only screen and (max-width: 1024px) {
   .top {
     height: 50px;
@@ -663,6 +674,29 @@ textarea.chat-box {
   margin-top: 0;
   padding-left: 20px;
   padding-top: 10px;
+}
+#share-panel .overlay-content {
+  padding-top: 0px;
+  cursor: default;
+}
+.share-content {
+  background: #e7e7e7;
+  width: 100%;
+  padding: 10px 0px;
+}
+.share-content h3 {
+  margin: 0px 20px;
+  text-align: left;
+  color: #333;
+  font-size: 23pt;
+}
+.share-content .url-input {
+  float: left;
+  margin: 0px 20px;
+}
+.share-content .url-input input {
+  width: 400px;
+  font-size: 16pt;
 }
 .center {
   position: absolute;

@@ -12,7 +12,28 @@
 			<figure>
 				<img src="./assets/king-win.png"></img>	
 				<figcaption>Checkmate!</figcaption>
-			</figure>				
+			</figure>					
+		</div>	
+	</div>
+	<div id="share-panel" class="mini-overlay">
+		<div class="bg"></div>
+		<div class="overlay-content">
+			<div class="share-content">
+				<h3>Share</h3>
+				<div class="url-input">
+					<input type="text" value="http://chess.roguestory.com/#/g/<%- game.code %>">
+				</div>
+				<div class="g-plusone" data-size="tall"></div>
+					<script type="text/javascript">
+					  (function() {
+					    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+					    po.src = 'https://apis.google.com/js/plusone.js';
+					    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+					  })();
+					</script>
+				<a href="https://twitter.com/share" class="twitter-share-button"  data-text="" data-count="vertical">Tweet</a>		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>							
+
+			</div>
 		</div>	
 	</div>
 	<div class="winning-bg">
@@ -22,8 +43,8 @@
 		<div class="main-inner">
 			<div class="main-content">
 				<div class="top <%- color %>">
-					<span class="<%- color %>">Peasants Revolt Against <%- game.king.name %></span>
-					Share
+					<span class="<%- color %>">Peasants Revolt Against <%- game.king.name %></span>					
+					<a class="button"><span style="font-size: 12px; padding: 5px;">Share !</span></a>
 				</div>
 				<div class="center">
 					<div class="log" style="position: absolute; left: 0; top: 0;">						

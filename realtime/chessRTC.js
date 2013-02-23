@@ -101,7 +101,7 @@ var ChessRTC = function(clusterURL){
 							console.log('Game found, peasant count: ' + game.peasants.length);
 							if(game.king.playerCode == disconnectionObj.player.playerCode){
 								game.king.alive = false;
-								disconnectionObj.passkey = game.obscurePasskey(game.king.passkey);
+								disconnectionObj.player.passkey = game.obscurePasskey(game.king.passkey);
 							}else{
 								for(var i in game.peasants){
 									if(game.peasants[i].playerCode == disconnectionObj.player.playerCode){

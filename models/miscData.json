@@ -20,7 +20,9 @@
 		"Freedom Fighter",
 		"The Everyman",
 		"Everybody's Hero",
-		"The Peasant Leader"		
+		"The Peasant Leader",
+		"The Rebel",
+		"Visionary"		
 	],
 	"kings" : [
 		"Sultan Suleiman",
@@ -31,17 +33,25 @@
 		"Emperor Augustus",
 		"Cyrus II",
 		"King Frederick ",
-		"King Louis"
+		"King Louis",
+		"Abe Lincoln"
 	],
 	"kingTitles" : [
 		"The Benevolent",
 		"The Sun King",
 		"The Lion Ruler",
 		"The Magnificient",
-		"The One True King"		
+		"The One True King",
+		"The Regal",
+		"The Towering Ruler",
+		"The Brilliant",
+		"The Most Noble"
 	],
 	"usurperTitles" : [
 		"The Schemer King",
-		"The Usurper King"
+		"The Usurper King",
+		"The Crown Thief",
+		"The Great Pretender",
+		"The Power Grabber"
 	]
 }

@@ -13,6 +13,7 @@ body{
 
 a{
 	text-decoration: none;
+	cursor: pointer;	
 }
 
 header{
@@ -681,6 +682,13 @@ textarea.chat-box{
 	margin-bottom: 5px;
 	text-align: center;
 
+	.button{
+		padding: 0px;
+		position: absolute;
+		top: 20pt;
+		@media only screen and (max-width : 1024px) { top: 10pt; }
+	}
+
 	@media only screen and (max-width : 1024px) { height: 50px; }
 	&.peasant{
 		background: @peasant-color;
@@ -709,6 +717,34 @@ textarea.chat-box{
 	margin-top: 0;
 	padding-left: 20px;
 	padding-top: 10px;
+
+}
+
+#share-panel{
+	.overlay-content{
+		padding-top: 0px;
+		cursor: default;
+	}
+}
+
+.share-content{
+	background: #e7e7e7;
+	width: 100%;
+	padding: 10px 0px;		
+	h3{
+		margin: 0px 20px;
+		text-align: left;
+		color: #333;
+		font-size: 23pt;
+	}
+	.url-input{
+		float: left;
+		margin: 0px 20px;
+		input{
+			width: 400px;
+			font-size: 16pt;
+		}
+	}
 }
 
 .center{

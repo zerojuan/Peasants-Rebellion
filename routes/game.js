@@ -49,6 +49,7 @@ exports.randomGame = function(req, res, next){
 					name : game.king.name,
 					title : game.king.title,
 					alive : game.king.alive,
+					passkey : (!game.king.alive) ? game.obscurePasskey(game.king.passkey) : null,
 					playerCode : game.king.playerCode
 				},
 				peasants : game.peasants,
@@ -143,6 +144,7 @@ exports.getByCode = function(req, res, next){
 				name : game.king.name,
 				title : game.king.title,
 				alive : game.king.alive,
+				passkey : (!game.king.alive) ? game.obscurePasskey(game.king.passkey) : null,
 				playerCode : game.king.playerCode
 			},
 			board : game.board,

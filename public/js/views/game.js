@@ -84,6 +84,8 @@ define('GameView',[
 			"resize window" : "onResizeWindow",
 			"click .player-name" : "onClickPlayerName",
 			"click #back-btn" : "onBackClicked",
+			"click .top .button" : "onShareClicked",
+			"click #share-panel .bg" : "onHideSharePanel",
 			"click #results-panel" : "onHideResultsPanel"
 		},
 		render : function(){
@@ -158,8 +160,17 @@ define('GameView',[
 		onResizeWindow : function(){
 			this._resizeScroller();
 		},
-		onClickPlayerName : function(){
-			console.log("Clicked player name");
+		onShareClicked : function(){
+			console.log("Clicked share");
+			$(this.el).find('#share-panel').css('top', '-2000px').animate({top: "250px", bottom: "0"}, 600);
+			$(this.el).find('#share-panel .bg').css('bottom', '1000px').animate({bottom: "0"}, 600);
+		},
+		onHideSharePanel : function(){
+			console.log("Clicked share");
+			$(this.el).find('#share-panel').animate({top: "-2000px", bottom: "2000px"}, 600);					
+			$(this.el).find('#share-panel .bg').animate({bottom: "2000px"}, 600);			
+		},
+		onClickPlayerName : function(){			
 			$(this.el).find("#main-feed-slider").animate({marginLeft: "-320px"}, 300);
 		},
 		onBackClicked : function(){
@@ -289,7 +300,7 @@ define('GameView',[
 				status = 'peasant';
 			}		
 			console.log('Creating Connection Element...');
-			var tmpl = this.playerListTemplate({alive: data.player.alive, color: status, code: data.player.playerCode, name : data.player.name, title: data.player.title});
+			var tmpl = this.playerListTemplate({passkey: data.player.passkey, alive: data.player.alive, color: status, code: data.player.playerCode, name : data.player.name, title: data.player.title});
 			$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
 			if(data.color == 'B'){				
 				$(tmpl).hide().prependTo($(this.el).find('.king-container')).fadeIn("slow");
@@ -305,7 +316,7 @@ define('GameView',[
 			$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
 			if(data.color == 'B'){
 				$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
-				var tmpl = this.playerListTemplate({alive: false, color: 'king', code: data.player.playerCode, name : data.player.name, title: data.player.title});
+				var tmpl = this.playerListTemplate({passkey: data.player.passkey, alive: false, color: 'king', code: data.player.playerCode, name : data.player.name, title: data.player.title});
 				$(tmpl).hide().prependTo($(this.el).find('.king-container')).fadeIn("slow");
 			}else{
 				if($(this.el).find('.peasant-container .feed-item').length == 0){
@@ -326,7 +337,7 @@ define('GameView',[
 			}
 			if(type == "disconnect"){
 				if(data.color == 'B'){
-					message = " has left the throne! His passkey is rumored to be: " + data.passkey;
+					message = " has left the throne! His passkey is rumored to be: " + data.player.passkey;
 				}else{
 					message = " has left.";	
 				}
