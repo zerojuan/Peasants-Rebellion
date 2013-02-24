@@ -237,8 +237,10 @@ ChessRTC.prototype = {
 					console.log('Enclosing '+ message.data.name+'\'s move');
 					return function(customData){
 						message.data.moveType = customData.moveType;
+						console.log("MoveTYPE: " + customData.moveType);
 						message.data.time = customData.time;
 						message.data.turn = customData.turn;
+						message.data._id = customData._id;
 						message.data.captured = customData.captured;
 						console.log('Publishing '+ message.data.name+'\'s move');
 						that.ortcPublisher(code, message);	
@@ -320,12 +322,13 @@ ChessRTC.prototype = {
 								game.board = board;
 								game.markModified('board');
 								console.log("VERSION:"+ game.toJSON().__v);								
-								game.save(function(err){
+								game.save(function(err, newGame){
 									if(err){
 										console.log(err);
 										return;
 									}									
 									customData.turn = game.turn;	
+									customData._id = newGame._id;
 									console.log('PUBLISHED MESSAGE! NEW DATA HAS BEEN SAVED');
 									msgPublisher(customData);
 								});	

@@ -1,0 +1,30 @@
+<div id="<%- data._id %>" class="feed-item feed-item-plain move-feed">											
+	<div class="feed-item-inner tip-arrow-inner">
+		<div class="tip-arrow"></div>
+		<div class="feed-item-main">
+			<div class="media media-mini">
+				<div class="media-img">
+					<% if(data.color == 'B') { %>
+					<img src="./assets/king-icon-small.png"></img>
+					<% }else{ %>
+					<img src="./assets/peasant-icon-small.png"></img>
+					<% } %>
+				</div>					
+				<div class="media-body">
+					<aside class="align-right time">
+						<time data-time-format="short" datetime="<%- timestamp %>"><%- timestring %></time>	
+					</aside>
+					<div class="media-content">
+						<p>							
+							<b><%- data.name %></b> moved 
+							<b><%- piece %> </b> from 
+							<b><%- from %></b> to
+							<b><%- to %></b> 
+							<%- result %>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

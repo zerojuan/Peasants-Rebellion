@@ -56,7 +56,8 @@ exports.randomGame = function(req, res, next){
 				board : game.board,
 				turn : game.turn,
 				player : peasant,
-				alive : game.alive
+				alive : game.alive,
+				moves : game.moves
 			}); 
 		});
 	});

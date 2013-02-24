@@ -13,13 +13,18 @@ var app = express();
 var db = mongoose.connect(process.env.MONGO_URI);
 
 
+
 //=========================
 // Setup Express
 //========================= 
 app.configure(function(){
-	app.use(less({ src: __dirname + '/public' }));
+	var client_folder = '/client/dev'
+	if(app.settings.env == 'production'){
+		client_folder = '/client/build'
+	}
+	app.use(less({ src: __dirname + client_folder }));
 	app.use(express.bodyParser());
-	app.use(express.static(__dirname + '/public'));
+	app.use(express.static(__dirname + client_folder));
 	app.use(function(err, req, res, next){
 		console.error(err.stack);
 		res.send(500, 'Something broke!');
@@ -30,6 +35,16 @@ app.configure(function(){
 // Setup Schemas
 //=========================
 var Game = require('./models/game');
+
+//=========================
+// Routes for easy testing
+//=========================
+
+var test = require("./routes/test");
+app.configure('development', function(){
+	console.log('Development mode: Test routes are open');
+	app.get('/testreset', test.reset);
+});
 
 //=========================
 // ORTC Client
@@ -64,17 +79,6 @@ Game.find({alive:true}, function(err, games){
 		    }
 		});
 });	
-
-
-//=========================
-// Routes for easy testing
-//=========================
-
-var test = require("./routes/test");
-app.configure('development', function(){
-	console.log('Development mode: Test routes are open');
-	app.get('/testreset', test.reset);
-});
 
 
 //=========================

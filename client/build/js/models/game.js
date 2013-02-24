@@ -1,0 +1,1 @@
+define("GameModel",["jquery","underscore","backbone"],function(e,t,n){var r;return r=n.Model.extend({idAttribute:"code",urlRoot:"api/v1/game"}),r});

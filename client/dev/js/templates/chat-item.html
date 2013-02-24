@@ -1,0 +1,26 @@
+<div class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">						
+	<div class="feed-item-inner tip-arrow-inner">
+		<div class="tip-arrow"></div>
+		<div class="feed-item-main">
+			<div class="media media-mini">
+				<div class="media-img">
+					<% if(color == 'B') { %>
+					<img src="./assets/king-icon-small.png"></img>
+					<% }else{ %>
+					<img src="./assets/peasant-icon-small.png"></img>
+					<% } %>					
+				</div>
+				<div class="media-body">
+					<aside class="align-right time">
+						<time data-time-format="short" datetime="<%- timestamp %>"><%- timestring %></time>	
+					</aside>
+					<div class="media-content">
+						<p>
+							<a class="player-name"><%- name %></a> <%- message %>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

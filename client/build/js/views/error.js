@@ -1,0 +1,1 @@
+define("ErrorView",["jquery","underscore","backbone","text!templates/error.html"],function(e,t,n,r){var i;return i=n.View.extend({initialize:function(){this.template=t.template(r)},render:function(t){console.log("Error render");var n=this.template({error:t});return e(this.el).html(n),this}}),i});

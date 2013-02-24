@@ -1,0 +1,1 @@
+define("App",["jquery","underscore","backbone","Router"],function(e,t,n,r){function i(){var e=new r;n.history.start()}return{initialize:i}});

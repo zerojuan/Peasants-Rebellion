@@ -1,0 +1,31 @@
+<div id="<%- code %>" class="feed-item feed-item-bubble tip-arrow-container tip-arrow-left-top">					
+	<div class="feed-item-inner tip-arrow-inner">
+		<div class="feed-item-main  <%- color %>">
+			<div class="media media-mini">
+				<div class="media-img">
+					<% if(color == 'B') { %>
+						<img src="./assets/king-icon-small.png"></img>
+					<% }else{ %>
+						<img src="./assets/peasant-icon-small.png"></img>
+					<% } %>					
+				</div>
+				<div class="media-body">
+					<aside class="align-right time">
+						<% if(alive) { %>							
+							<span style="color: #e7e7e7;">online</span>
+						<% }else{ %>
+							[<%- passkey %>]
+							<span style="color: #ccc;">offline</span>
+						<% } %>					
+						
+					</aside>
+					<div class="media-content">
+						<p style="font-size: 8pt">
+							<b><%- name %></b> <%- title %>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
