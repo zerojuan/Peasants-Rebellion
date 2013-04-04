@@ -105,6 +105,10 @@ var ChessRTC = function(clusterURL){
 								disconnectionObj.player.authId = null;
 								disconnectionObj.player.passkey = game.obscurePasskey(game.king.passkey);
 							}else{
+								if(disconnectionObj.player.authId){ // this is a king, that has been usurped
+									disconnectionObj.usurped =  true;
+									disconnectionObj.player.passkey = 'disgraced';
+								}
 								for(var i in game.peasants){
 									if(game.peasants[i].playerCode == disconnectionObj.player.playerCode){
 										game.peasants.remove(game.peasants[i]);
@@ -137,8 +141,8 @@ var ChessRTC = function(clusterURL){
 ChessRTC.prototype = {
 	ortcSubscriber : function(code){
 		var that = this;
-		console.log('Subscribing to: ' + 'peasant_chess_server_'+code);
-		this.ortcClient.subscribe('peasant_chess_server_'+code, true, 
+		console.log('Subscribing to: ' + 'peasant_chess_server:'+code);
+		this.ortcClient.subscribe('peasant_chess_server:'+code, true, 
 			function(ortc, channel, message){
 				console.log('Recieved Message: ');
 				var msgObj = JSON.parse(message);
@@ -146,7 +150,7 @@ ChessRTC.prototype = {
 			});
 	},
 	ortcPublisher : function(code, message){		
-		var browserChannel = 'peasant_chess_browser_'+code;
+		var browserChannel = 'peasant_chess_browser:'+code;
 		this.ortcClient.send(browserChannel, JSON.stringify(message));
 	},
 	handleORTCMessage : function(code, xRTMLMessage){
@@ -327,8 +331,9 @@ ChessRTC.prototype = {
 										console.log(err);
 										return;
 									}									
-									customData.turn = game.turn;	
-									customData._id = newGame._id;
+									customData.turn = game.turn;
+									console.log("ID: " + newGame._id);	
+									customData._id = newGame.moves[newGame.moves.length-1]._id;
 									console.log('PUBLISHED MESSAGE! NEW DATA HAS BEEN SAVED');
 									msgPublisher(customData);
 								});	

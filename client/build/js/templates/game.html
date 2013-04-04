@@ -15,6 +15,30 @@
 			</figure>					
 		</div>	
 	</div>
+	<div id="help-panel" class="mini-overlay">
+		<div class="bg"></div>
+		<div class="overlay-content">
+			<div class="help-content">
+				<h3>How To Play</h3>
+				<div class="details">
+					<ol>
+						<li>The game plays like an ordinary chess game.</li>
+						<li>One player controls the king (blue pieces) and then anyone who accesses the game URL joins the peasant (white pieces) team.</li>
+						<li>Players who play in the peasant team can move the peasant pieces, but only one, the quickest to be commited, becomes the official move for the peasant team.</li>				
+						<li>Can't find anyone to play with? Share the game URL to your friends.</li>
+					</ol>
+					<h4 style="margin-left: 20px">Usurping</h4>
+					<ol>
+						<li>In chat you can type: "!usurp kingpasskey yournewpasskey"</li>
+						<li>A peasant can use the "!usurp" chat command to seize control from the current King. The successful usurper becomes the new King.</li>						
+						<li>A king that goes offline leaves clues to his passkey, for example: "b*rt*",  is the passkey "birth", "berto", or "berta"?</li>
+						<li>A king leaves the game and it's a mad scramble for the crown (just like in real life)!</li>
+					</ol>					
+				</div>
+				<h4>By the way, you are a <span class="<%- color %>"><%- color %></span> !</h4>
+			</div>
+		</div>
+	</div>
 	<div id="share-panel" class="mini-overlay">
 		<div class="bg"></div>
 		<div class="overlay-content">
@@ -43,8 +67,11 @@
 		<div class="main-inner">
 			<div class="main-content">
 				<div class="top <%- color %>">
-					<span class="<%- color %>">Peasants Revolt Against <%- game.king.name %></span>					
-					<a class="button"><span style="font-size: 19px; padding: 5px;"> &#10010;</span></a>
+					<span class="banner <%- color %>">Peasants Revolt Against <%- game.king.name %></span>					
+					<div class="buttons">
+						<a class="button" id="share-btn"><span data-icon="&#xe000;"></span></a>
+						<a class="button" id="help-btn"><span data-icon="&#xe001;"></span></a>	
+					</div>					
 				</div>
 				<div class="center">
 					<div class="log" style="position: absolute; left: 0; top: 0;">						

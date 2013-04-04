@@ -51,7 +51,7 @@ define('GameView',[
 						appKey : 'Qy9W72',
 						authToken : 'peasantchessauth',
 						channels : [{
-							name : 'peasant_chess_browser_' + that.channel,
+							name : 'peasant_chess_browser:' + that.channel,
 							onMessage : xRTML.Common.Function.proxy(function(e){
 								var message = e.message;
 								//console.log('Message Recieved: ' + message);
@@ -83,10 +83,12 @@ define('GameView',[
 			"resize window" : "onResizeWindow",
 			"click .player-name" : "onClickPlayerName",
 			"click #back-btn" : "onBackClicked",
-			"click .top .button" : "onShareClicked",
+			"click #share-btn" : "onShareClicked",
+			"click #help-btn" : "onHelpClicked",
 			"click .move-feed" : "onMoveFeedClicked",
 			"click .announcement-feed" : "onClickPlayerName",
 			"click #share-panel .bg" : "onHideSharePanel",
+			"click #help-panel" : "onHideHelpPanel",
 			"click #results-panel" : "onHideResultsPanel"
 		},
 		render : function(){
@@ -107,8 +109,7 @@ define('GameView',[
 						
 			this.playChess.initialize(canvas, game, function(){
 				that.updateTurn(that.model.get('turn'));
-				var moves = that.model.get("moves");
-				console.log(moves);
+				var moves = that.model.get("moves");				
 				if(!game.alive){
 					console.log('GAME IS DEAD!');
 					$(that.el).find('.overlay').hide();				
@@ -178,9 +179,17 @@ define('GameView',[
 			$(this.el).find('#share-panel').css('top', '-2000px').animate({top: "250px", bottom: "0"}, 600);
 			$(this.el).find('#share-panel .bg').css('bottom', '1000px').animate({bottom: "0"}, 600);
 		},
+		onHelpClicked : function(){
+			$(this.el).find('#help-panel').css('top', '-2000px').animate({top: "50px", bottom: "0"}, 600);
+			$(this.el).find('#help-panel .bg').css('bottom', '1000px').animate({bottom: "0"}, 600);	
+		},
 		onHideSharePanel : function(){			
 			$(this.el).find('#share-panel').animate({top: "-2000px", bottom: "2000px"}, 600);					
 			$(this.el).find('#share-panel .bg').animate({bottom: "2000px"}, 600);			
+		},
+		onHideHelpPanel : function(){			
+			$(this.el).find('#help-panel').animate({top: "-2000px", bottom: "2000px"}, 600);					
+			$(this.el).find('#help-panel .bg').animate({bottom: "2000px"}, 600);			
 		},
 		onClickPlayerName : function(){			
 			$(this.el).find("#main-feed-slider").animate({marginLeft: "-320px"}, 300);
@@ -323,7 +332,7 @@ define('GameView',[
 			}
 		},
 		createDisconnectionElement : function(data){
-			$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
+			$(this.el).find('#'+data.player.playerCode).fadeOut().remove();			
 			if(data.color == 'B'){
 				$(this.el).find('#'+data.player.playerCode).fadeOut().remove();
 				var tmpl = this.playerListTemplate({passkey: data.player.passkey, alive: false, color: 'king', code: data.player.playerCode, name : data.player.name, title: data.player.title});
@@ -333,8 +342,7 @@ define('GameView',[
 					$(this.el).find('.peasant-container').html('');
 					$('<p class="sample">No one. Share this url to your friends (and enemies)!</p>').hide().appendTo($(this.el).find('.peasant-container')).fadeIn("slow");
 				}	
-			}
-			
+			}	
 		},
 		createAnnouncementElement : function(type, data){
 			var timestring = $.timeago(new Date());
@@ -346,10 +354,14 @@ define('GameView',[
 				status = 'peasant';
 			}
 			if(type == "disconnect"){
-				if(data.color == 'B'){
-					message = " has left the throne! His passkey is rumored to be: " + data.player.passkey;
+				if(data.usurped){
+					message = " the disgraced King has finally left.";
 				}else{
-					message = " has left.";	
+					if(data.color == 'B'){
+						message = " has left the throne! His passkey is rumored to be: " + data.player.passkey;
+					}else{
+						message = " has left.";	
+					}	
 				}
 				
 			}else{
@@ -428,8 +440,7 @@ define('GameView',[
 			var cols = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 			var from = cols[data.from.col]+ ""+ (data.from.row + 1)
 
-			var to = cols[data.to.col]+ ""+ (data.to.row + 1)				
-
+			var to = cols[data.to.col]+ ""+ (data.to.row + 1)							
 			var tmpl = this.moveTemplate({data: data, result : result, from: from, to: to, piece: piece, timestamp: date.toISOString(), timestring: timestring});
 			this._appendToFeed(tmpl);
 		},
@@ -439,12 +450,14 @@ define('GameView',[
 		},
 		updateBanner : function(status, data){
 			console.log('Updating banner');
+			console.log("I should be the new king", data.player.name);
 			if(status == 'me'){
 				console.log('Updating banner');
 				$('.top').removeClass('peasant');
 				$('.top').addClass('king');
 				$('.top span.banner').hide().html('Peasants Revolt Against ' + data.player.name).fadeIn();
 			}else if(status == 'me-lose'){
+				console.log("I should be the new king", data.player.name);
 				$('.top').removeClass('king');
 				$('.top').addClass('peasant');
 				$('.top span.banner').hide().html('Peasants Revolt Against ' + data.player.name).fadeIn();
@@ -576,7 +589,7 @@ define('GameView',[
 		},
 		_publishMessage : function(type, data){
 			//send via ajax			 
-			var channel = 'peasant_chess_server_'+this.channel;
+			var channel = 'peasant_chess_server:'+this.channel;
 			console.log('Publishing to ' + channel);
 			switch(type){
 				case 'connect':

@@ -34,7 +34,7 @@ requirejs.config({
 		'tween' : 'lib/tweenjs-0.3.0.min',
 		'preload' : 'lib/preloadjs-0.2.0.min',
 		'timeago' : 'lib/jquery.timeago',
-		'xrtml' : 'lib/xrtml-custom-3.0-min',
+		'xrtml' : 'lib/xrtml-custom-3.1.0-dev',
 		'antiscroll' : 'lib/antiscroll',
 		'sound' : 'lib/soundjs-0.3.0.min',
 		'backbone' : 'lib/backbone',

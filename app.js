@@ -60,9 +60,12 @@ Game.find({alive:true}, function(err, games){
 		for(var i in games){
 			var game = games[i];
 				console.log('Subscribing... ' + game.code);
-				channels['peasant_chess_server_'+game.code] = 'r';
-				channels['peasant_chess_browser_'+game.code] = 'w';
-		}		
+		//		channels['peasant_chess_server_'+game.code] = 'r';
+		//		channels['peasant_chess_browser_'+game.code] = 'w';
+		}
+
+		channels['peasant_chess_server'] = 'r';
+		channels['peasant_chess_browser'] = 'w';
 
 		// Post permissions
 		chessRTC.ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true, 

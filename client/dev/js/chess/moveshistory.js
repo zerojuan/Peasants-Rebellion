@@ -152,6 +152,7 @@ define('MovesHistory',[
 				board[move.from.row][move.from.col] = pieceTo;
 				if(move._id == id){										
 					//create board graphics
+					console.log("Move Found: ", move);
 					this._createBoard(board, move.from, move.to);
 					break;
 				}

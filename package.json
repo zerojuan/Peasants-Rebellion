@@ -1,8 +1,8 @@
 {
   "name": "peasant-chess",
-  "version": "0.0.0-24",
+  "version": "0.1.0-27",
   "dependencies": {
-    "requirejs" : "latest",
+    "requirejs": "latest",
     "express": "3.0.3",
     "mongoose": "3.5.7",
     "less-middleware": "",
