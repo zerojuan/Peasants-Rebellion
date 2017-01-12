@@ -9,20 +9,21 @@ var miscData = require('./models/miscData.json');
 
 
 var app = express();
-
+console.log("Debug: ", process.env.MONGO_URI);
 var db = mongoose.connect(process.env.MONGO_URI);
 
 
 
 //=========================
 // Setup Express
-//========================= 
+//=========================
 app.configure(function(){
 	var client_folder = '/client/dev'
 	if(app.settings.env == 'production'){
 		client_folder = '/client/build'
 	}
-	app.use(less({ src: __dirname + client_folder }));
+  console.log( 'Client_Folder: ', client_folder );
+	app.use(less( __dirname + client_folder ));
 	app.use(express.bodyParser());
 	app.use(express.static(__dirname + client_folder));
 	app.use(function(err, req, res, next){
@@ -68,9 +69,9 @@ Game.find({alive:true}, function(err, games){
 		channels['peasant_chess_browser'] = 'w';
 
 		// Post permissions
-		chessRTC.ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true, 
-			'peasantchessauth', 0, 
-			process.env.ORTC_APP_KEY, 1400, 
+		chessRTC.ortcClient.saveAuthentication('http://ortc-developers.realtime.co/server/2.1', true,
+			'peasantchessauth', 0,
+			process.env.ORTC_APP_KEY, 1400,
 			process.env.ORTC_PRIVATE_KEY, channels, function (error, success) {
 		    if (error) {
 		        console.log('Error saving authentication: ' + error);
@@ -81,7 +82,7 @@ Game.find({alive:true}, function(err, games){
 		        console.log('Not authenticated');
 		    }
 		});
-});	
+});
 
 
 //=========================
@@ -93,7 +94,7 @@ var gameRoutes = require("./routes/game");
 app.post('/api/v1/game', function(req, res){
 	var name = req.body.kingName;
 	var password = req.body.kingPass;
-	
+
 
 	if(password == ''){
 		password = 'usurpthis';
@@ -108,10 +109,10 @@ app.post('/api/v1/game', function(req, res){
 
 		var game = new Game();
 
-		if(name == ''){						
+		if(name == ''){
 			name = game.getRandomKingName();
 		}
-		
+
 		var king = {
 			name : name,
 			title : game.getRandomKingTitle(),
@@ -129,10 +130,10 @@ app.post('/api/v1/game', function(req, res){
 		game.moves = [];
 		game.turn = 'W';
 		var https = require('https');
-		
+
 		game.save(function(err, savedGame){
 			if(err){
-				console.log('Error saving new game');			
+				console.log('Error saving new game');
 				return;
 			}
 
@@ -156,9 +157,9 @@ app.post('/api/v1/game', function(req, res){
 				},
 				alive : true
 			});
-		});			
+		});
 	});
-	
+
 });
 
 
@@ -169,5 +170,5 @@ app.get('/api/v1/game/:code', gameRoutes.getByCode);
 
 
 app.listen(process.env.PORT || 3000, function(){
-	console.log('Started app...');
+	console.log('Started app at port: ' + ( process.env.PORT || 3000 ) );
 });

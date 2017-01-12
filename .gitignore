@@ -1,6 +1,7 @@
 node_modules/
 app_config.json
 start.bat
+start.sh
 
 #################
 ## Eclipse
