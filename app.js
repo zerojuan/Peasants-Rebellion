@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+require('dotenv').config()
 var less = require('less-middleware');
 var ChessRTC = require('./realtime/chessRTC');
 var Chess = require('./chess/chess');

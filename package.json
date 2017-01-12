@@ -2,6 +2,7 @@
   "name": "peasant-chess",
   "version": "0.1.0-27",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "express": "3.0.3",
     "ibtrealtimesjnode": "",
     "less-middleware": "",
@@ -14,7 +15,7 @@
     "chess.roguestory.com"
   ],
   "scripts": {
-    "start": "app.js",
+    "start": "node app.js",
     "test": "mocha test/ -u tdd "
   },
   "engines": {
